@@ -1,0 +1,23 @@
+{
+    "name": "joomla/cache",
+    "type": "joomla-package",
+    "description": "Joomla Cache Package",
+    "keywords": ["joomla", "framework", "cache"],
+    "homepage": "https://github.com/joomla/joomla-framework-cache",
+    "license": "GPL-2.0+",
+    "require": {
+        "php": ">=5.3.10"
+    },
+    "require-dev": {
+         "joomla/test": "dev-master"
+    },
+    "suggest": {
+        "joomla/registry": "Registry can be used as an alternative to using an array for the caching options."
+    },
+    "target-dir": "Joomla/Cache",
+    "autoload": {
+    	"psr-0": {
+    		"Joomla\\Cache": ""
+    	}
+    }
+}
