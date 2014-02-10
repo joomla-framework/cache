@@ -4,8 +4,12 @@ php:
   - 5.3
   - 5.4
 
+services:
+  - memcached # will start memcached
+
 before_script:
   - composer update --dev
+  - phpenv config-add build/travis/phpenv/memcached.ini
 
 script:
   - phpunit
