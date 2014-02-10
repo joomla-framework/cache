@@ -1,4 +1,4 @@
-# The Cache Package
+# The Cache Package [![Build Status](https://travis-ci.org/joomla-framework/cache.png?branch=master)](https://travis-ci.org/joomla-framework/cache)
 
 This cache package complies with the proposed `Psr\Cache` standard.
 
