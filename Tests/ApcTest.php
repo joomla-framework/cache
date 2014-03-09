@@ -63,8 +63,8 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testExists()
 	{
-		$this->assertTrue($this->instance->set('name','aliasm2k'));
-		$this->assertTrue($this->instance->exists('name'));
+		$this->assertTrue($this->instance->set('foo','bar'));
+		$this->assertTrue($this->instance->exists('foo'));
 	}
 
 	/**
