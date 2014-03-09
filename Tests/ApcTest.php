@@ -50,7 +50,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testClear()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue(apc_cache_clear('user'));
 	}
 
 	/**
