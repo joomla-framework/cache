@@ -26,7 +26,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @coversNothing
+	 * @covers  Nothing
 	 * @since   1.0
 	 */
 	public function testPsrCache()
@@ -50,7 +50,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testClear()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->clear());
 	}
 
 	/**
@@ -63,7 +63,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testExists()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->exists('foo'));
 	}
 
 	/**
@@ -76,7 +76,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$this->markTestIncomplete();
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface',$this->instance->get('foo'));
 	}
 
 	/**
@@ -89,7 +89,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRemove()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->remove('foo'));
 	}
 
 	/**
@@ -102,7 +102,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSet()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->set('foo', 'bar'));
 	}
 
 	/**
@@ -119,6 +119,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 		try
 		{
 			$this->instance = new Cache\Apc;
+			$this->instance->set('foo', 'bar');
 		}
 		catch (\Exception $e)
 		{
