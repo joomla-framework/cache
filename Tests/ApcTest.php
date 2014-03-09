@@ -26,7 +26,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @coversNothing
+	 * @covers  Nothing
 	 * @since   1.0
 	 */
 	public function testPsrCache()
@@ -50,7 +50,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testClear()
 	{
-		$this->assertTrue(apc_cache_clear('user'));
+		$this->assertTrue($this->instance->clear());
 	}
 
 	/**
