@@ -76,7 +76,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$this->markTestIncomplete();
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface',$this->instance->get('foo'));
 	}
 
 	/**
@@ -89,7 +89,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRemove()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->remove('foo'));
 	}
 
 	/**
@@ -102,7 +102,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSet()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->set('foo', 'bar'));
 	}
 
 	/**
