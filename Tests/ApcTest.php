@@ -63,7 +63,6 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testExists()
 	{
-		$this->assertTrue($this->instance->set('foo','bar'));
 		$this->assertTrue($this->instance->exists('foo'));
 	}
 
@@ -120,6 +119,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 		try
 		{
 			$this->instance = new Cache\Apc;
+			$this->instance->set('foo', 'bar');
 		}
 		catch (\Exception $e)
 		{
