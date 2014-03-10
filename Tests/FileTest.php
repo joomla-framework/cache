@@ -103,7 +103,9 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRemove()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->set('foo', 'bar'), 'Checks the value was set');
+		$this->assertTrue($this->instance->remove('foo'), 'Checks the value was removed');
+		$this->assertNull($this->instance->get('foo')->getValue(), 'Checks for the delete');
 	}
 
 	/**
