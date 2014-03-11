@@ -174,7 +174,11 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testCheckFilePath_exception2()
 	{
 		// Check for an unwritable folder.
-		$this->markTestIncomplete();
+		if (!is_dir(__DIR__ . '/uwd'))
+		{
+			mkdir(__DIR__ . '/uwd', 0444);
+		}
+		TestHelper::invoke($this->instance, 'checkFilePath', __DIR__ . '/uwd');
 	}
 
 	/**
