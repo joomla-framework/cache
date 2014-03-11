@@ -9,7 +9,7 @@ namespace Joomla\Cache\Tests;
 use Joomla\Cache;
 
 /**
- * Tests for the Joomla\Cache\None class.
+ * Tests for the Joomla\Cache\Item class.
  *
  * @since  1.0
  */
