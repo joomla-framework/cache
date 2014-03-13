@@ -99,6 +99,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
 		touch($fileName, time() -2);
 
+		$this->assertFalse($this->instance->get('foo')->isHit(), 'The key should have been deleted.');
 		$this->assertNull($this->instance->get('foo')->getValue(), 'The key should have been deleted.');
 	}
 
