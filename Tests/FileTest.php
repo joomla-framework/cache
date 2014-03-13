@@ -95,7 +95,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 		$this->instance->setOption('ttl', 1);
 		$this->instance->set('foo', 'bar', 1);
-		sleep(2);
+
+		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
+		touch($fileName, time() -2);
+
 		$this->assertNull($this->instance->get('foo')->getValue(), 'The key should have been deleted.');
 	}
 
@@ -245,7 +248,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->instance->setOption('ttl', 1);
 		$this->instance->set('foo', 'bar');
-		sleep(2);
+
+		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
+		touch($fileName, time() -2);
+
 		$this->assertTrue(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should be expired.');
 
 		$this->instance->setOption('ttl', 900);
