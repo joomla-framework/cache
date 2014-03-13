@@ -42,6 +42,27 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Tests constructor when given non writable cache folder
+	 *
+	 * @return  void
+	 *
+	 * @covers Joomla\Cache\File::__construct
+	 * @since   1.0
+	 * @expectedException  \RuntimeException
+	 */
+	public function test__construct_exception()
+	{
+		$options = array(
+			'file.path' => __DIR__ . '/no_write_tmp'
+		);
+
+		mkdir($options['file.path']);
+		chmod($options['file.path'], 0000);
+
+		new Cache\File($options);
+	}
+
+	/**
 	 * Tests the Joomla\Cache\File::clear method.
 	 *
 	 * @return  void
@@ -107,6 +128,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($this->instance->remove('foo'), 'Checks the value was removed');
 		$this->assertNull($this->instance->get('foo')->getValue(), 'Checks for the delete');
 	}
+
+	/**
+	 * Tests the Joomla\Cache\File::remove method fail to remove
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\File::remove
+	 * @since   1.0
+	 */
+	public function testRemove_fail()
+ 	{
+ 		$this->assertTrue($this->instance->set('foo', 'barabum'), 'Checks the value was set');
+
+		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
+ 		unlink($fileName);
+
+  		$this->assertFalse($this->instance->remove('foo'), 'Checks the value was removed');
+ 	}
 
 	/**
 	 * Tests the Joomla\Cache\File::set method.
@@ -259,6 +298,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			{
 				rmdir($file->getRealPath());
 			}
+		}
+
+		if (is_dir(__DIR__ . '/no_write_tmp')) {
+			rmdir(__DIR__ . '/no_write_tmp');
 		}
 	}
 }
