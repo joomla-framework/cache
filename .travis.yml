@@ -7,10 +7,12 @@ php:
 
 services:
   - memcached # will start memcached
+  - redis
 
 before_script:
   - composer update --dev
   - phpenv config-add build/travis/phpenv/memcached.ini
+  - echo "no" | pecl install apcu-beta
 
 script:
   - phpunit

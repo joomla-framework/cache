@@ -23,6 +23,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	private $instance;
 
 	/**
+	 * Tests the Joomla\Cache\File::__construct method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\File::__construct
+	 * @since   1.0
+	 * @expectedException RuntimeException
+	 */
+	public function test__construct()
+	{
+		$options = array(
+			'file.path' => '/'
+		);
+
+		$this->instance = new Cache\File($options);
+	}
+
+	/**
 	 * Tests for the correct Psr\Cache return values.
 	 *
 	 * @return  void
@@ -156,7 +174,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @expectedException  \RuntimeException
 	 * @since              1.0
 	 */
-	public function testCheckFilePath_exception1()
+	public function testCheckFilePathInvalidPath()
 	{
 		// Invalid path
 		TestHelper::invoke($this->instance, 'checkFilePath', 'foo123');
@@ -171,14 +189,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @expectedException  \RuntimeException
 	 * @since              1.0
 	 */
-	public function testCheckFilePath_exception2()
+	public function testCheckFilePathUnwritablePath()
 	{
 		// Check for an unwritable folder.
-		if (!is_dir(__DIR__ . '/uwd'))
-		{
-			mkdir(__DIR__ . '/uwd', 0444);
-		}
-		TestHelper::invoke($this->instance, 'checkFilePath', __DIR__ . '/uwd');
+		TestHelper::invoke($this->instance, 'checkFilePath', '/');
 	}
 
 	/**

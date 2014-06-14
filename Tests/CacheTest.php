@@ -41,11 +41,16 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Cache\Cache::__construct
 	 * @since   1.0
+	 * @expectedException RuntimeException
 	 */
 	public function test__construct()
 	{
 		// This checks the default ttl and also that the options registry was initialised.
 		$this->assertEquals('900', $this->instance->getOption('ttl'));
+
+		// Throws exception, options is null
+		$className = $this->cacheClass;
+		new $className(null);
 	}
 
 	/**
