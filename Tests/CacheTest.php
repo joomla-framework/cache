@@ -73,8 +73,9 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Checks to ensure a that $key is not set at all in the Cache
 	 *
-	 * @param   string $key Key of cache item to check
-	 * @param   string $value Value cache item should be
+	 * @param   string  $key    Key of cache item to check
+	 * @param   string  $value  Value cache item should be
+	 *
 	 * @return  void
 	 *
 	 * @since   1.1
@@ -94,8 +95,9 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Checks to ensure a that $key is set to $value in the Cache
 	 *
-	 * @param   string $key Key of cache item to check
-	 * @param   string $value Value cache item should be
+	 * @param   string  $key    Key of cache item to check
+	 * @param   string  $value  Value cache item should be
+	 *
 	 * @return  void
 	 *
 	 * @since   1.1
@@ -196,7 +198,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 
 		$sampleKeys = array_merge(
 			array_keys($samples),
-		array('foobar'));
+			array('foobar')
+		);
 		$results = $cacheInstance->removeMultiple($sampleKeys);
 
 		foreach ($results as $key => $removed)
@@ -206,12 +209,12 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 			if (array_key_exists($key, $samples))
 			{
 				$this->assertThat($removed, $this->equalTo(true), $msg . __LINE__);
-			} else {
+			}
+			else
+			{
 				$this->assertThat($removed, $this->equalTo(false), $msg . __LINE__);
 			}
-
 		}
-
 	}
 
 	/**
@@ -277,7 +280,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$this->assertThat($result, $this->isTrue(), __LINE__);
 		$i = 0;
 
-		foreach($keys as $key)
+		foreach ($keys as $key)
 		{
 			$cacheValue = $cacheInstance->get($key)->getValue();
 			$sampleValue = $samples[$key];

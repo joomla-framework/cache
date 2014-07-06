@@ -76,7 +76,7 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface',$this->instance->get('foo'));
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'));
 	}
 
 	/**
