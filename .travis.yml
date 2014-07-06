@@ -5,14 +5,11 @@ php:
   - 5.4
   - 5.5
 
-services:
-  - memcached # will start memcached
-  - redis
-
 before_script:
   - composer update --dev
   - phpenv config-add build/travis/phpenv/memcached.ini
-  - echo "no" | pecl install apcu-beta
+  - phpenv config-add build/travis/phpenv/apc.ini
+  - phpenv config-add build/travis/phpenv/redis.ini
 
 script:
-  - phpunit
+  - phpunit -v
