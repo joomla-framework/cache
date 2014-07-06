@@ -5,6 +5,10 @@ php:
   - 5.4
   - 5.5
 
+services:
+  - memcached
+  - redis-server
+
 before_script:
   - composer update --dev
   - phpenv config-add build/travis/phpenv/memcached.ini
