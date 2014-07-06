@@ -10,7 +10,7 @@ use Joomla\Cache;
 use Joomla\Test\TestHelper;
 
 /**
- * Tests for the Joomla\Cache\Cache class.
+ * Tests for the Joomla\Cache\FileTest class.
  *
  * @since  1.0
  */
@@ -92,8 +92,40 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 		$this->instance->setOption('ttl', 1);
 		$this->instance->set('foo', 'bar', 1);
+		$this->assertEquals('bar', $this->instance->get('foo')->getValue(), 'The key should have not been deleted.');
 		sleep(2);
 		$this->assertNull($this->instance->get('foo')->getValue(), 'The key should have been deleted.');
+	}
+
+	/**
+	 * Tests the Joomla\Cache\File::get method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\File::get
+	 * @expectedException RuntimeException
+	 * @since   1.0
+	 */
+	public function testGetCantRemoveExpiredKeyException()
+	{
+		$options = array(
+			'file.path' => __DIR__ . '/tmp'
+		);
+
+		$instance = $this->getMockBuilder('Joomla\Cache\File');
+		$instance = $instance->setMethods(array('remove'));
+		$instance = $instance->setConstructorArgs(array($options));
+		$instance = $instance->getMock();
+
+		$instance->expects($this->any())
+				->method('remove')
+				->will($this->returnValue(false));
+
+		$instance->setOption('ttl', 1);
+		$instance->set('foo', 'bar', 1);
+		sleep(2);
+
+		$this->assertNull($instance->get('foo')->getValue(), 'The key should have been deleted.');
 	}
 
 	/**
