@@ -138,7 +138,7 @@ class Apc extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function exists($key)
 	{
 		return apc_exists($key);
 	}
