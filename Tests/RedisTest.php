@@ -47,6 +47,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Cache\Redis::get
 	 * @covers  Joomla\Cache\Redis::set
+	 * @covers  Joomla\Cache\Redis::connect
 	 * @since   1.0
 	 */
 	public function testGetAndSet()
@@ -62,6 +63,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Cache\Redis::get
 	 * @covers  Joomla\Cache\Redis::set
+	 * @covers  Joomla\Cache\Redis::connect
 	 * @since   1.0
 	 */
 	public function testGetAndSetWithTimeout()
@@ -77,6 +79,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Redis::clear
+	 * @covers  Joomla\Cache\Redis::connect
 	 * @since   1.0
 	 */
 	public function testClear()
@@ -95,6 +98,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
+	 * @covers  Joomla\Cache\Redis::connect
 	 * @covers  Joomla\Cache\Redis::exists
 	 * @since   1.0
 	 */
@@ -110,6 +114,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
+	 * @covers  Joomla\Cache\Redis::connect
 	 * @covers  Joomla\Cache\Redis::remove
 	 * @since   1.0
 	 */
@@ -187,6 +192,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
+	 * @covers  Joomla\Cache\Redis::__construct
 	 * @since   1.0
 	 */
 	protected function setUp()

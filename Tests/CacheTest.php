@@ -40,8 +40,10 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::__construct
-	 * @since   1.0
+	 * @covers  Joomla\Cache\Apc::__construct
+	 * @covers  Joomla\Cache\Memcached::__construct
 	 * @expectedException RuntimeException
+	 * @since   1.0
 	 */
 	public function test__construct()
 	{
@@ -54,11 +56,52 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Tests the Joomla\Cache\Cache::clear method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\Cache::clear
+	 * @covers  Joomla\Cache\Memcached::clear
+	 * @since   1.0
+	 */
+	public function testClear()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$this->assertFalse(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->set('foobar', 'barfoo'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->clear(),
+			__LINE__
+		);
+
+		$this->assertFalse(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
+	}
+
+	/**
 	 * Tests the the Joomla\Cache\Cache::get method..
 	 *
 	 * @return  void
 	 *
-	 * @coversNothing
+	 * @covers  Joomla\Cache\Memcached::get
+	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
 	public function testGet()
@@ -120,6 +163,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::set
+	 * @covers  Joomla\Cache\Memcached::set
+	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
 	public function testSet()
@@ -138,6 +183,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::getMultiple
+	 * @covers  Joomla\Cache\Apc::getMultiple
 	 * @since   1.0
 	 */
 	public function testGetMultiple()
@@ -223,6 +269,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::remove
+	 * @covers  Joomla\Cache\Memcached::remove
+	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
 	public function testRemove()
@@ -287,6 +335,36 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 			$this->assertThat($cacheValue, $this->equalTo($sampleValue), __LINE__);
 			$i++;
 		}
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::exists method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\Cache::exists
+	 * @covers  Joomla\Cache\Memcached::exists
+	 * @since   1.0
+	 */
+	public function testExists()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$this->assertFalse(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->set('foobar', 'barfoo'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
 	}
 
 	/**

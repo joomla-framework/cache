@@ -192,6 +192,6 @@ class ConcreteCache extends Cache
 	 */
 	protected function exists($key)
 	{
-		return array_key_exists($this->db, $key);
+		return array_key_exists($key, $this->db);
 	}
 }

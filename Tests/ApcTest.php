@@ -13,14 +13,8 @@ use Joomla\Cache;
  *
  * @since  1.0
  */
-class ApcTest extends \PHPUnit_Framework_TestCase
+class ApcTest extends CacheTest
 {
-	/**
-	 * @var    Cache\Apc
-	 * @since  1.0
-	 */
-	private $instance;
-
 	/**
 	 * Tests for the correct Psr\Cache return values.
 	 *
@@ -114,11 +108,11 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
-		parent::setUp();
+		$this->cacheClass = 'Joomla\\Cache\\Apc';
 
 		try
 		{
-			$this->instance = new Cache\Apc;
+			parent::setUp();
 			$this->instance->set('foo', 'bar');
 		}
 		catch (\Exception $e)
