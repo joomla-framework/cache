@@ -131,8 +131,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheKey = $cacheItem->getKey();
 		$cacheHit = $cacheItem->isHit();
 		$this->assertThat($cacheKey, $this->equalTo($key), __LINE__);
-		$this->assertThat($cacheValue, $this->equalTo(null), __LINE__);
-		$this->assertThat($cacheHit, $this->equalTo(false), __LINE__);
+		$this->assertNull($cacheValue,  __LINE__);
+		$this->assertFalse($cacheHit, __LINE__);
 	}
 
 	/**
@@ -154,7 +154,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheHit = $cacheItem->isHit();
 		$this->assertThat($cacheKey, $this->equalTo($key), __LINE__);
 		$this->assertThat($cacheValue, $this->equalTo($value), __LINE__);
-		$this->assertThat($cacheHit, $this->equalTo(true), __LINE__);
+		$this->assertTrue($cacheHit, __LINE__);
 	}
 
 	/**
@@ -171,8 +171,10 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
+
 		$result = $cacheInstance->set('fooSet', 'barSet');
-		$this->assertThat($result, $this->equalTo(true), __LINE__);
+		$this->assertTrue($result, __LINE__);
+
 		$fooValue = $cacheInstance->get('fooSet')->getValue();
 		$this->assertThat($fooValue, $this->equalTo('barSet'), __LINE__);
 	}
@@ -254,11 +256,11 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 
 			if (array_key_exists($key, $samples))
 			{
-				$this->assertThat($removed, $this->equalTo(true), $msg . __LINE__);
+				$this->assertTrue($removed, $msg . __LINE__);
 			}
 			else
 			{
-				$this->assertThat($removed, $this->equalTo(false), $msg . __LINE__);
+				$this->assertFalse($removed, $msg . __LINE__);
 			}
 		}
 	}
@@ -285,13 +287,13 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		}
 
 		$getFoo = $cacheInstance->get('foo2');
-		$this->assertThat($getFoo->isHit(), $this->equalTo(true), __LINE__);
+		$this->assertTrue($getFoo->isHit(), __LINE__);
 		$removeFoo = $cacheInstance->remove('foo2');
-		$this->assertThat($removeFoo, $this->equalTo(true), __LINE__);
+		$this->assertTrue($removeFoo, __LINE__);
 		$removeFoobar = $cacheInstance->remove('foobar');
-		$this->assertThat($removeFoobar, $this->equalTo(false), __LINE__);
+		$this->assertFalse($removeFoobar, __LINE__);
 		$getResult = $cacheInstance->get('foo2');
-		$this->assertThat($getResult->isHit(), $this->equalTo(false), __LINE__);
+		$this->assertFalse($getResult->isHit(), __LINE__);
 	}
 
 	/**
@@ -324,8 +326,12 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheInstance->clear();
 		$samples = array( 'foo' => 'fooSet', 'bar' => 'barSet', 'hello' => 'worldSet');
 		$keys = array_keys($samples);
-		$result = $cacheInstance->setMultiple($samples, 50);
-		$this->assertThat($result, $this->isTrue(), __LINE__);
+
+		$this->assertTrue(
+			$cacheInstance->setMultiple($samples, 50),
+			__LINE__
+		);
+
 		$i = 0;
 
 		foreach ($keys as $key)

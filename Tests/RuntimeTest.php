@@ -57,13 +57,30 @@ class RuntimeTest extends \PHPUnit_Framework_TestCase
 				'goo' => 'car',
 			)
 		);
-		$this->assertEquals('bar', $this->instance->get('foo')->getValue(), 'Checks first item was set.');
-		$this->assertEquals('car', $this->instance->get('goo')->getValue(), 'Checks second item was set.');
+
+		$this->assertEquals(
+			'bar',
+			$this->instance->get('foo')->getValue(),
+			'Checks first item was set.'
+		);
+
+		$this->assertEquals(
+			'car',
+			$this->instance->get('goo')->getValue(),
+			'Checks second item was set.'
+		);
 
 		$this->instance->clear();
 
-		$this->assertNull($this->instance->get('foo')->getValue(), 'Checks first item was cleared.');
-		$this->assertNull($this->instance->get('goo')->getValue(), 'Checks second item was cleared.');
+		$this->assertNull(
+			$this->instance->get('foo')->getValue(),
+			'Checks first item was cleared.'
+		);
+
+		$this->assertNull(
+			$this->instance->get('goo')->getValue(),
+			'Checks second item was cleared.'
+		);
 	}
 
 	/**

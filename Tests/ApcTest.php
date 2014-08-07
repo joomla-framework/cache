@@ -70,7 +70,10 @@ class ApcTest extends CacheTest
 	 */
 	public function testGet()
 	{
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'));
+		$this->assertInstanceOf(
+			'\Psr\Cache\CacheItemInterface',
+			$this->instance->get('foo')
+		);
 	}
 
 	/**

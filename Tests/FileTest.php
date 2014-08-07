@@ -92,9 +92,19 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 		$this->instance->setOption('ttl', 1);
 		$this->instance->set('foo', 'bar', 1);
-		$this->assertEquals('bar', $this->instance->get('foo')->getValue(), 'The key should have not been deleted.');
+
+		$this->assertEquals(
+			'bar',
+			$this->instance->get('foo')->getValue(),
+			'The key should have not been deleted.'
+		);
+
 		sleep(2);
-		$this->assertNull($this->instance->get('foo')->getValue(), 'The key should have been deleted.');
+
+		$this->assertNull(
+			$this->instance->get('foo')->getValue(),
+			'The key should have been deleted.'
+		);
 	}
 
 	/**
@@ -125,7 +135,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$instance->set('foo', 'bar', 1);
 		sleep(2);
 
-		$this->assertNull($instance->get('foo')->getValue(), 'The key should have been deleted.');
+		$this->assertNull(
+			$instance->get('foo')->getValue(),
+			'The key should have been deleted.'
+		);
 	}
 
 	/**
@@ -153,9 +166,18 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRemove()
 	{
-		$this->assertTrue($this->instance->set('foo', 'bar'), 'Checks the value was set');
-		$this->assertTrue($this->instance->remove('foo'), 'Checks the value was removed');
-		$this->assertNull($this->instance->get('foo')->getValue(), 'Checks for the delete');
+		$this->assertTrue(
+			$this->instance->set('foo', 'bar'),
+			'Checks the value was set'
+		);
+		$this->assertTrue(
+			$this->instance->remove('foo'),
+			'Checks the value was removed'
+		);
+		$this->assertNull(
+			$this->instance->get('foo')->getValue(),
+			'Checks for the delete'
+		);
 	}
 
 	/**
@@ -173,15 +195,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	{
 		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
 
-		$this->assertFalse(file_exists($fileName));
+		$this->assertFileNotExists($fileName);
 
 		$this->instance->set('foo', 'bar');
-		$this->assertTrue(file_exists($fileName), 'Checks the cache file was created.');
+		$this->assertFileExists(
+			$fileName,
+			'Checks the cache file was created.'
+		);
 
-		$this->assertEquals('bar', $this->instance->get('foo')->getValue(), 'Checks we got the cached value back.');
+		$this->assertEquals(
+			'bar', $this->instance->get('foo')->getValue(),
+			'Checks we got the cached value back.'
+		);
 
 		$this->instance->remove('foo');
-		$this->assertNull($this->instance->get('foo')->getValue(), 'Checks for the delete.');
+		$this->assertNull(
+			$this->instance->get('foo')->getValue(),
+			'Checks for the delete.'
+		);
 	}
 
 	/**
