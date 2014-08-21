@@ -23,13 +23,13 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	public $instance;
 
 	/**
-	 * @var    String Cache Classname to test
+	 * @var    string  Cache Classname to test
 	 * @since  1.0
 	 */
 	public $cacheClass = 'Joomla\\Cache\\Tests\\ConcreteCache';
 
 	/**
-	 * @var    Array
+	 * @var    array
 	 * @since  1.0
 	 */
 	public $cacheOptions = array();
@@ -42,7 +42,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @covers  Joomla\Cache\Cache::__construct
 	 * @covers  Joomla\Cache\Apc::__construct
 	 * @covers  Joomla\Cache\Memcached::__construct
-	 * @expectedException RuntimeException
+	 * @expectedException  \RuntimeException
 	 * @since   1.0
 	 */
 	public function test__construct()
@@ -62,7 +62,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Cache\Cache::clear
 	 * @covers  Joomla\Cache\Memcached::clear
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function testClear()
 	{
@@ -96,7 +96,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the the Joomla\Cache\Cache::get method..
+	 * Tests the the Joomla\Cache\Cache::get method.
 	 *
 	 * @return  void
 	 *
@@ -350,7 +350,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Cache\Cache::exists
 	 * @covers  Joomla\Cache\Memcached::exists
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function testExists()
 	{
@@ -421,7 +421,9 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		{
 			$this->markTestSkipped();
 		}
+
 		$this->instance =& $cacheInstance;
+
 		parent::setUp();
 	}
 }

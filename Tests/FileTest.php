@@ -28,8 +28,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\File::__construct
-	 * @since   1.0
-	 * @expectedException RuntimeException
+	 * @since   __DEPLOY_VERSION__
+	 * @expectedException  \RuntimeException
 	 */
 	public function test__construct()
 	{
@@ -113,8 +113,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\File::get
-	 * @expectedException RuntimeException
-	 * @since   1.0
+	 * @expectedException  \RuntimeException
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function testGetCantRemoveExpiredKeyException()
 	{
