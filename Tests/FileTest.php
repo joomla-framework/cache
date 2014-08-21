@@ -10,7 +10,7 @@ use Joomla\Cache;
 use Joomla\Test\TestHelper;
 
 /**
- * Tests for the Joomla\Cache\Cache class.
+ * Tests for the Joomla\Cache\FileTest class.
  *
  * @since  1.0
  */
@@ -21,6 +21,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @since  1.0
 	 */
 	private $instance;
+
+	/**
+	 * Tests the Joomla\Cache\File::__construct method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\File::__construct
+	 * @since   1.0
+	 * @expectedException RuntimeException
+	 */
+	public function test__construct()
+	{
+		$options = array(
+			'file.path' => '/'
+		);
+
+		$this->instance = new Cache\File($options);
+	}
 
 	/**
 	 * Tests for the correct Psr\Cache return values.
@@ -74,8 +92,53 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 		$this->instance->setOption('ttl', 1);
 		$this->instance->set('foo', 'bar', 1);
+
+		$this->assertEquals(
+			'bar',
+			$this->instance->get('foo')->getValue(),
+			'The key should have not been deleted.'
+		);
+
 		sleep(2);
-		$this->assertNull($this->instance->get('foo')->getValue(), 'The key should have been deleted.');
+
+		$this->assertNull(
+			$this->instance->get('foo')->getValue(),
+			'The key should have been deleted.'
+		);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\File::get method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\File::get
+	 * @expectedException RuntimeException
+	 * @since   1.0
+	 */
+	public function testGetCantRemoveExpiredKeyException()
+	{
+		$options = array(
+			'file.path' => __DIR__ . '/tmp'
+		);
+
+		$instance = $this->getMockBuilder('Joomla\Cache\File');
+		$instance = $instance->setMethods(array('remove'));
+		$instance = $instance->setConstructorArgs(array($options));
+		$instance = $instance->getMock();
+
+		$instance->expects($this->any())
+				->method('remove')
+				->will($this->returnValue(false));
+
+		$instance->setOption('ttl', 1);
+		$instance->set('foo', 'bar', 1);
+		sleep(2);
+
+		$this->assertNull(
+			$instance->get('foo')->getValue(),
+			'The key should have been deleted.'
+		);
 	}
 
 	/**
@@ -103,9 +166,18 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRemove()
 	{
-		$this->assertTrue($this->instance->set('foo', 'bar'), 'Checks the value was set');
-		$this->assertTrue($this->instance->remove('foo'), 'Checks the value was removed');
-		$this->assertNull($this->instance->get('foo')->getValue(), 'Checks for the delete');
+		$this->assertTrue(
+			$this->instance->set('foo', 'bar'),
+			'Checks the value was set'
+		);
+		$this->assertTrue(
+			$this->instance->remove('foo'),
+			'Checks the value was removed'
+		);
+		$this->assertNull(
+			$this->instance->get('foo')->getValue(),
+			'Checks for the delete'
+		);
 	}
 
 	/**
@@ -123,15 +195,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	{
 		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
 
-		$this->assertFalse(file_exists($fileName));
+		$this->assertFileNotExists($fileName);
 
 		$this->instance->set('foo', 'bar');
-		$this->assertTrue(file_exists($fileName), 'Checks the cache file was created.');
+		$this->assertFileExists(
+			$fileName,
+			'Checks the cache file was created.'
+		);
 
-		$this->assertEquals('bar', $this->instance->get('foo')->getValue(), 'Checks we got the cached value back.');
+		$this->assertEquals(
+			'bar', $this->instance->get('foo')->getValue(),
+			'Checks we got the cached value back.'
+		);
 
 		$this->instance->remove('foo');
-		$this->assertNull($this->instance->get('foo')->getValue(), 'Checks for the delete.');
+		$this->assertNull(
+			$this->instance->get('foo')->getValue(),
+			'Checks for the delete.'
+		);
 	}
 
 	/**
@@ -156,7 +237,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @expectedException  \RuntimeException
 	 * @since              1.0
 	 */
-	public function testCheckFilePath_exception1()
+	public function testCheckFilePathInvalidPath()
 	{
 		// Invalid path
 		TestHelper::invoke($this->instance, 'checkFilePath', 'foo123');
@@ -171,14 +252,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @expectedException  \RuntimeException
 	 * @since              1.0
 	 */
-	public function testCheckFilePath_exception2()
+	public function testCheckFilePathUnwritablePath()
 	{
 		// Check for an unwritable folder.
-		if (!is_dir(__DIR__ . '/uwd'))
-		{
-			mkdir(__DIR__ . '/uwd', 0444);
-		}
-		TestHelper::invoke($this->instance, 'checkFilePath', __DIR__ . '/uwd');
+		TestHelper::invoke($this->instance, 'checkFilePath', '/');
 	}
 
 	/**

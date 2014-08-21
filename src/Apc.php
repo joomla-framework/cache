@@ -88,11 +88,14 @@ class Apc extends Cache
 
 		if ($success && is_array($values))
 		{
-			foreach ($values as $key => $value)
+			foreach ($keys as $key)
 			{
-				// @todo - identify the value when a cache item is not found.
 				$items[$key] = new Item($key);
-				$items[$key]->setValue($value);
+
+				if (isset($values[$key]))
+				{
+					$items[$key]->setValue($values[$key]);
+				}
 			}
 		}
 
@@ -138,7 +141,7 @@ class Apc extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function exists($key)
 	{
 		return apc_exists($key);
 	}

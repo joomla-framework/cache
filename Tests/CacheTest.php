@@ -40,12 +40,59 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::__construct
+	 * @covers  Joomla\Cache\Apc::__construct
+	 * @covers  Joomla\Cache\Memcached::__construct
+	 * @expectedException RuntimeException
 	 * @since   1.0
 	 */
 	public function test__construct()
 	{
 		// This checks the default ttl and also that the options registry was initialised.
 		$this->assertEquals('900', $this->instance->getOption('ttl'));
+
+		// Throws exception, options is null
+		$className = $this->cacheClass;
+		new $className(null);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::clear method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\Cache::clear
+	 * @covers  Joomla\Cache\Memcached::clear
+	 * @since   1.0
+	 */
+	public function testClear()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$this->assertFalse(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->set('foobar', 'barfoo'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->clear(),
+			__LINE__
+		);
+
+		$this->assertFalse(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
 	}
 
 	/**
@@ -53,7 +100,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @coversNothing
+	 * @covers  Joomla\Cache\Memcached::get
+	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
 	public function testGet()
@@ -68,8 +116,9 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Checks to ensure a that $key is not set at all in the Cache
 	 *
-	 * @param   string $key Key of cache item to check
-	 * @param   string $value Value cache item should be
+	 * @param   string  $key    Key of cache item to check
+	 * @param   string  $value  Value cache item should be
+	 *
 	 * @return  void
 	 *
 	 * @since   1.1
@@ -82,15 +131,16 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheKey = $cacheItem->getKey();
 		$cacheHit = $cacheItem->isHit();
 		$this->assertThat($cacheKey, $this->equalTo($key), __LINE__);
-		$this->assertThat($cacheValue, $this->equalTo(null), __LINE__);
-		$this->assertThat($cacheHit, $this->equalTo(false), __LINE__);
+		$this->assertNull($cacheValue,  __LINE__);
+		$this->assertFalse($cacheHit, __LINE__);
 	}
 
 	/**
 	 * Checks to ensure a that $key is set to $value in the Cache
 	 *
-	 * @param   string $key Key of cache item to check
-	 * @param   string $value Value cache item should be
+	 * @param   string  $key    Key of cache item to check
+	 * @param   string  $value  Value cache item should be
+	 *
 	 * @return  void
 	 *
 	 * @since   1.1
@@ -104,7 +154,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheHit = $cacheItem->isHit();
 		$this->assertThat($cacheKey, $this->equalTo($key), __LINE__);
 		$this->assertThat($cacheValue, $this->equalTo($value), __LINE__);
-		$this->assertThat($cacheHit, $this->equalTo(true), __LINE__);
+		$this->assertTrue($cacheHit, __LINE__);
 	}
 
 	/**
@@ -113,14 +163,18 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::set
+	 * @covers  Joomla\Cache\Memcached::set
+	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
 	public function testSet()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
+
 		$result = $cacheInstance->set('fooSet', 'barSet');
-		$this->assertThat($result, $this->equalTo(true), __LINE__);
+		$this->assertTrue($result, __LINE__);
+
 		$fooValue = $cacheInstance->get('fooSet')->getValue();
 		$this->assertThat($fooValue, $this->equalTo('barSet'), __LINE__);
 	}
@@ -131,6 +185,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::getMultiple
+	 * @covers  Joomla\Cache\Apc::getMultiple
 	 * @since   1.0
 	 */
 	public function testGetMultiple()
@@ -191,7 +246,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 
 		$sampleKeys = array_merge(
 			array_keys($samples),
-		array('foobar'));
+			array('foobar')
+		);
 		$results = $cacheInstance->removeMultiple($sampleKeys);
 
 		foreach ($results as $key => $removed)
@@ -200,13 +256,13 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 
 			if (array_key_exists($key, $samples))
 			{
-				$this->assertThat($removed, $this->equalTo(true), $msg . __LINE__);
-			} else {
-				$this->assertThat($removed, $this->equalTo(false), $msg . __LINE__);
+				$this->assertTrue($removed, $msg . __LINE__);
 			}
-
+			else
+			{
+				$this->assertFalse($removed, $msg . __LINE__);
+			}
 		}
-
 	}
 
 	/**
@@ -215,6 +271,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Cache::remove
+	 * @covers  Joomla\Cache\Memcached::remove
+	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
 	public function testRemove()
@@ -229,13 +287,13 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		}
 
 		$getFoo = $cacheInstance->get('foo2');
-		$this->assertThat($getFoo->isHit(), $this->equalTo(true), __LINE__);
+		$this->assertTrue($getFoo->isHit(), __LINE__);
 		$removeFoo = $cacheInstance->remove('foo2');
-		$this->assertThat($removeFoo, $this->equalTo(true), __LINE__);
+		$this->assertTrue($removeFoo, __LINE__);
 		$removeFoobar = $cacheInstance->remove('foobar');
-		$this->assertThat($removeFoobar, $this->equalTo(false), __LINE__);
+		$this->assertFalse($removeFoobar, __LINE__);
 		$getResult = $cacheInstance->get('foo2');
-		$this->assertThat($getResult->isHit(), $this->equalTo(false), __LINE__);
+		$this->assertFalse($getResult->isHit(), __LINE__);
 	}
 
 	/**
@@ -268,17 +326,51 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheInstance->clear();
 		$samples = array( 'foo' => 'fooSet', 'bar' => 'barSet', 'hello' => 'worldSet');
 		$keys = array_keys($samples);
-		$result = $cacheInstance->setMultiple($samples, 50);
-		$this->assertThat($result, $this->isTrue(), __LINE__);
+
+		$this->assertTrue(
+			$cacheInstance->setMultiple($samples, 50),
+			__LINE__
+		);
+
 		$i = 0;
 
-		foreach($keys as $key)
+		foreach ($keys as $key)
 		{
 			$cacheValue = $cacheInstance->get($key)->getValue();
 			$sampleValue = $samples[$key];
 			$this->assertThat($cacheValue, $this->equalTo($sampleValue), __LINE__);
 			$i++;
 		}
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::exists method.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\Cache::exists
+	 * @covers  Joomla\Cache\Memcached::exists
+	 * @since   1.0
+	 */
+	public function testExists()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$this->assertFalse(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->set('foobar', 'barfoo'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			__LINE__
+		);
 	}
 
 	/**

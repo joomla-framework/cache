@@ -13,20 +13,14 @@ use Joomla\Cache;
  *
  * @since  1.0
  */
-class ApcTest extends \PHPUnit_Framework_TestCase
+class ApcTest extends CacheTest
 {
-	/**
-	 * @var    Cache\Apc
-	 * @since  1.0
-	 */
-	private $instance;
-
 	/**
 	 * Tests for the correct Psr\Cache return values.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Nothing
+	 * @coversNothing
 	 * @since   1.0
 	 */
 	public function testPsrCache()
@@ -76,7 +70,10 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface',$this->instance->get('foo'));
+		$this->assertInstanceOf(
+			'\Psr\Cache\CacheItemInterface',
+			$this->instance->get('foo')
+		);
 	}
 
 	/**
@@ -114,11 +111,11 @@ class ApcTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
-		parent::setUp();
+		$this->cacheClass = 'Joomla\\Cache\\Apc';
 
 		try
 		{
-			$this->instance = new Cache\Apc;
+			parent::setUp();
 			$this->instance->set('foo', 'bar');
 		}
 		catch (\Exception $e)

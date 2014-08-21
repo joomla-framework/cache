@@ -88,13 +88,9 @@ class File extends Cache
 		// If the cached data has expired remove it and return.
 		if ($this->exists($key) && $this->isExpired($key))
 		{
-			try
+			if (!$this->remove($key))
 			{
-				$this->remove($key);
-			}
-			catch (\RuntimeException $e)
-			{
-				throw new \RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null, $e);
+				throw new \RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null);
 			}
 
 			return new Item($key);
