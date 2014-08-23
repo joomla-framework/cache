@@ -62,7 +62,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Cache\Cache::clear
 	 * @covers  Joomla\Cache\Memcached::clear
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.3
 	 */
 	public function testClear()
 	{
@@ -350,7 +350,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Cache\Cache::exists
 	 * @covers  Joomla\Cache\Memcached::exists
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.1.3
 	 */
 	public function testExists()
 	{
