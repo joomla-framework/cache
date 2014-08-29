@@ -9,15 +9,17 @@
         "php": ">=5.3.10"
     },
     "require-dev": {
-         "joomla/test": "~1.0"
+        "joomla/test": "~1.0",
+        "phpunit/phpunit": "4.*",
+        "squizlabs/php_codesniffer": "1.*"
     },
     "suggest": {
         "joomla/registry": "Registry can be used as an alternative to using an array for the package options."
     },
     "autoload": {
-	    "psr-0": {
-		    "Psr": "vendor/psr/cache"
-	    },
+        "psr-0": {
+            "Psr": "vendor/psr/cache"
+        },
         "psr-4": {
             "Joomla\\Cache\\": "src/",
             "Joomla\\Cache\\Tests\\": "Tests/"

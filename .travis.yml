@@ -17,4 +17,5 @@ before_script:
   - phpenv config-add build/travis/phpenv/redis.ini
 
 script:
-  - phpunit
+  - ./vendor/bin/phpunit
+  - ./vendor/bin/phpcs -p --report=full --extensions=php --standard=.travis/phpcs/Joomla/ruleset.xml src/
