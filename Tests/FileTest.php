@@ -295,7 +295,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testCheckFilePathUnwritablePath()
 	{
 		// Check for an unwritable folder.
-		TestHelper::invoke($this->instance, 'checkFilePath', '/');
+		mkdir(__DIR__ . '/tmp/~uwd', 0444);
+		TestHelper::invoke($this->instance, 'checkFilePath', __DIR__ . '/tmp/~uwd');
 	}
 
 	/**
