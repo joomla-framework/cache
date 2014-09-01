@@ -64,8 +64,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers Joomla\Cache\File::__construct
-	 * @since   1.0
+	 * @covers  Joomla\Cache\File::__construct
+	 * @since   __DEPLOY_VERSION__
 	 * @expectedException  \RuntimeException
 	 */
 	public function test__construct_exception()
@@ -208,7 +208,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\File::remove
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function testRemove_fail()
  	{
@@ -381,7 +381,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			}
 		}
 
-		if (is_dir(__DIR__ . '/no_write_tmp')) {
+		if (is_dir(__DIR__ . '/no_write_tmp'))
+		{
 			rmdir(__DIR__ . '/no_write_tmp');
 		}
 	}
