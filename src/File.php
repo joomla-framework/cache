@@ -32,14 +32,19 @@ class File extends Cache
 	 */
 	public function __construct($options = array())
 	{
-		parent::__construct($options);
-
-		if (!isset($this->options['file.locking']))
+		if (!isset($options['file.locking']))
 		{
-			$this->options['file.locking'] = true;
+			$options['file.locking'] = true;
 		}
 
-		$this->checkFilePath($this->options['file.path']);
+		if (!isset($options['file.path']))
+		{
+			throw new \RuntimeException('The file.path option must be set.');
+		}
+
+		$this->checkFilePath($options['file.path']);
+
+		parent::__construct($options);
 	}
 
 	/**
