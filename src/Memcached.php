@@ -36,24 +36,24 @@ class Memcached extends Cache
 			throw new \RuntimeException('Memcached not supported.');
 		}
 
-		// These options must be set to something, so if not set make them false
-		if (!isset($options['memcache.pool']))
-		{
-			$options['memcache.pool'] = false;
-		}
-
-		if (!isset($options['memcache.compress']))
-		{
-			$options['memcache.compress'] = false;
-		}
-
-		if (!isset($options['memcache.servers']))
-		{
-			$options['memcache.servers'] = false;
-		}
-
 		// Parent sets up the caching options and checks their type
 		parent::__construct($options);
+
+		// These options must be set to something, so if not set make them false
+		if (!isset($this->options['memcache.pool']))
+		{
+			$this->options['memcache.pool'] = false;
+		}
+
+		if (!isset($this->options['memcache.compress']))
+		{
+			$this->options['memcache.compress'] = false;
+		}
+
+		if (!isset($this->options['memcache.servers']))
+		{
+			$this->options['memcache.servers'] = false;
+		}
 	}
 
 	/**
