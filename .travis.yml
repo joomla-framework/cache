@@ -18,7 +18,7 @@ services:
 before_script:
   - composer update
   - phpenv config-add build/travis/phpenv/memcached.ini
-  - phpenv config-add build/travis/phpenv/apc-$TRAVIS_PHP_VERSION.ini
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' != '7.0' ]; then phpenv config-add build/travis/phpenv/apc-$TRAVIS_PHP_VERSION.ini; fi"
   - phpenv config-add build/travis/phpenv/redis.ini
 
 script:
