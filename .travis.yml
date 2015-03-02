@@ -11,7 +11,7 @@ services:
   - redis-server
 
 before_script:
-  - composer update --dev
+  - composer update
   - phpenv config-add build/travis/phpenv/memcached.ini
   - phpenv config-add build/travis/phpenv/apc-$TRAVIS_PHP_VERSION.ini
   - phpenv config-add build/travis/phpenv/redis.ini
