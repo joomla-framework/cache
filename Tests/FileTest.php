@@ -60,6 +60,27 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Tests constructor when given non writable cache folder
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\File::__construct
+	 * @since   1.1.4
+	 * @expectedException  \RuntimeException
+	 */
+	public function test__construct_exception()
+	{
+		$options = array(
+			'file.path' => __DIR__ . '/no_write_tmp'
+		);
+
+		mkdir($options['file.path']);
+		chmod($options['file.path'], 0000);
+
+		new Cache\File($options);
+	}
+
+	/**
 	 * Tests the Joomla\Cache\File::clear method.
 	 *
 	 * @return  void
@@ -99,10 +120,11 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			'The key should have not been deleted.'
 		);
 
-		sleep(2);
+		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
+		touch($fileName, time() -2);
 
-		$this->assertNull(
-			$this->instance->get('foo')->getValue(),
+		$this->assertFalse(
+			$this->instance->get('foo')->isHit(),
 			'The key should have been deleted.'
 		);
 	}
@@ -181,6 +203,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Tests the Joomla\Cache\File::remove method fail to remove
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\File::remove
+	 * @since   1.1.4
+	 */
+	public function testRemove_fail()
+ 	{
+ 		$this->assertTrue($this->instance->set('foo', 'barabum'), 'Checks the value was set');
+
+		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
+ 		unlink($fileName);
+
+  		$this->assertFalse($this->instance->remove('foo'), 'Checks the value was removed');
+ 	}
+
+	/**
 	 * Tests the Joomla\Cache\File::set method.
 	 *
 	 * @return  void
@@ -255,7 +295,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testCheckFilePathUnwritablePath()
 	{
 		// Check for an unwritable folder.
-		TestHelper::invoke($this->instance, 'checkFilePath', '/');
+		mkdir(__DIR__ . '/tmp/~uwd', 0444);
+		TestHelper::invoke($this->instance, 'checkFilePath', __DIR__ . '/tmp/~uwd');
 	}
 
 	/**
@@ -283,7 +324,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->instance->setOption('ttl', 1);
 		$this->instance->set('foo', 'bar');
-		sleep(2);
+
+		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
+		touch($fileName, time() -2);
+
 		$this->assertTrue(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should be expired.');
 
 		$this->instance->setOption('ttl', 900);
@@ -336,6 +380,11 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			{
 				rmdir($file->getRealPath());
 			}
+		}
+
+		if (is_dir(__DIR__ . '/no_write_tmp'))
+		{
+			rmdir(__DIR__ . '/no_write_tmp');
 		}
 	}
 }

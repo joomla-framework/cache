@@ -27,12 +27,12 @@ class Wincache extends Cache
 	 */
 	public function __construct($options = array())
 	{
-		parent::__construct($options);
-
 		if (!extension_loaded('wincache') || !is_callable('wincache_ucache_get'))
 		{
 			throw new \RuntimeException('WinCache not supported.');
 		}
+
+		parent::__construct($options);
 	}
 
 	/**

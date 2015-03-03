@@ -34,20 +34,18 @@ abstract class Cache implements CacheInterface
 	 */
 	public function __construct($options = array())
 	{
-		if ($options instanceof \ArrayAccess || is_array($options))
-		{
-			// Set a default ttl if none is set in the options.
-			if (!isset($options['ttl']))
-			{
-				$options['ttl'] = 900;
-			}
-
-			$this->options = $options;
-		}
-		else
+		if (! ($options instanceof \ArrayAccess || is_array($options)))
 		{
 			throw new \RuntimeException(sprintf('%s requires an options array or an object that implements \\ArrayAccess', __CLASS__));
 		}
+
+		// Set a default ttl if none is set in the options.
+		if (!isset($options['ttl']))
+		{
+			$options['ttl'] = 900;
+		}
+
+		$this->options = $options;
 	}
 
 	/**
