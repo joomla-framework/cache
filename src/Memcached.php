@@ -8,6 +8,10 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\UnsupportedFormatException;
+use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Exception\RuntimeException;
+
 /**
  * Memcached cache driver for the Joomla Framework.
  *
@@ -33,7 +37,7 @@ class Memcached extends Cache
 	{
 		if (!extension_loaded('memcached') || !class_exists('Memcached'))
 		{
-			throw new \RuntimeException('Memcached not supported.');
+			throw new UnsupportedFormatException('Memcached not supported.');
 		}
 
 		// Parent sets up the caching options and checks their type
@@ -79,7 +83,7 @@ class Memcached extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		$this->connect();
 		$value = $this->driver->get($key);
@@ -88,7 +92,7 @@ class Memcached extends Cache
 
 		if ($code === \Memcached::RES_SUCCESS)
 		{
-			$item->setValue($value);
+			$item->set($value);
 		}
 
 		return $item;
@@ -103,7 +107,7 @@ class Memcached extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		$this->connect();
 
@@ -113,29 +117,27 @@ class Memcached extends Cache
 
 		if ( ($rc != \Memcached::RES_SUCCESS))
 		{
-// 			throw new \RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
-			return false;
+ 			throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
 		}
 
 		return true;
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param CacheItemInterface $item
+	 *   The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return static
+	 *   The invoked object.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
 		$this->connect();
+		$ttl = $this->convertItemExpiryToSeconds($item);
 
-		$this->driver->set($key, $value, $ttl);
+		$this->driver->set($item->getKey(), $item->get(), $ttl);
 
 		return (bool) ($this->driver->getResultCode() == \Memcached::RES_SUCCESS);
 	}

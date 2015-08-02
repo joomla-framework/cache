@@ -8,7 +8,9 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\RuntimeException;
 use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Exception\InvalidArgumentException;
 
 /**
  * Filesystem cache driver for the Joomla Framework.
@@ -39,7 +41,7 @@ class File extends Cache
 
 		if (!isset($options['file.path']))
 		{
-			throw new \RuntimeException('The file.path option must be set.');
+			throw new InvalidArgumentException('The file.path option must be set.');
 		}
 
 		$this->checkFilePath($options['file.path']);
@@ -88,14 +90,14 @@ class File extends Cache
 	 * @since   1.0
 	 * @throws  \RuntimeException
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		// If the cached data has expired remove it and return.
 		if ($this->exists($key) && $this->isExpired($key))
 		{
-			if (!$this->remove($key))
+			if (!$this->deleteItem($key))
 			{
-				throw new \RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null);
+				throw new RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null);
 			}
 
 			return new Item($key);
@@ -110,13 +112,13 @@ class File extends Cache
 
 		if (!$resource)
 		{
-			throw new \RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot open the resource.', $key));
+			throw new RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot open the resource.', $key));
 		}
 
 		// If locking is enabled get a shared lock for reading on the resource.
 		if ($this->options['file.locking'] && !flock($resource, LOCK_SH))
 		{
-			throw new \RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot obtain a lock.', $key));
+			throw new RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot obtain a lock.', $key));
 		}
 
 		$data = stream_get_contents($resource);
@@ -124,13 +126,13 @@ class File extends Cache
 		// If locking is enabled release the lock on the resource.
 		if ($this->options['file.locking'] && !flock($resource, LOCK_UN))
 		{
-			throw new \RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot release the lock.', $key));
+			throw new RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot release the lock.', $key));
 		}
 
 		fclose($resource);
 
 		$item = new Item($key);
-		$item->setValue(unserialize($data));
+		$item->set(unserialize($data));
 
 		return $item;
 	}
@@ -144,25 +146,23 @@ class File extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		return (bool) @unlink($this->fetchStreamUri($key));
 	}
 
-	/**
-	 * Method to set a value for a storage entry.
-	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
-	 */
-	public function set($key, $value, $ttl = null)
+    /**
+     * Persists a cache item immediately.
+     *
+     * @param CacheItemInterface $item
+     *   The cache item to save.
+     *
+     * @return static
+     *   The invoked object.
+     */
+    public function save(CacheItemInterface $item)
 	{
-		$fileName = $this->fetchStreamUri($key);
+		$fileName = $this->fetchStreamUri($item->getKey());
 		$filePath = pathinfo($fileName, PATHINFO_DIRNAME);
 
 		if (!is_dir($filePath))
@@ -172,7 +172,7 @@ class File extends Cache
 
 		$success = (bool) file_put_contents(
 			$fileName,
-			serialize($value),
+			serialize($item->get()),
 			($this->options['file.locking'] ? LOCK_EX : null)
 		);
 
@@ -207,11 +207,11 @@ class File extends Cache
 	{
 		if (!is_dir($filePath))
 		{
-			throw new \RuntimeException(sprintf('The base cache path `%s` does not exist.', $filePath));
+			throw new RuntimeException(sprintf('The base cache path `%s` does not exist.', $filePath));
 		}
 		elseif (!is_writable($filePath))
 		{
-			throw new \RuntimeException(sprintf('The base cache path `%s` is not writable.', $filePath));
+			throw new RuntimeException(sprintf('The base cache path `%s` is not writable.', $filePath));
 		}
 
 		return true;

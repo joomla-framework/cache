@@ -8,6 +8,7 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\UnsupportedFormatException;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -29,7 +30,7 @@ class XCache extends Cache
 	{
 		if (!extension_loaded('xcache') || !is_callable('xcache_get'))
 		{
-			throw new \RuntimeException('XCache not supported.');
+			throw new UnsupportedFormatException('XCache not supported.');
 		}
 
 		parent::__construct($options);
@@ -55,13 +56,13 @@ class XCache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		$item = new Item($key);
 
 		if ($this->exists($key))
 		{
-			$item->setValue(xcache_get($key));
+			$item->set(xcache_get($key));
 		}
 
 		return $item;
@@ -76,25 +77,23 @@ class XCache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		return xcache_unset($key);
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param CacheItemInterface $item
+	 *   The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return static
+	 *   The invoked object.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
-		return xcache_set($key, $value, $ttl);
+		return xcache_set($item->getKey(), $item->get(), $this->convertItemExpiryToSeconds($item));
 	}
 
 	/**

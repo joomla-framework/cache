@@ -8,6 +8,7 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\UnsupportedFormatException;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -29,7 +30,7 @@ class Wincache extends Cache
 	{
 		if (!extension_loaded('wincache') || !is_callable('wincache_ucache_get'))
 		{
-			throw new \RuntimeException('WinCache not supported.');
+			throw new UnsupportedFormatException('WinCache not supported.');
 		}
 
 		parent::__construct($options);
@@ -55,7 +56,7 @@ class Wincache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		$item = new Item($key);
 		$success = true;
@@ -63,7 +64,7 @@ class Wincache extends Cache
 
 		if ($success)
 		{
-			$item->setValue($value);
+			$item->set($value);
 		}
 
 		return $item;
@@ -78,25 +79,23 @@ class Wincache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		return wincache_ucache_delete($key);
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param CacheItemInterface $item
+	 *   The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return static
+	 *   The invoked object.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
-		return wincache_ucache_set($key, $value, $ttl);
+		return wincache_ucache_set($item->getKey(), $item->get(), $this->convertItemExpiryToSeconds($item));
 	}
 
 	/**

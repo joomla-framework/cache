@@ -8,6 +8,7 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\UnsupportedFormatException;
 use Psr\Cache\CacheItemInterface;
 use Redis as RedisDriver;
 
@@ -46,7 +47,7 @@ class Redis extends Cache
 	{
 		if (!extension_loaded('redis') || !class_exists('\Redis'))
 		{
-			throw new \RuntimeException('Redis not supported.');
+			throw new UnsupportedFormatException('Redis not supported.');
 		}
 
 		parent::__construct($options);
@@ -75,7 +76,7 @@ class Redis extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		$this->connect();
 
@@ -84,7 +85,7 @@ class Redis extends Cache
 
 		if ($value !== false)
 		{
-			$item->setValue($value);
+			$item->set($value);
 		}
 
 		return $item;
@@ -99,7 +100,7 @@ class Redis extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		$this->connect();
 
@@ -109,31 +110,26 @@ class Redis extends Cache
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param CacheItemInterface $item
+	 *   The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return static
+	 *   The invoked object.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
 		$this->connect();
 
-		if (!$this->driver->set($key, $value))
+		if (!$this->driver->set($item->getKey(), $item->get()))
 		{
 			return false;
 		}
 
-		if ($ttl)
+		if (!$this->driver->expire($item->getKey(), $this->convertItemExpiryToSeconds($item)))
 		{
-			if (!$this->driver->expire($key, $ttl))
-			{
-				return false;
-			}
+			return false;
 		}
 
 		return true;

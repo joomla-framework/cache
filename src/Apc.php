@@ -8,6 +8,7 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\UnsupportedFormatException;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -29,7 +30,7 @@ class Apc extends Cache
 	{
 		if (!extension_loaded('apc') || !is_callable('apc_fetch'))
 		{
-			throw new \RuntimeException('APC not supported.');
+			throw new UnsupportedFormatException('APC not supported.');
 		}
 
 		parent::__construct($options);
@@ -57,7 +58,7 @@ class Apc extends Cache
 	 * @since   1.0
 	 * @throws  \RuntimeException
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		$success = false;
 		$value = apc_fetch($key, $success);
@@ -65,7 +66,7 @@ class Apc extends Cache
 
 		if ($success)
 		{
-			$item->setValue($value);
+			$item->set($value);
 		}
 
 		return $item;
@@ -80,7 +81,7 @@ class Apc extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function getMultiple($keys)
+	public function getItems(array $keys = array())
 	{
 		$items = array();
 		$success = false;
@@ -94,7 +95,7 @@ class Apc extends Cache
 
 				if (isset($values[$key]))
 				{
-					$items[$key]->setValue($values[$key]);
+					$items[$key]->set($values[$key]);
 				}
 			}
 		}
@@ -111,25 +112,23 @@ class Apc extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		return apc_delete($key);
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param CacheItemInterface $item
+	 *   The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return static
+	 *   The invoked object.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
-		return apc_store($key, $value, $ttl ?: $this->options['ttl']);
+		return apc_store($item->getKey(), $item->get(), $this->convertItemExpiryToSeconds($item));
 	}
 
 	/**
