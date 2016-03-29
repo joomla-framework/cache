@@ -51,10 +51,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->removeMultiple(array('foo')), 'Checking removeMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
 		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
 		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
 	}
@@ -95,8 +95,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 		$this->instance->clear();
 
-		$this->assertFalse($this->instance->get('foo')->isHit());
-		$this->assertFalse($this->instance->get('goo')->isHit());
+		$this->assertFalse($this->instance->getItem('foo')->isHit());
+		$this->assertFalse($this->instance->getItem('goo')->isHit());
 	}
 
 	/**
@@ -109,14 +109,14 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$this->assertFalse($this->instance->get('foo')->isHit(), 'Checks an unknown key.');
+		$this->assertFalse($this->instance->getItem('foo')->isHit(), 'Checks an unknown key.');
 
 		$this->instance->setOption('ttl', 1);
 		$this->instance->set('foo', 'bar', 1);
 
 		$this->assertEquals(
 			'bar',
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'The key should have not been deleted.'
 		);
 
@@ -124,7 +124,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		touch($fileName, time() -2);
 
 		$this->assertFalse(
-			$this->instance->get('foo')->isHit(),
+			$this->instance->getItem('foo')->isHit(),
 			'The key should have been deleted.'
 		);
 	}
@@ -150,7 +150,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$instance = $instance->getMock();
 
 		$instance->expects($this->any())
-				->method('remove')
+				->method('deleteItem')
 				->will($this->returnValue(false));
 
 		$instance->setOption('ttl', 1);
@@ -158,7 +158,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		sleep(2);
 
 		$this->assertNull(
-			$instance->get('foo')->getValue(),
+			$instance->getItem('foo')->get(),
 			'The key should have been deleted.'
 		);
 	}
@@ -179,25 +179,25 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\File::remove method.
+	 * Tests the Joomla\Cache\File::deleteItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\File::remove
+	 * @covers  Joomla\Cache\File::deleteItem
 	 * @since   1.0
 	 */
-	public function testRemove()
+	public function testDeleteItem()
 	{
 		$this->assertTrue(
 			$this->instance->set('foo', 'bar'),
 			'Checks the value was set'
 		);
 		$this->assertTrue(
-			$this->instance->remove('foo'),
+			$this->instance->deleteItem('foo'),
 			'Checks the value was removed'
 		);
 		$this->assertNull(
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'Checks for the delete'
 		);
 	}
@@ -244,13 +244,13 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$this->assertEquals(
-			'bar', $this->instance->get('foo')->getValue(),
+			'bar', $this->instance->getItem('foo')->get(),
 			'Checks we got the cached value back.'
 		);
 
-		$this->instance->remove('foo');
+		$this->instance->deleteItem('foo');
 		$this->assertNull(
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'Checks for the delete.'
 		);
 	}

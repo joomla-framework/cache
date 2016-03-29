@@ -31,11 +31,11 @@ class ItemTest extends \PHPUnit_Framework_TestCase
 	public function testItem()
 	{
 		$this->assertEquals('foo', $this->instance->getKey());
-		$this->assertNull($this->instance->getValue());
+		$this->assertNull($this->instance->get());
 		$this->assertFalse($this->instance->isHit());
 
-		$this->instance->setValue('bar');
-		$this->assertEquals('bar', $this->instance->getValue());
+		$this->instance->set('bar');
+		$this->assertEquals('bar', $this->instance->get());
 		$this->assertTrue($this->instance->isHit());
 	}
 

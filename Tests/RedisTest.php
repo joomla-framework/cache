@@ -32,10 +32,10 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->removeMultiple(array('foo')), 'Checking removeMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
 		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
 		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
 	}
@@ -45,7 +45,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Redis::get
+	 * @covers  Joomla\Cache\Redis::getItem
 	 * @covers  Joomla\Cache\Redis::set
 	 * @covers  Joomla\Cache\Redis::connect
 	 * @since   1.0
@@ -59,7 +59,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(
 			'bar',
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'Checking get'
 		);
 	}
@@ -69,7 +69,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Redis::get
+	 * @covers  Joomla\Cache\Redis::getItem
 	 * @covers  Joomla\Cache\Redis::set
 	 * @covers  Joomla\Cache\Redis::connect
 	 * @since   1.0
@@ -84,7 +84,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 		sleep(2);
 
 		$this->assertFalse(
-			$this->instance->get('foo')->isHit(),
+			$this->instance->getItem('foo')->isHit(),
 			'Checks expired get.'
 		);
 	}
@@ -106,12 +106,12 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 		$this->instance->clear();
 
 		$this->assertFalse(
-			$this->instance->get('foo')->isHit(),
+			$this->instance->getItem('foo')->isHit(),
 			'Item should have been removed'
 		);
 
 		$this->assertFalse(
-			$this->instance->get('goo')->isHit(),
+			$this->instance->getItem('goo')->isHit(),
 			'Item should have been removed'
 		);
 	}
@@ -146,7 +146,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Redis::connect
-	 * @covers  Joomla\Cache\Redis::remove
+	 * @covers  Joomla\Cache\Redis::deleteItem
 	 * @since   1.0
 	 */
 
@@ -154,32 +154,32 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->instance->set('foo', 'bar');
 		$this->assertTrue(
-			$this->instance->get('foo')->isHit(),
+			$this->instance->getItem('foo')->isHit(),
 			'Item should exist'
 		);
 
-		$this->instance->remove('foo');
+		$this->instance->deleteItem('foo');
 
 		$this->assertFalse(
-			$this->instance->get('foo')->isHit(),
+			$this->instance->getItem('foo')->isHit(),
 			'Item should have been removed'
 		);
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Redis::getMultiple method.
+	 * Tests the Joomla\Cache\Redis::getItems method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Redis::getMultiple
+	 * @covers  Joomla\Cache\Redis::getItems
 	 * @since   1.0
 	 */
-	public function testGetMultiple()
+	public function testGetItems()
 	{
 		$this->instance->set('foo', 'bar');
 		$this->instance->set('boo', 'bar');
 
-		$fooResult = $this->instance->getMultiple(array('foo', 'boo'));
+		$fooResult = $this->instance->getItems(array('foo', 'boo'));
 
 		$this->assertArrayHasKey('foo', $fooResult, 'Missing array key');
 		$this->assertArrayHasKey('boo', $fooResult, 'Missing array key');
@@ -221,37 +221,37 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(
 			'bar',
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'Item should be cached'
 			);
 
 		$this->assertEquals(
-			'bar', $this->instance->get('boo')->getValue(),
+			'bar', $this->instance->getItem('boo')->get(),
 			'Item should be cached'
 		);
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Redis::removeMultiple method.
+	 * Tests the Joomla\Cache\Redis::deleteItems method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Redis::removeMultiple
+	 * @covers  Joomla\Cache\Redis::deleteItems
 	 * @since   1.0
 	 */
-	public function removeMultiple()
+	public function testDeleteItems()
 	{
 		$this->instance->set('foo', 'bar');
 		$this->instance->set('boo', 'bar');
 
-		$this->instance->removeMultiple(array('foo', 'bar'));
+		$this->instance->deleteItems(array('foo', 'bar'));
 
 		$this->assertFalse(
-			$this->instance->get('foo')->isHit(),
+			$this->instance->getItem('foo')->isHit(),
 			'Item should have been removed'
 		);
 		$this->assertFalse(
-			$this->instance->get('boo')->isHit(),
+			$this->instance->getItem('boo')->isHit(),
 			'Item should have been removed'
 		);
 	}

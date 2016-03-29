@@ -33,10 +33,10 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->removeMultiple(array('foo')), 'Checking removeMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
 		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
 		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
 	}
@@ -65,22 +65,22 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	public function testGet()
 	{
 		$this->instance->set('foo', 'bar');
-		$item = $this->instance->get('foo');
-		$this->assertNull($item->getValue());
+		$item = $this->instance->getItem('foo');
+		$this->assertNull($item->get());
 		$this->assertFalse($item->isHit());
 	}
 
 	/**
-	 * Tests the Joomla\Cache\None::remove method.
+	 * Tests the Joomla\Cache\None::deleteItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\None::remove
+	 * @covers  Joomla\Cache\None::deleteItem
 	 * @since   1.0
 	 */
-	public function testRemove()
+	public function testDeleteItem()
 	{
-		$this->instance->remove('foo');
+		$this->instance->deleteItem('foo');
 	}
 
 	/**
@@ -94,8 +94,8 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	public function testSet()
 	{
 		$this->instance->set('foo', 'bar');
-		$item = $this->instance->get('foo');
-		$this->assertNull($item->getValue());
+		$item = $this->instance->getItem('foo');
+		$this->assertNull($item->get());
 		$this->assertFalse($item->isHit());
 	}
 

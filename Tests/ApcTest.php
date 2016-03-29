@@ -26,10 +26,10 @@ class ApcTest extends CacheTest
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->removeMultiple(array('foo')), 'Checking removeMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
 		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
 		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
 	}
@@ -72,7 +72,7 @@ class ApcTest extends CacheTest
 	{
 		$this->assertInstanceOf(
 			'\Psr\Cache\CacheItemInterface',
-			$this->instance->get('foo')
+			$this->instance->getItem('foo')
 		);
 	}
 
@@ -86,7 +86,7 @@ class ApcTest extends CacheTest
 	 */
 	public function testRemove()
 	{
-		$this->assertTrue($this->instance->remove('foo'));
+		$this->assertTrue($this->instance->deleteItem('foo'));
 	}
 
 	/**
