@@ -117,7 +117,7 @@ class Memcached extends Cache
 
 		if ( ($rc != \Memcached::RES_SUCCESS))
 		{
- 			throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
+			throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
 		}
 
 		return true;
@@ -126,11 +126,9 @@ class Memcached extends Cache
 	/**
 	 * Persists a cache item immediately.
 	 *
-	 * @param CacheItemInterface $item
-	 *   The cache item to save.
+	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return static
-	 *   The invoked object.
+	 * @return  static  The invoked object.
 	 */
 	public function save(CacheItemInterface $item)
 	{

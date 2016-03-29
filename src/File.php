@@ -151,16 +151,14 @@ class File extends Cache
 		return (bool) @unlink($this->fetchStreamUri($key));
 	}
 
-    /**
-     * Persists a cache item immediately.
-     *
-     * @param CacheItemInterface $item
-     *   The cache item to save.
-     *
-     * @return static
-     *   The invoked object.
-     */
-    public function save(CacheItemInterface $item)
+	/**
+	 * Persists a cache item immediately.
+	 *
+	 * @param   CacheItemInterface  $item  The cache item to save.
+	 *
+	 * @return  static  The invoked object.
+	 */
+	public function save(CacheItemInterface $item)
 	{
 		$fileName = $this->fetchStreamUri($item->getKey());
 		$filePath = pathinfo($fileName, PATHINFO_DIRNAME);

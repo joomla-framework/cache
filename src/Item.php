@@ -53,8 +53,8 @@ class Item implements CacheItemInterface
 	/**
 	 * Class constructor.
 	 *
-	 * @param   string                $key  The key for the cache item.
-	 * @param   DateTime|integer|null $ttl  The expiry time for the cache item in seconds or as a datetime object
+	 * @param   string                 $key  The key for the cache item.
+	 * @param   DateTime|integer|null  $ttl  The expiry time for the cache item in seconds or as a datetime object
 	 *
 	 * @since   1.0
 	 */
@@ -75,7 +75,6 @@ class Item implements CacheItemInterface
 			$this->expiresAfter(900);
 		}
 	}
-
 
 	/**
 	 * Confirms if the cache item exists in the cache.
@@ -148,14 +147,12 @@ class Item implements CacheItemInterface
 	/**
 	 * Sets the expiration time for this cache item.
 	 *
-	 * @param \DateTimeInterface $expiration
-	 *   The point in time after which the item MUST be considered expired.
-	 *   If null is passed explicitly, a default value MAY be used. If none is set,
-	 *   the value should be stored permanently or for as long as the
-	 *   implementation allows.
+	 * @param   \DateTimeInterface  $expiration  The point in time after which the item MUST be considered expired.
+	 *                                           If null is passed explicitly, a default value MAY be used. If none is
+	 *                                           set, the value should be stored permanently or for as long as the
+	 *                                           implementation allows.
 	 *
-	 * @return static
-	 *   The called object.
+	 * @return  static  The called object.
 	 */
 	public function expiresAt($expiration)
 	{
@@ -165,13 +162,11 @@ class Item implements CacheItemInterface
 	/**
 	 * Sets the expiration time for this cache item.
 	 *
-	 * @param int|\DateInterval $time
-	 *   The period of time from the present after which the item MUST be considered
-	 *   expired. An integer parameter is understood to be the time in seconds until
-	 *   expiration.
+	 * @param   int|\DateInterval  $time  The period of time from the present after which the item MUST be considered
+	 *                                    expired. An integer parameter is understood to be the time in seconds until
+	 *                                    expiration.
 	 *
-	 * @return static
-	 *   The called object.
+	 * @return  static  The called object.
 	 */
 	public function expiresAfter($time)
 	{
@@ -196,8 +191,7 @@ class Item implements CacheItemInterface
 	 * If this cache item is a Cache Miss, this method MAY return the time at
 	 * which the item expired or the current time if that is not available.
 	 *
-	 * @return \DateTime
-	 *   The timestamp at which this cache item will expire.
+	 * @return  \DateTime  The timestamp at which this cache item will expire.
 	 */
 	public function getExpiration()
 	{

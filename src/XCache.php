@@ -85,11 +85,9 @@ class XCache extends Cache
 	/**
 	 * Persists a cache item immediately.
 	 *
-	 * @param CacheItemInterface $item
-	 *   The cache item to save.
+	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return static
-	 *   The invoked object.
+	 * @return  static  The invoked object.
 	 */
 	public function save(CacheItemInterface $item)
 	{

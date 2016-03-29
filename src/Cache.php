@@ -154,10 +154,9 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * Sets a cache item to be persisted later.
 	 *
-	 * @param CacheItemInterface $item
-	 *   The cache item to save.
-	 * @return static
-	 *   The invoked object.
+	 * @param   CacheItemInterface  $item  The cache item to save.
+	 *
+	 * @return  static  The invoked object.
 	 */
 	public function saveDeferred(CacheItemInterface $item)
 	{
@@ -169,8 +168,7 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * Persists any deferred cache items.
 	 *
-	 * @return bool
-	 *   TRUE if all not-yet-saved items were successfully saved. FALSE otherwise.
+	 * @return  bool  TRUE if all not-yet-saved items were successfully saved. FALSE otherwise.
 	 */
 	public function commit()
 	{
@@ -194,9 +192,9 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * Converts the DateTime object from the cache item to the expiry time in seconds from the present
 	 *
-	 * @param  CacheItemInterface $item  The cache item
+	 * @param   CacheItemInterface  $item  The cache item
 	 *
-	 * @return int  The time in seconds until expiry
+	 * @return  int  The time in seconds until expiry
 	 */
 	protected function convertItemExpiryToSeconds(CacheItemInterface $item)
 	{
