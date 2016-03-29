@@ -117,25 +117,25 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Redis::exists method.
+	 * Tests the Joomla\Cache\Redis::hasItem method.
 	 *
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Redis::connect
-	 * @covers  Joomla\Cache\Redis::exists
+	 * @covers  Joomla\Cache\Redis::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
 		$this->assertFalse(
-			$this->instance->exists('foo'),
+			$this->instance->hasItem('foo'),
 			'Item should not exist'
 		);
 
 		$this->instance->set('foo', 'bar');
 
 		$this->assertTrue(
-			$this->instance->exists('foo'),
+			$this->instance->hasItem('foo'),
 			'Item should exist'
 		);
 	}

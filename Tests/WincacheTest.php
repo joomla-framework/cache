@@ -54,14 +54,14 @@ class WincacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Wincache::exists method.
+	 * Tests the Joomla\Cache\Wincache::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Wincache::exists
+	 * @covers  Joomla\Cache\Wincache::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
 		$this->markTestIncomplete();
 	}

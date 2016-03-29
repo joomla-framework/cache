@@ -93,7 +93,7 @@ class File extends Cache
 	public function getItem($key)
 	{
 		// If the cached data has expired remove it and return.
-		if ($this->exists($key) && $this->isExpired($key))
+		if ($this->hasItem($key) && $this->isExpired($key))
 		{
 			if (!$this->deleteItem($key))
 			{
@@ -103,7 +103,7 @@ class File extends Cache
 			return new Item($key);
 		}
 
-		if (!$this->exists($key))
+		if (!$this->hasItem($key))
 		{
 			return new Item($key);
 		}
@@ -188,7 +188,7 @@ class File extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		return is_file($this->fetchStreamUri($key));
 	}

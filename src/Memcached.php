@@ -151,7 +151,7 @@ class Memcached extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		$this->connect();
 

@@ -48,16 +48,16 @@ class ApcTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apc::exists method.
+	 * Tests the Joomla\Cache\Apc::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apc::exists
+	 * @covers  Joomla\Cache\Apc::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
-		$this->assertTrue($this->instance->exists('foo'));
+		$this->assertTrue($this->instance->hasItem('foo'));
 	}
 
 	/**

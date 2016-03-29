@@ -54,14 +54,14 @@ class XCacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\XCache::exists method.
+	 * Tests the Joomla\Cache\XCache::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\XCache::exists
+	 * @covers  Joomla\Cache\XCache::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
 		$this->markTestIncomplete();
 	}

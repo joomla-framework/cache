@@ -107,7 +107,7 @@ class Wincache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		return wincache_ucache_exists($key);
 	}

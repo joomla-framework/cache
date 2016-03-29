@@ -144,7 +144,7 @@ class Redis extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function exists($key)
+	public function hasItem($key)
 	{
 		$this->connect();
 

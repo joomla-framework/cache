@@ -70,7 +70,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheInstance->clear();
 
 		$this->assertFalse(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 
@@ -80,7 +80,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$this->assertTrue(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 
@@ -90,7 +90,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$this->assertFalse(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 	}
@@ -344,21 +344,21 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::exists method.
+	 * Tests the Joomla\Cache\Cache::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Cache::exists
-	 * @covers  Joomla\Cache\Memcached::exists
+	 * @covers  Joomla\Cache\Cache::hasItem
+	 * @covers  Joomla\Cache\Memcached::hasItem
 	 * @since   1.1.3
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
 
 		$this->assertFalse(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 
@@ -368,7 +368,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$this->assertTrue(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 	}

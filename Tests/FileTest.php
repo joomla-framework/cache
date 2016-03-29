@@ -164,18 +164,18 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\File::exists method.
+	 * Tests the Joomla\Cache\File::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\File::exists
+	 * @covers  Joomla\Cache\File::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
-		$this->assertFalse(TestHelper::invoke($this->instance, 'exists', 'foo'));
+		$this->assertFalse($this->instance->hasItem('foo'));
 		$this->instance->set('foo', 'bar');
-		$this->assertTrue(TestHelper::invoke($this->instance, 'exists', 'foo'));
+		$this->assertTrue($this->instance->hasItem('foo'));
 	}
 
 	/**

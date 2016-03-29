@@ -149,7 +149,7 @@ abstract class Cache implements CacheItemPoolInterface
 	 *
 	 * @since   1.0
 	 */
-	abstract protected function exists($key);
+	abstract public function hasItem($key);
 
 	/**
 	 * Sets a cache item to be persisted later.

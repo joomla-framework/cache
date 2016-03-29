@@ -45,7 +45,7 @@ class Mocker
 		// Collect all the relevant methods in JDatabase.
 		$methods = array(
 			'clear',
-			'exists',
+			'hasItem',
 			'get',
 			'getMultiple',
 			'remove',

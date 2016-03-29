@@ -140,7 +140,7 @@ class Apc extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function exists($key)
+	public function hasItem($key)
 	{
 		return apc_exists($key);
 	}

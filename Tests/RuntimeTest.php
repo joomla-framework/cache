@@ -84,18 +84,18 @@ class RuntimeTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Runtime::exists method.
+	 * Tests the Joomla\Cache\Runtime::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Runtime::exists
+	 * @covers  Joomla\Cache\Runtime::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
-		$this->assertFalse(TestHelper::invoke($this->instance, 'exists', 'foo'));
+		$this->assertFalse($this->instance->hasItem('foo'));
 		$this->instance->set('foo', 'bar');
-		$this->assertTrue(TestHelper::invoke($this->instance, 'exists', 'foo'));
+		$this->assertTrue($this->instance->hasItem('foo'));
 	}
 
 	/**

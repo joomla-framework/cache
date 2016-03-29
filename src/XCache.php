@@ -60,7 +60,7 @@ class XCache extends Cache
 	{
 		$item = new Item($key);
 
-		if ($this->exists($key))
+		if ($this->hasItem($key))
 		{
 			$item->set(xcache_get($key));
 		}
@@ -105,7 +105,7 @@ class XCache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		return xcache_isset($key);
 	}
