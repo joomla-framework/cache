@@ -61,13 +61,28 @@ class RuntimeTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testClear()
 	{
-		
-		$this->instance->setMultiple(
-			array(
-				'foo' => 'bar',
-				'goo' => 'car',
-			)
-		);
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('car');
+
+		$stub2->method('getKey')
+			->willReturn('goo');
+
+		$this->instance->save($stub);
+		$this->instance->save($stub2);
 
 		$this->assertEquals(
 			'bar',

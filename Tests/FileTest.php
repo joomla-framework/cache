@@ -269,8 +269,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$stub->method('getKey')
 			->willReturn('foo');
 
-		$this->assertInstanceOf(
-			'\\Joomla\\Cache\\File',
+		$this->assertTrue(
 			$this->instance->save($stub),
 			'Checks the value was set'
 		);
@@ -428,7 +427,18 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testIsExpired()
 	{
 		$this->instance->setOption('ttl', 1);
-		$this->instance->set('foo', 'bar');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 
 		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
 		touch($fileName, time() -2);
@@ -436,7 +446,18 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should be expired.');
 
 		$this->instance->setOption('ttl', 900);
-		$this->instance->set('foo', 'bar');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 		$this->assertFalse(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should not be expired.');
 	}
 
