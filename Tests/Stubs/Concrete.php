@@ -88,7 +88,7 @@ class ConcreteCache extends Cache
 		try
 		{
 			$value = $this->getValue($key);
-			$item->setValue($value);
+			$item->set($value);
 		}
 		catch ( \Exception $e)
 		{
@@ -147,7 +147,7 @@ class ConcreteCache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		$oldCache = $this->db->getArrayCopy();
 
@@ -166,17 +166,15 @@ class ConcreteCache extends Cache
 	/**
 	 * Method to set a value for a storage entry.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
 	 * @return  boolean
 	 *
 	 * @since   1.0
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
-		$this->db[$key] = $value;
+		$this->db[$item->getKey()] = $item->get();
 
 		return true;
 	}
@@ -190,7 +188,7 @@ class ConcreteCache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		return array_key_exists($key, $this->db);
 	}
