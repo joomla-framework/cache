@@ -26,12 +26,22 @@ class ApcTest extends CacheTest
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
-		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
-		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking getItem.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getItems.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking deleteItem.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking deleteItems.');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking save.');
 	}
 
 	/**
@@ -116,7 +126,18 @@ class ApcTest extends CacheTest
 		try
 		{
 			parent::setUp();
-			$this->instance->set('foo', 'bar');
+
+			// Create a stub for the CacheItemInterface class.
+			$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+				->getMock();
+
+			$stub->method('get')
+				->willReturn('bar');
+
+			$stub->method('getKey')
+				->willReturn('foo');
+
+			$this->instance->save($stub);
 		}
 		catch (\Exception $e)
 		{

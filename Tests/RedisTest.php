@@ -32,12 +32,22 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
-		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
-		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking getItem.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getItems.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking deleteItem.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking deleteItems.');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking save.');
 	}
 
 	/**
@@ -46,11 +56,11 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Redis::getItem
-	 * @covers  Joomla\Cache\Redis::set
+	 * @covers  Joomla\Cache\Redis::save
 	 * @covers  Joomla\Cache\Redis::connect
 	 * @since   1.0
 	 */
-	public function testGetAndSet()
+	public function testGetAndSave()
 	{
 		$this->assertTrue(
 			$this->instance->set('foo', 'bar'),
@@ -70,11 +80,11 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 * @return  void
 	 *
 	 * @covers  Joomla\Cache\Redis::getItem
-	 * @covers  Joomla\Cache\Redis::set
+	 * @covers  Joomla\Cache\Redis::save
 	 * @covers  Joomla\Cache\Redis::connect
 	 * @since   1.0
 	 */
-	public function testGetAndSetWithTimeout()
+	public function testGetAndSaveWithTimeout()
 	{
 		$this->assertTrue(
 			$this->instance->set('foo', 'bar', 1),
@@ -100,8 +110,28 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testClear()
 	{
-		$this->instance->set('foo', 'bar');
-		$this->instance->set('boo', 'car');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('car');
+
+		$stub2->method('getKey')
+			->willReturn('boo');
+
+		$this->instance->save($stub);
+		$this->instance->save($stub2);
 
 		$this->instance->clear();
 
@@ -132,7 +162,17 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 			'Item should not exist'
 		);
 
-		$this->instance->set('foo', 'bar');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 
 		$this->assertTrue(
 			$this->instance->hasItem('foo'),
@@ -152,7 +192,17 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 
 	public function testRemove()
 	{
-		$this->instance->set('foo', 'bar');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 		$this->assertTrue(
 			$this->instance->getItem('foo')->isHit(),
 			'Item should exist'
@@ -176,8 +226,28 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetItems()
 	{
-		$this->instance->set('foo', 'bar');
-		$this->instance->set('boo', 'bar');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('bar');
+
+		$stub2->method('getKey')
+			->willReturn('boo');
+
+		$this->instance->save($stub);
+		$this->instance->save($stub2);
 
 		$fooResult = $this->instance->getItems(array('foo', 'boo'));
 
@@ -206,32 +276,6 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Redis::setMultiple method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Redis::setMultiple
-	 * @since   1.0
-	 */
-	public function testSetMultiple()
-	{
-		$data = array('foo' => 'bar', 'boo' => 'bar');
-
-		$this->instance->setMultiple($data);
-
-		$this->assertEquals(
-			'bar',
-			$this->instance->getItem('foo')->get(),
-			'Item should be cached'
-			);
-
-		$this->assertEquals(
-			'bar', $this->instance->getItem('boo')->get(),
-			'Item should be cached'
-		);
-	}
-
-	/**
 	 * Tests the Joomla\Cache\Redis::deleteItems method.
 	 *
 	 * @return  void
@@ -241,8 +285,28 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testDeleteItems()
 	{
-		$this->instance->set('foo', 'bar');
-		$this->instance->set('boo', 'bar');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('bar');
+
+		$stub2->method('getKey')
+			->willReturn('boo');
+
+		$this->instance->save($stub);
+		$this->instance->save($stub2);
 
 		$this->instance->deleteItems(array('foo', 'bar'));
 

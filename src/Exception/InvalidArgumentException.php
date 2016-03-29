@@ -2,7 +2,6 @@
 
 namespace Joomla\Cache\Exception;
 
-use Psr\Cache\CacheException;
 use Psr\Cache\InvalidArgumentException as PsrInvalidArgumentExceptionInterface;
 
 /**
@@ -10,7 +9,7 @@ use Psr\Cache\InvalidArgumentException as PsrInvalidArgumentExceptionInterface;
  *
  * @since  1.0
  */
-class InvalidArgumentException extends \InvalidArgumentException implements PsrInvalidArgumentExceptionInterface, CacheException
+class InvalidArgumentException extends \InvalidArgumentException implements PsrInvalidArgumentExceptionInterface
 {
 
 }

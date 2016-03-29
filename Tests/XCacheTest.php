@@ -37,7 +37,6 @@ class XCacheTest extends \PHPUnit_Framework_TestCase
 		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
 		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
 		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
-		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
 	}
 
 	/**

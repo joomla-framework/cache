@@ -37,8 +37,18 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
 		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
 		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
-		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
-		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking set.');
 	}
 
 	/**
@@ -64,7 +74,17 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$this->instance->set('foo', 'bar');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 		$item = $this->instance->getItem('foo');
 		$this->assertNull($item->get());
 		$this->assertFalse($item->isHit());
@@ -93,7 +113,17 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSet()
 	{
-		$this->instance->set('foo', 'bar');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 		$item = $this->instance->getItem('foo');
 		$this->assertNull($item->get());
 		$this->assertFalse($item->isHit());
@@ -110,7 +140,18 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	public function testHasItem()
 	{
 		$this->assertFalse($this->instance->hasItem('foo'));
-		$this->instance->set('foo', 'bar');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 		$this->assertFalse($this->instance->hasItem('foo'));
 	}
 
