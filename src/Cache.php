@@ -198,6 +198,7 @@ abstract class Cache implements CacheItemPoolInterface
 	 */
 	protected function convertItemExpiryToSeconds(CacheItemInterface $item)
 	{
+		/** @var DateTime $itemExpiry */
 		$itemExpiry = $item->getExpiration();
 		$itemTimezone = $itemExpiry->getTimezone();
 		$now = new DateTime('now', $itemTimezone);
