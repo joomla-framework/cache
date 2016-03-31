@@ -1,4 +1,3 @@
-# The Cache Package [![Build Status](https://travis-ci.org/joomla-framework/cache.png?branch=master)](https://travis-ci.org/joomla-framework/cache)
 # The Cache Package [![Build Status](https://travis-ci.org/joomla-framework/cache.png?branch=master)](https://travis-ci.org/joomla-framework/cache) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/joomla-framework/cache/badges/quality-score.png?b=2.0-dev)](https://scrutinizer-ci.com/g/joomla-framework/cache/?branch=2.0-dev)
 
 [![Latest Stable Version](https://poser.pugx.org/joomla/cache/v/stable)](https://packagist.org/packages/joomla/cache)
