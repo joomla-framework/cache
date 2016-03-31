@@ -186,7 +186,7 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * Converts a DateTime object from the cache item to the expiry time in seconds from the present
 	 *
-	 * @param   HasExpirationDateInterface $item The cache item
+	 * @param   HasExpirationDateInterface  $item  The cache item
 	 *
 	 * @return  integer  The time in seconds until expiry
 	 *
