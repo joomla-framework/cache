@@ -135,7 +135,7 @@ class Redis extends Cache
 			$ttl = 0;
 		}
 
-		if (!$this->driver->set($item->getKey(), $item->get(), $ttl))
+		if (!$this->driver->setex($item->getKey(), $ttl, $item->get()))
 		{
 			return false;
 		}
