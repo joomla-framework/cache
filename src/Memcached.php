@@ -113,13 +113,16 @@ class Memcached extends Cache
 	{
 		$this->connect();
 
-		$this->driver->delete($key);
-
-		$rc = $this->driver->getResultCode();
-
-		if ( ($rc != \Memcached::RES_SUCCESS))
+		if ($this->hasItem($key))
 		{
-			throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
+			$this->driver->delete($key);
+	
+			$rc = $this->driver->getResultCode();
+	
+			if ( ($rc != \Memcached::RES_SUCCESS))
+			{
+				throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
+			}
 		}
 
 		return true;
