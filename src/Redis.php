@@ -130,20 +130,13 @@ class Redis extends Cache
 		{
 			$ttl = $this->convertItemExpiryToSeconds($item);
 
-			if (!$this->driver->setex($item->getKey(), $ttl, $item->get()))
+			if ($ttl > 0)
 			{
-				return false;
-			}
-		}
-		else
-		{
-			if (!$this->driver->set($item->getKey(), $item->get()))
-			{
-				return false;
+				return $this->driver->setex($item->getKey(), $ttl, $item->get());
 			}
 		}
 
-		return true;
+		return $this->driver->set($item->getKey(), $item->get());
 	}
 
 	/**
