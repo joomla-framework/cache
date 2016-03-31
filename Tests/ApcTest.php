@@ -100,16 +100,26 @@ class ApcTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apc::set method.
+	 * Tests the Joomla\Cache\Apc::save method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apc::set
+	 * @covers  Joomla\Cache\Apc::save
 	 * @since   1.0
 	 */
-	public function testSet()
+	public function testSave()
 	{
-		$this->assertTrue($this->instance->set('foo', 'bar'));
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('car');
+
+		$stub->method('getKey')
+			->willReturn('boo');
+
+		$this->assertTrue($this->instance->save($stub));
 	}
 
 	/**
