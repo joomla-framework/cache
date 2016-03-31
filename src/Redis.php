@@ -66,7 +66,7 @@ class Redis extends Cache
 	{
 		$this->connect();
 
-		return $this->driver->flushall();
+		return $this->driver->flushDB();
 	}
 
 	/**
