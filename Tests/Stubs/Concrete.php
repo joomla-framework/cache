@@ -7,7 +7,7 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache\Cache;
-use Joomla\Cache\Item;
+use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -115,6 +115,7 @@ class ConcreteCache extends Cache
 	 * @return  mixed
 	 *
 	 * @since   1.0
+	 * @throws  \Exception
 	 */
 	public function getValue($key)
 	{
