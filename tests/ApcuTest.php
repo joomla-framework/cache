@@ -71,14 +71,14 @@ class ApcuTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apcu::get method.
+	 * Tests the Joomla\Cache\Apcu::getItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apcu::get
+	 * @covers  Joomla\Cache\Apcu::getItem
 	 * @since   1.0
 	 */
-	public function testGet()
+	public function testGetItem()
 	{
 		$this->assertInstanceOf(
 			'\Psr\Cache\CacheItemInterface',
@@ -87,14 +87,14 @@ class ApcuTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apcu::remove method.
+	 * Tests the Joomla\Cache\Apcu::deleteItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apcu::remove
+	 * @covers  Joomla\Cache\Apcu::deleteItem
 	 * @since   1.0
 	 */
-	public function testRemove()
+	public function testDeleteItem()
 	{
 		$this->assertTrue($this->instance->deleteItem('foo'));
 	}

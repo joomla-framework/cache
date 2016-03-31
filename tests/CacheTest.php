@@ -193,16 +193,16 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::set method.
+	 * Tests the Joomla\Cache\Cache::save method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Cache::set
-	 * @covers  Joomla\Cache\Memcached::set
+	 * @covers  Joomla\Cache\Cache::save
+	 * @covers  Joomla\Cache\Memcached::save
 	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
-	public function testSet()
+	public function testSave()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
@@ -315,11 +315,11 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::testDeleteItems method.
+	 * Tests the Joomla\Cache\Cache::deleteItems method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Cache::testDeleteItems
+	 * @covers  Joomla\Cache\Cache::deleteItems
 	 * @since   1.0
 	 */
 	public function testDeleteItems()

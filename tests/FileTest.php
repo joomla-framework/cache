@@ -131,14 +131,14 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\File::get method.
+	 * Tests the Joomla\Cache\File::getItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\File::get
+	 * @covers  Joomla\Cache\File::getItem
 	 * @since   1.0
 	 */
-	public function testGet()
+	public function testGetItem()
 	{
 		$this->assertFalse($this->instance->getItem('foo')->isHit(), 'Checks an unknown key.');
 
