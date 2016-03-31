@@ -8,7 +8,6 @@
 
 namespace Joomla\Cache;
 
-use Joomla\Cache\Exception\UnsupportedFormatException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
@@ -20,24 +19,6 @@ use Joomla\Cache\Item\Item;
  */
 class XCache extends Cache
 {
-	/**
-	 * Constructor.
-	 *
-	 * @param   array  $options  Caching options object.
-	 *
-	 * @since   1.0
-	 * @throws  \RuntimeException
-	 */
-	public function __construct($options = array())
-	{
-		if (!extension_loaded('xcache') || !is_callable('xcache_get'))
-		{
-			throw new UnsupportedFormatException('XCache not supported.');
-		}
-
-		parent::__construct($options);
-	}
-
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
@@ -124,5 +105,18 @@ class XCache extends Cache
 	public function hasItem($key)
 	{
 		return xcache_isset($key);
+	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		// XCache is not supported on CLI
+		return extension_loaded('xcache') && php_sapi_name() != 'cli';
 	}
 }

@@ -193,4 +193,16 @@ class ConcreteCache extends Cache
 	{
 		return array_key_exists($key, $this->db);
 	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		return true;
+	}
 }

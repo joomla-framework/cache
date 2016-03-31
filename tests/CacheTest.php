@@ -539,14 +539,12 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$options = $this->cacheOptions;
 		$className = $this->cacheClass;
 
-		try
+		if (!$className::isSupported())
 		{
-			$cacheInstance = new $className($options);
+			$this->markTestSkipped(sprintf('Cache Handler Class %sis not supported on this system.', $className));
 		}
-		catch (\RuntimeException $e)
-		{
-			$this->markTestSkipped();
-		}
+
+		$cacheInstance = new $className($options);
 
 		$this->instance =& $cacheInstance;
 

@@ -8,7 +8,6 @@
 
 namespace Joomla\Cache;
 
-use Joomla\Cache\Exception\UnsupportedFormatException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Exception\RuntimeException;
@@ -37,11 +36,6 @@ class Memcached extends Cache
 	 */
 	public function __construct($options = array())
 	{
-		if (!extension_loaded('memcached') || !class_exists('Memcached'))
-		{
-			throw new UnsupportedFormatException('Memcached not supported.');
-		}
-
 		// Parent sets up the caching options and checks their type
 		parent::__construct($options);
 
@@ -169,6 +163,22 @@ class Memcached extends Cache
 		$this->driver->get($key);
 
 		return ($this->driver->getResultCode() != \Memcached::RES_NOTFOUND);
+	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		/*
+		 * GAE and HHVM have both had instances where Memcached the class was defined but no extension was loaded.
+		 * If the class is there, we can assume it works.
+		 */
+		return (class_exists('Memcached'));
 	}
 
 	/**

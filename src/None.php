@@ -83,4 +83,16 @@ class None extends Cache
 	{
 		return false;
 	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		return true;
+	}
 }

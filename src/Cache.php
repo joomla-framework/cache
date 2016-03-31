@@ -11,7 +11,6 @@ namespace Joomla\Cache;
 use Joomla\Cache\Exception\InvalidArgumentException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
-use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Joomla! Caching Class

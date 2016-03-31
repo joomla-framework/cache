@@ -166,13 +166,6 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		try
-		{
-			$this->instance = new Cache\None;
-		}
-		catch (\Exception $e)
-		{
-			$this->markTestSkipped();
-		}
+		$this->instance = new Cache\None;
 	}
 }

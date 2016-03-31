@@ -8,7 +8,6 @@
 
 namespace Joomla\Cache;
 
-use Joomla\Cache\Exception\UnsupportedFormatException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
@@ -36,24 +35,6 @@ class Redis extends Cache
 	 * @since  1.0
 	 */
 	private $driver;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
-	 *
-	 * @since   1.0
-	 * @throws  \RuntimeException
-	 */
-	public function __construct($options = array())
-	{
-		if (!extension_loaded('redis') || !class_exists('\Redis'))
-		{
-			throw new UnsupportedFormatException('Redis not supported.');
-		}
-
-		parent::__construct($options);
-	}
 
 	/**
 	 * This will wipe out the entire cache's keys
@@ -153,6 +134,18 @@ class Redis extends Cache
 		$this->connect();
 
 		return $this->driver->exists($key);
+	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		return (extension_loaded('redis') && class_exists('Redis'));
 	}
 
 	/**

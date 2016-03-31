@@ -358,16 +358,14 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
+		if (!Cache\Redis::isSupported())
+		{
+			$this->markTestSkipped('Redis Cache Handler is not supported on this system.');
+		}
+
 		parent::setUp();
 
-		try
-		{
-			$this->instance = new Cache\Redis;
-		}
-		catch (\Exception $e)
-		{
-			$this->markTestSkipped($e->getMessage());
-		}
+		$this->instance = new Cache\Redis;
 	}
 
 	/**

@@ -8,7 +8,6 @@
 
 namespace Joomla\Cache;
 
-use Joomla\Cache\Exception\UnsupportedFormatException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
@@ -20,24 +19,6 @@ use Joomla\Cache\Item\Item;
  */
 class Wincache extends Cache
 {
-	/**
-	 * Constructor.
-	 *
-	 * @param   array  $options  Caching options object.
-	 *
-	 * @since   1.0
-	 * @throws  \RuntimeException
-	 */
-	public function __construct($options = array())
-	{
-		if (!extension_loaded('wincache') || !is_callable('wincache_ucache_get'))
-		{
-			throw new UnsupportedFormatException('WinCache not supported.');
-		}
-
-		parent::__construct($options);
-	}
-
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
@@ -126,5 +107,17 @@ class Wincache extends Cache
 	public function hasItem($key)
 	{
 		return wincache_ucache_exists($key);
+	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		return (extension_loaded('wincache') && function_exists('wincache_ucache_get') && !strcmp(ini_get('wincache.ucenabled'), "1"));
 	}
 }

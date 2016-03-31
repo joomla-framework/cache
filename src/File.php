@@ -210,6 +210,18 @@ class File extends Cache
 	}
 
 	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		return true;
+	}
+
+	/**
 	 * Check that the file path is a directory and writable.
 	 *
 	 * @param   string  $filePath  A file path.

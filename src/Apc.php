@@ -8,7 +8,6 @@
 
 namespace Joomla\Cache;
 
-use Joomla\Cache\Exception\UnsupportedFormatException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
@@ -20,24 +19,6 @@ use Joomla\Cache\Item\Item;
  */
 class Apc extends Cache
 {
-	/**
-	 * Constructor.
-	 *
-	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
-	 *
-	 * @since   1.0
-	 * @throws  \RuntimeException
-	 */
-	public function __construct($options = array())
-	{
-		if (!extension_loaded('apc') || !is_callable('apc_fetch'))
-		{
-			throw new UnsupportedFormatException('APC not supported.');
-		}
-
-		parent::__construct($options);
-	}
-
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
@@ -160,5 +141,25 @@ class Apc extends Cache
 	public function hasItem($key)
 	{
 		return apc_exists($key);
+	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		$supported = extension_loaded('apc') && ini_get('apc.enabled');
+
+		// If on the CLI interface, the `apc.enable_cli` option must also be enabled
+		if ($supported && php_sapi_name() === 'cli')
+		{
+			$supported = ini_get('apc.enable_cli');
+		}
+
+		return (bool) $supported;
 	}
 }

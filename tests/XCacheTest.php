@@ -124,15 +124,13 @@ class XCacheTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
+		if (!Cache\XCache::isSupported())
+		{
+			$this->markTestSkipped('XCache Cache Handler is not supported on this system.');
+		}
+
 		parent::setUp();
 
-		try
-		{
-			$this->instance = new Cache\XCache;
-		}
-		catch (\Exception $e)
-		{
-			$this->markTestSkipped();
-		}
+		$this->instance = new Cache\XCache;
 	}
 }

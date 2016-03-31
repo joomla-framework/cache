@@ -131,27 +131,25 @@ class ApcuTest extends CacheTest
 	 */
 	protected function setUp()
 	{
+		if (!Cache\Apcu::isSupported())
+		{
+			$this->markTestSkipped('APCu Cache Handler is not supported on this system.');
+		}
+
 		$this->cacheClass = 'Joomla\\Cache\\Apcu';
 
-		try
-		{
-			parent::setUp();
+		parent::setUp();
 
-			// Create a stub for the CacheItemInterface class.
-			$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-				->getMock();
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
 
-			$stub->method('get')
-				->willReturn('bar');
+		$stub->method('get')
+			->willReturn('bar');
 
-			$stub->method('getKey')
-				->willReturn('foo');
+		$stub->method('getKey')
+			->willReturn('foo');
 
-			$this->instance->save($stub);
-		}
-		catch (\Exception $e)
-		{
-			$this->markTestSkipped();
-		}
+		$this->instance->save($stub);
 	}
 }

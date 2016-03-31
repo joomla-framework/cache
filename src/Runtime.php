@@ -104,4 +104,16 @@ class Runtime extends Cache
 	{
 		return isset(self::$store[$key]);
 	}
+
+	/**
+	 * Test to see if the CacheItemPoolInterface is available
+	 *
+	 * @return  boolean  True on success, false otherwise
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function isSupported()
+	{
+		return true;
+	}
 }

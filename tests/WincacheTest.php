@@ -124,15 +124,13 @@ class WincacheTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
+		if (!Cache\Wincache::isSupported())
+		{
+			$this->markTestSkipped('WinCache Cache Handler is not supported on this system.');
+		}
+
 		parent::setUp();
 
-		try
-		{
-			$this->instance = new Cache\Wincache;
-		}
-		catch (\Exception $e)
-		{
-			$this->markTestSkipped();
-		}
+		$this->instance = new Cache\Wincache;
 	}
 }
