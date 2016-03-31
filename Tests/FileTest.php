@@ -196,8 +196,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
 				->method('deleteItem')
 				->willReturn(false);
 
-		$instance->setOption('ttl', 1);
-
 		$stub = $this->getMockBuilder('Joomla\Cache\Item\Item');
 		$stub = $stub->setMethods(array('get', 'getKey', 'getExpiration'));
 		$stub = $stub->setConstructorArgs(array('foo'));
@@ -210,11 +208,9 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			->willReturn('foo');
 
 		$stub->method('getExpiration')
-			->willReturn(new \DateTime(time() + 1));
+			->willReturn(new \DateTime(time() - 1));
 
 		$instance->save($stub);
-
-		sleep(2);
 
 		$this->assertNull(
 			$instance->getItem('foo')->get(),
@@ -319,7 +315,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 * @covers  Joomla\Cache\File::getItem
 	 * @covers  Joomla\Cache\File::deleteItem
 	 * @since   1.0
-	 * @todo    Custom ttl is not working in set yet.
 	 */
 	public function testSave()
 	{
@@ -410,51 +405,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testFetchStreamUri()
 	{
 		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'test');
-	}
-
-	/**
-	 * Tests the Joomla\Cache\File::isExpired method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\File::isExpired
-	 * @since   1.0
-	 */
-	public function testIsExpired()
-	{
-		$this->instance->setOption('ttl', 1);
-
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->instance->save($stub);
-
-		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
-		touch($fileName, time() -2);
-
-		$this->assertTrue(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should be expired.');
-
-		$this->instance->setOption('ttl', 900);
-
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->instance->save($stub);
-		$this->assertFalse(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should not be expired.');
 	}
 
 	/**

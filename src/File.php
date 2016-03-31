@@ -9,6 +9,7 @@
 namespace Joomla\Cache;
 
 use Joomla\Cache\Exception\RuntimeException;
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Exception\InvalidArgumentException;
 use Joomla\Cache\Item\Item;
@@ -17,7 +18,6 @@ use Joomla\Cache\Item\Item;
  * Filesystem cache driver for the Joomla Framework.
  *
  * Supported options:
- * - ttl (integer)          : The default number of seconds for the cache life.
  * - file.locking (boolean) :
  * - file.path              : The path for cache files.
  *
@@ -93,17 +93,6 @@ class File extends Cache
 	 */
 	public function getItem($key)
 	{
-		// If the cached data has expired remove it and return.
-		if ($this->hasItem($key) && $this->isExpired($key))
-		{
-			if (!$this->deleteItem($key))
-			{
-				throw new RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null);
-			}
-
-			return new Item($key);
-		}
-
 		if (!$this->hasItem($key))
 		{
 			return new Item($key);
@@ -133,7 +122,20 @@ class File extends Cache
 		fclose($resource);
 
 		$item = new Item($key);
-		$item->set(unserialize($data));
+		$information = unserialize($data);
+
+		// If the cached data has expired remove it and return.
+		if ($information[1] !== null && time() > $information[1])
+		{
+			if (!$this->deleteItem($key))
+			{
+				throw new RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null);
+			}
+
+			return $item;
+		}
+
+		$item->set($information[0]);
 
 		return $item;
 	}
@@ -175,9 +177,18 @@ class File extends Cache
 			mkdir($filePath, 0770, true);
 		}
 
+		if ($item instanceof HasExpirationDateInterface)
+		{
+			$contents = serialize(array($item->get(), time() + $this->convertItemExpiryToSeconds($item)));
+		}
+		else
+		{
+			$contents = serialize(array($item->get(), null));
+		}
+
 		$success = (bool) file_put_contents(
 			$fileName,
-			serialize($item->get()),
+			$contents,
 			($this->options['file.locking'] ? LOCK_EX : null)
 		);
 
@@ -243,25 +254,5 @@ class File extends Cache
 			substr(hash('md5', $key), 0, 4),
 			hash('sha1', $key)
 		);
-	}
-
-	/**
-	 * Check whether or not the cached data by id has expired.
-	 *
-	 * @param   string  $key  The storage entry identifier.
-	 *
-	 * @return  boolean  True if the data has expired.
-	 *
-	 * @since   1.0
-	 */
-	private function isExpired($key)
-	{
-		// Check to see if the cached data has expired.
-		if (filemtime($this->fetchStreamUri($key)) < (time() - $this->options['ttl']))
-		{
-			return true;
-		}
-
-		return false;
 	}
 }
