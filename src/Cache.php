@@ -111,11 +111,14 @@ abstract class Cache implements CacheItemPoolInterface
 	 */
 	public function deleteItems(array $keys)
 	{
-		$result = array();
+		$result = true;
 
 		foreach ($keys as $key)
 		{
-			$result[$key] = $this->deleteItem($key);
+			if (!$this->deleteItem($key))
+			{
+				$result = false;
+			}
 		}
 
 		return $result;
