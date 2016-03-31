@@ -5,22 +5,22 @@ sudo: false
 env:
   global:
     - RUN_PHPCS="no"
+    - RUN_SCRUTINIZER="no"
     - COMPOSER_FLAGS=""
+    - PHPUNIT_FLAGS=""
     - INSTALL_MEMCACHED="yes"
     - INSTALL_REDIS="yes"
 
 matrix:
   include:
-    - php: 5.3
-      env: INSTALL_APC="yes"
-    - php: 5.3
-      env: INSTALL_APC="yes" COMPOSER_FLAGS="--prefer-lowest"
     - php: 5.4
       env: INSTALL_APC="yes"
+    - php: 5.4
+      env: INSTALL_APC="yes" COMPOSER_FLAGS="--prefer-lowest"
     - php: 5.5
       env: INSTALL_APCU="yes"
     - php: 5.6
-      env: RUN_PHPCS="yes" INSTALL_APCU="yes"
+      env: RUN_PHPCS="yes" RUN_SCRUTINIZER="yes" PHPUNIT_FLAGS="--coverage-clover .travis/logs/clover.xml" INSTALL_APCU="yes"
     - php: 7.0
       env: INSTALL_APCU="yes" INSTALL_APCU_BC_BETA="no" INSTALL_MEMCACHED="yes" INSTALL_REDIS="yes" # Disabled apcu_bc install until https://github.com/travis-ci/travis-ci/issues/5303 is resolved
     - php: hhvm
@@ -35,6 +35,7 @@ services:
 before_script:
   - composer self-update
   - composer update $COMPOSER_FLAGS
+  - if [ "RUN_SCRUTINIZER" == "yes" ]; then composer require --no-update satooshi/php-coveralls:~1.0; fi
   # Enable additional PHP extensions
   - if [[ $INSTALL_MEMCACHED == "yes" ]]; then phpenv config-add .travis/phpenv/memcached.ini; fi
   - if [[ $INSTALL_APC == "yes" ]]; then phpenv config-add .travis/phpenv/apc-$TRAVIS_PHP_VERSION.ini; fi
@@ -44,5 +45,11 @@ before_script:
   - if [[ $INSTALL_REDIS == "yes" ]]; then phpenv config-add .travis/phpenv/redis.ini; fi
 
 script:
-  - vendor/bin/phpunit
+  - if [ "$RUN_SCRUTINIZER" == "yes" ]; then mkdir -p .travis/logs; fi
+  - vendor/bin/phpunit $PHPUNIT_FLAGS
+  - if [ "$RUN_SCRUTINIZER" == "yes" ]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [ "$RUN_SCRUTINIZER" == "yes" ]; then php ocular.phar code-coverage:upload --format=php-clover .travis/logs/clover.xml; fi
   - if [[ $RUN_PHPCS == "yes" ]]; then vendor/bin/phpcs -p --report=full --extensions=php --standard=.travis/phpcs/Joomla/ruleset.xml src/; fi;
+
+after_script:
+  - php vendor/bin/coveralls -v
