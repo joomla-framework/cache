@@ -152,8 +152,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$stub->method('getKey')
 			->willReturn('foo');
 
+		$expireDate = new \DateTime;
+		$expireDate->setTimestamp(time());
 		$stub->method('getExpiration')
-			->willReturn(new \Datetime(time() - 2));
+			->willReturn($expireDate);
 
 		$this->instance->save($stub);
 
@@ -163,57 +165,10 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			'The key should have not been deleted.'
 		);
 
-		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
-		touch($fileName, time() -2);
+		sleep(1);
 
 		$this->assertFalse(
 			$this->instance->getItem('foo')->isHit(),
-			'The key should have been deleted.'
-		);
-	}
-
-	/**
-	 * Tests the Joomla\Cache\File::get method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\File::get
-	 * @expectedException  \RuntimeException
-	 * @since   1.1.3
-	 */
-	public function testGetCantRemoveExpiredKeyException()
-	{
-		$options = array(
-			'file.path' => __DIR__ . '/tmp'
-		);
-
-		$instance = $this->getMockBuilder('Joomla\Cache\File');
-		$instance = $instance->setMethods(array('deleteItem'));
-		$instance = $instance->setConstructorArgs(array($options));
-		$instance = $instance->getMock();
-
-		$instance->expects($this->any())
-				->method('deleteItem')
-				->willReturn(false);
-
-		$stub = $this->getMockBuilder('Joomla\Cache\Item\Item');
-		$stub = $stub->setMethods(array('get', 'getKey', 'getExpiration'));
-		$stub = $stub->setConstructorArgs(array('foo'));
-		$stub = $stub->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$stub->method('getExpiration')
-			->willReturn(new \DateTime(time() - 1));
-
-		$instance->save($stub);
-
-		$this->assertNull(
-			$instance->getItem('foo')->get(),
 			'The key should have been deleted.'
 		);
 	}
