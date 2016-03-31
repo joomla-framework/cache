@@ -178,7 +178,7 @@ class Item extends AbstractItem
 	{
 		if (is_integer($time))
 		{
-			$this->expiration = new DateTime('now +' . $time . ' seconds');
+			$this->expiration = new \DateTime('now +' . $time . ' seconds');
 		}
 		elseif($time instanceof \DateInterval)
 		{
