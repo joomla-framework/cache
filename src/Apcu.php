@@ -18,7 +18,7 @@ use Joomla\Cache\Item\Item;
  *
  * @since  __DEPLOY_VERSION__
  */
-class Apc extends Cache
+class Apcu extends Cache
 {
 	/**
 	 * Constructor.
