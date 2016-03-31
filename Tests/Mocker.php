@@ -50,8 +50,7 @@ class Mocker
 			'getItems',
 			'deleteItem',
 			'deleteItems',
-			'set',
-			'setMultiple',
+			'save'
 		);
 
 		// Create the mock.
@@ -70,7 +69,7 @@ class Mocker
 			$mockObject,
 			$this->test,
 			array(
-				'get' => array((is_callable(array($this->test, 'mockCacheGet')) ? $this->test : $this), 'mockCacheGet'),
+				'getItem' => array((is_callable(array($this->test, 'mockCacheGetItem')) ? $this->test : $this), 'mockCacheGetItem'),
 			)
 		);
 
@@ -89,9 +88,9 @@ class Mocker
 		// Collect all the relevant methods in JDatabase.
 		$methods = array(
 			'getKey',
-			'getValue',
+			'get',
 			'isHit',
-			'setValue',
+			'set',
 		);
 
 		// Create the mock.
@@ -127,7 +126,7 @@ class Mocker
 	 *
 	 * @since   1.0
 	 */
-	public function mockCacheGet($key)
+	public function mockCacheGetItem($key)
 	{
 		return $this->createMockItem();
 	}
