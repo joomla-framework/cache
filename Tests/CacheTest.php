@@ -373,16 +373,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 
 		foreach ($results as $key => $removed)
 		{
-			$msg = "Removal of $key was $removed::";
-
-			if (in_array($key, $trueSampleKeys))
-			{
-				$this->assertTrue($removed, $msg . __LINE__);
-			}
-			else
-			{
-				$this->assertFalse($removed, $msg . __LINE__);
-			}
+			$this->assertTrue($removed, "The $key key should be removed even when it does not exist.");
 		}
 	}
 
@@ -442,7 +433,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$removeFoo = $cacheInstance->deleteItem('foo2');
 		$this->assertTrue($removeFoo, __LINE__);
 		$removeFoobar = $cacheInstance->deleteItem('foobar');
-		$this->assertFalse($removeFoobar, __LINE__);
+		$this->assertTrue($removeFoobar, __LINE__);
 		$getResult = $cacheInstance->getItem('foo2');
 		$this->assertFalse($getResult->isHit(), __LINE__);
 	}
