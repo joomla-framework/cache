@@ -138,7 +138,7 @@ class Apc extends Cache
 		{
 			$ttl = 0;
 		}
-		
+
 		return apc_store($item->getKey(), $item->get(), $ttl);
 	}
 
