@@ -37,4 +37,11 @@ The following methods have a 1:1 mapping:
 3. Setting expiration of cache items is now done at the Cache item level rather than the cache adapter level.
 
 ### APCu Support Added
+
 A handler natively supporting APCu was added.
+
+### UnsupportedFormatException Removed
+
+The `Joomla\Cache\Exception\UnsupportedFormatException` class has been removed. This was previously thrown when an adapter is not
+supported on an environment. Instead, a `Joomla\Cache\CacheItemPoolInterface` interface extending the `Psr\Cache\CacheItemPoolInterface`
+interface has been added and all CacheItemPool implementations offer a static `isSupported()` method to test for support.
