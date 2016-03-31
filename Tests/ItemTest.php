@@ -6,7 +6,7 @@
 
 namespace Joomla\Cache\Tests;
 
-use Joomla\Cache;
+use Joomla\Cache\Item\Item;
 
 /**
  * Tests for the Joomla\Cache\Item class.
@@ -16,7 +16,7 @@ use Joomla\Cache;
 class ItemTest extends \PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var    Cache\Item
+	 * @var    Item
 	 * @since  1.0
 	 */
 	private $instance;
@@ -50,6 +50,6 @@ class ItemTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->instance = new Cache\Item('foo');
+		$this->instance = new Item('foo');
 	}
 }
