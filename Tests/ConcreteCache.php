@@ -154,14 +154,14 @@ class ConcreteCache extends Cache
 
 		if (array_key_exists($key, $oldCache))
 		{
-			$keyArray = array($key => $key );
+			$keyArray = array($key => $key);
 			$newCache = array_diff_key($oldCache, $keyArray);
 			$this->db->exchangeArray($newCache);
 
 			return true;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**

@@ -307,10 +307,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			'Checks the value was set'
 		);
 
-		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
- 		unlink($fileName);
-
-  		$this->assertFalse($this->instance->deleteItem('foo'), 'Checks the value was removed');
+  		$this->assertTrue($this->instance->deleteItem('foo'), 'Checks the value was removed');
  	}
 
 	/**

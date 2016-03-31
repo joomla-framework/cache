@@ -331,7 +331,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 		$this->instance->save($stub);
 		$this->instance->save($stub2);
 
-		$this->instance->deleteItems(array('foo', 'bar'));
+		$this->instance->deleteItems(array('foo', 'boo'));
 
 		$this->assertFalse(
 			$this->instance->getItem('foo')->isHit(),
