@@ -8,8 +8,6 @@
 
 namespace Joomla\Cache\Item;
 
-use DateTime;
-
 /**
  * Cache item instance for the Joomla Framework.
  *
@@ -20,8 +18,8 @@ class Item extends AbstractItem
 	/**
 	 * The time the object expires at
 	 *
-	 * @var    DateTime
-	 * @since  2.0
+	 * @var    \DateTime
+	 * @since  __DEPLOY_VERSION__
 	 */
 	private $expiration;
 
@@ -39,10 +37,10 @@ class Item extends AbstractItem
 	 * @var    mixed
 	 * @since  1.0
 	 */
-	private $value = null;
+	private $value;
 
 	/**
-	 * Whether the cache item is value or not.
+	 * Whether the cache item has been hit.
 	 *
 	 * @var    boolean
 	 * @since  1.0
@@ -52,8 +50,8 @@ class Item extends AbstractItem
 	/**
 	 * Class constructor.
 	 *
-	 * @param   string                 $key  The key for the cache item.
-	 * @param   DateTime|integer|null  $ttl  The expiry time for the cache item in seconds or as a datetime object
+	 * @param   string                  $key  The key for the cache item.
+	 * @param   \DateTime|integer|null  $ttl  The expiry time for the cache item in seconds or as a datetime object
 	 *
 	 * @since   1.0
 	 */
@@ -65,7 +63,7 @@ class Item extends AbstractItem
 		{
 			$this->expiresAfter($ttl);
 		}
-		elseif ($ttl instanceof DateTime)
+		elseif ($ttl instanceof \DateTime)
 		{
 			$this->expiresAt($ttl);
 		}
@@ -82,8 +80,9 @@ class Item extends AbstractItem
 	 * reasons, which could result in a race condition between exists() and get().
 	 * To avoid that potential race condition use isHit() instead.
 	 *
-	 * @return boolean
-	 *  True if item exists in the cache, false otherwise.
+	 * @return  boolean
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function exists()
 	{
@@ -91,9 +90,9 @@ class Item extends AbstractItem
 	}
 
 	/**
-	 * Get the key associated with this CacheItem.
+	 * Returns the key for the current cache item.
 	 *
-	 * @return  string
+	 * @return  string  The key string for this cache item.
 	 *
 	 * @since   1.0
 	 */
@@ -103,9 +102,9 @@ class Item extends AbstractItem
 	}
 
 	/**
-	 * Obtain the value of this cache item.
+	 * Retrieves the value of the item from the cache associated with this object's key.
 	 *
-	 * @return  mixed
+	 * @return  mixed  The value corresponding to this cache item's key, or null if not found.
 	 *
 	 * @since   1.0
 	 */
@@ -115,13 +114,13 @@ class Item extends AbstractItem
 	}
 
 	/**
-	 * Set the value of the item.
+	 * Sets the value represented by this cache item.
 	 *
 	 * If the value is set, we are assuming that there was a valid hit on the cache for the given key.
 	 *
-	 * @param   mixed  $value  The value for the cache item.
+	 * @param   mixed  $value  The serializable value to be stored.
 	 *
-	 * @return  void
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -129,10 +128,12 @@ class Item extends AbstractItem
 	{
 		$this->value = $value;
 		$this->hit = true;
+
+		return $this;
 	}
 
 	/**
-	 * This boolean value tells us if our cache item is currently in the cache or not.
+	 * Confirms if the cache item lookup resulted in a cache hit.
 	 *
 	 * @return  boolean
 	 *
@@ -151,11 +152,15 @@ class Item extends AbstractItem
 	 *                                           set, the value should be stored permanently or for as long as the
 	 *                                           implementation allows.
 	 *
-	 * @return  static  The called object.
+	 * @return  $this
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function expiresAt($expiration)
 	{
 		$this->expiration = $expiration;
+
+		return $this;
 	}
 
 	/**
@@ -165,7 +170,9 @@ class Item extends AbstractItem
 	 *                                    expired. An integer parameter is understood to be the time in seconds until
 	 *                                    expiration.
 	 *
-	 * @return  static  The called object.
+	 * @return  $this
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function expiresAfter($time)
 	{
@@ -175,22 +182,25 @@ class Item extends AbstractItem
 		}
 		elseif($time instanceof \DateInterval)
 		{
-			$this->expiration = new DateTime('now');
+			$this->expiration = new \DateTime('now');
 			$this->expiration->add($time);
 		}
 		else
 		{
-			$this->expiration = new DateTime('now + 900 seconds');
+			$this->expiration = new \DateTime('now + 900 seconds');
 		}
+
+		return $this;
 	}
 
 	/**
 	 * Returns the expiration time of a not-yet-expired cache item.
 	 *
-	 * If this cache item is a Cache Miss, this method MAY return the time at
-	 * which the item expired or the current time if that is not available.
+	 * If this cache item is a Cache Miss, this method MAY return the time at which the item expired or the current time if that is not available.
 	 *
 	 * @return  \DateTime  The timestamp at which this cache item will expire.
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function getExpiration()
 	{
