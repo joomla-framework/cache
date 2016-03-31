@@ -97,7 +97,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	public function testGetAndSaveWithTimeout()
 	{
 		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\Item')
+		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\AbstractItem')
 			->getMock();
 
 		$stub->method('get')
