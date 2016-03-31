@@ -83,7 +83,13 @@ class Wincache extends Cache
 	 */
 	public function deleteItem($key)
 	{
-		return wincache_ucache_delete($key);
+		if ($this->hasItem($key))
+		{
+			return wincache_ucache_delete($key);
+		}
+
+		// If the item doesn't exist, no error
+		return true;
 	}
 
 	/**

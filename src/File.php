@@ -149,7 +149,13 @@ class File extends Cache
 	 */
 	public function deleteItem($key)
 	{
-		return (bool) @unlink($this->fetchStreamUri($key));
+		if ($this->hasItem($key))
+		{
+			return (bool) @unlink($this->fetchStreamUri($key));
+		}
+
+		// If the item doesn't exist, no error
+		return true;
 	}
 
 	/**

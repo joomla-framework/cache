@@ -81,7 +81,13 @@ class XCache extends Cache
 	 */
 	public function deleteItem($key)
 	{
-		return xcache_unset($key);
+		if ($this->hasItem($key))
+		{
+			return xcache_unset($key);
+		}
+
+		// If the item doesn't exist, no error
+		return true;
 	}
 
 	/**

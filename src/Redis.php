@@ -106,9 +106,13 @@ class Redis extends Cache
 	{
 		$this->connect();
 
-		$result = (bool) $this->driver->del($key);
+		if ($this->hasItem($key))
+		{
+			return (bool) $this->driver->del($key);
+		}
 
-		return $result;
+		// If the item doesn't exist, no error
+		return true;
 	}
 
 	/**

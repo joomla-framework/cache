@@ -116,7 +116,13 @@ class Apc extends Cache
 	 */
 	public function deleteItem($key)
 	{
-		return apc_delete($key);
+		if ($this->hasItem($key))
+		{
+			return apc_delete($key);
+		}
+
+		// If the item doesn't exist, no error
+		return true;
 	}
 
 	/**
