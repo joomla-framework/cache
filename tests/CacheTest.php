@@ -120,15 +120,15 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the the Joomla\Cache\Cache::get method.
+	 * Tests the the Joomla\Cache\Cache::getItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Memcached::get
+	 * @covers  Joomla\Cache\Memcached::getItem
 	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
-	public function testGet()
+	public function testGetItem()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
