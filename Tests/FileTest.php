@@ -144,7 +144,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 		// Create a stub for the CacheItemInterface class.
 		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\AbstractItem')
-			->setConstructorArgs(array('foo'))
 			->getMock();
 
 		$stub->method('get')

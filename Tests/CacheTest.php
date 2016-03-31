@@ -269,6 +269,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 			->willReturn('hello');
 
 		$samples = array($stub, $stub2, $stub3);
+		$expectedSamples = array('foo' => 'foo', 'bar' => 'bar', 'hello' => 'world');
 		$moreSamples = $samples;
 
 		// Create a stub for the CacheItemInterface class.
@@ -305,8 +306,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		{
 			$itemKey = $item->getKey();
 			$itemValue = $item->get();
-			$sampleValue = $samples[$itemKey];
-			$this->assertEquals($itemValue, $sampleValue, __LINE__);
+			$this->assertEquals($itemValue, $expectedSamples[$itemKey], __LINE__);
 		}
 
 		// Even if no keys are set, we should still$ have an array of keys
