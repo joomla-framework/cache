@@ -32,12 +32,11 @@ class XCacheTest extends \PHPUnit_Framework_TestCase
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->removeMultiple(array('foo')), 'Checking removeMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
 		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
-		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
 	}
 
 	/**
@@ -54,40 +53,40 @@ class XCacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\XCache::exists method.
+	 * Tests the Joomla\Cache\XCache::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\XCache::exists
+	 * @covers  Joomla\Cache\XCache::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
 		$this->markTestIncomplete();
 	}
 
 	/**
-	 * Tests the Joomla\Cache\XCache::get method.
+	 * Tests the Joomla\Cache\XCache::getItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\XCache::get
+	 * @covers  Joomla\Cache\XCache::getItem
 	 * @since   1.0
 	 */
-	public function testGet()
+	public function testGetItem()
 	{
 		$this->markTestIncomplete();
 	}
 
 	/**
-	 * Tests the Joomla\Cache\XCache::remove method.
+	 * Tests the Joomla\Cache\XCache::deleteItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\XCache::remove
+	 * @covers  Joomla\Cache\XCache::deleteItem
 	 * @since   1.0
 	 */
-	public function testRemove()
+	public function testDeleteItem()
 	{
 		$this->markTestIncomplete();
 	}

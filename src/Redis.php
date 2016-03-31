@@ -8,6 +8,9 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\UnsupportedFormatException;
+use Joomla\Cache\Item\HasExpirationDateInterface;
+use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
 use Redis as RedisDriver;
 
@@ -46,7 +49,7 @@ class Redis extends Cache
 	{
 		if (!extension_loaded('redis') || !class_exists('\Redis'))
 		{
-			throw new \RuntimeException('Redis not supported.');
+			throw new UnsupportedFormatException('Redis not supported.');
 		}
 
 		parent::__construct($options);
@@ -63,7 +66,7 @@ class Redis extends Cache
 	{
 		$this->connect();
 
-		return $this->driver->flushall();
+		return $this->driver->flushDB();
 	}
 
 	/**
@@ -75,7 +78,7 @@ class Redis extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		$this->connect();
 
@@ -84,7 +87,7 @@ class Redis extends Cache
 
 		if ($value !== false)
 		{
-			$item->setValue($value);
+			$item->set($value);
 		}
 
 		return $item;
@@ -99,44 +102,41 @@ class Redis extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		$this->connect();
 
-		$result = (bool) $this->driver->del($key);
+		if ($this->hasItem($key))
+		{
+			return (bool) $this->driver->del($key);
+		}
 
-		return $result;
+		// If the item doesn't exist, no error
+		return true;
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return  bool  True if the item was successfully persisted. False if there was an error.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
 		$this->connect();
 
-		if (!$this->driver->set($key, $value))
+		if ($item instanceof HasExpirationDateInterface)
 		{
-			return false;
-		}
+			$ttl = $this->convertItemExpiryToSeconds($item);
 
-		if ($ttl)
-		{
-			if (!$this->driver->expire($key, $ttl))
+			if ($ttl > 0)
 			{
-				return false;
+				return $this->driver->setex($item->getKey(), $ttl, $item->get());
 			}
 		}
 
-		return true;
+		return $this->driver->set($item->getKey(), $item->get());
 	}
 
 	/**
@@ -148,7 +148,7 @@ class Redis extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function exists($key)
+	public function hasItem($key)
 	{
 		$this->connect();
 

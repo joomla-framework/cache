@@ -14,25 +14,25 @@ use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
 
 /**
- * WinCache cache driver for the Joomla Framework.
+ * APCu cache driver for the Joomla Framework.
  *
- * @since  1.0
+ * @since  __DEPLOY_VERSION__
  */
-class Wincache extends Cache
+class Apcu extends Cache
 {
 	/**
 	 * Constructor.
 	 *
-	 * @param   array  $options  Caching options object.
+	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 * @throws  \RuntimeException
 	 */
 	public function __construct($options = array())
 	{
-		if (!extension_loaded('wincache') || !is_callable('wincache_ucache_get'))
+		if (!extension_loaded('apc') || !is_callable('apcu_fetch'))
 		{
-			throw new UnsupportedFormatException('WinCache not supported.');
+			throw new UnsupportedFormatException('APC not supported.');
 		}
 
 		parent::__construct($options);
@@ -43,10 +43,11 @@ class Wincache extends Cache
 	 *
 	 * @return  boolean  The result of the clear operation.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function clear()
 	{
+		return apcu_clear_cache('user');
 	}
 
 	/**
@@ -56,13 +57,14 @@ class Wincache extends Cache
 	 *
 	 * @return  CacheItemInterface
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \RuntimeException
 	 */
 	public function getItem($key)
 	{
+		$success = false;
+		$value = apcu_fetch($key, $success);
 		$item = new Item($key);
-		$success = true;
-		$value = wincache_ucache_get($key, $success);
 
 		if ($success)
 		{
@@ -73,19 +75,50 @@ class Wincache extends Cache
 	}
 
 	/**
+	 * Obtain multiple CacheItems by their unique keys.
+	 *
+	 * @param   array  $keys  A list of keys that can obtained in a single operation.
+	 *
+	 * @return  array  An associative array of CacheItem objects keyed on the cache key.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getItems(array $keys = array())
+	{
+		$items = array();
+		$success = false;
+		$values = apcu_fetch($keys, $success);
+
+		if ($success && is_array($values))
+		{
+			foreach ($keys as $key)
+			{
+				$items[$key] = new Item($key);
+
+				if (isset($values[$key]))
+				{
+					$items[$key]->set($values[$key]);
+				}
+			}
+		}
+
+		return $items;
+	}
+
+	/**
 	 * Method to remove a storage entry for a key.
 	 *
 	 * @param   string  $key  The storage entry identifier.
 	 *
 	 * @return  boolean
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function deleteItem($key)
 	{
 		if ($this->hasItem($key))
 		{
-			return wincache_ucache_delete($key);
+			return apcu_delete($key);
 		}
 
 		// If the item doesn't exist, no error
@@ -97,7 +130,8 @@ class Wincache extends Cache
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  static  The invoked object.
+	 * @return static
+	 *   The invoked object.
 	 */
 	public function save(CacheItemInterface $item)
 	{
@@ -111,7 +145,7 @@ class Wincache extends Cache
 			$ttl = 0;
 		}
 
-		return wincache_ucache_set($item->getKey(), $item->get(), $ttl);
+		return apcu_store($item->getKey(), $item->get(), $ttl);
 	}
 
 	/**
@@ -121,10 +155,10 @@ class Wincache extends Cache
 	 *
 	 * @return  boolean
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function hasItem($key)
 	{
-		return wincache_ucache_exists($key);
+		return apcu_exists($key);
 	}
 }

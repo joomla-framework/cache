@@ -6,7 +6,7 @@
 
 namespace Joomla\Cache\Tests;
 
-use Joomla\Cache;
+use Joomla\Cache\Item\Item;
 
 /**
  * Tests for the Joomla\Cache\Item class.
@@ -16,7 +16,7 @@ use Joomla\Cache;
 class ItemTest extends \PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var    Cache\Item
+	 * @var    Item
 	 * @since  1.0
 	 */
 	private $instance;
@@ -31,11 +31,11 @@ class ItemTest extends \PHPUnit_Framework_TestCase
 	public function testItem()
 	{
 		$this->assertEquals('foo', $this->instance->getKey());
-		$this->assertNull($this->instance->getValue());
+		$this->assertNull($this->instance->get());
 		$this->assertFalse($this->instance->isHit());
 
-		$this->instance->setValue('bar');
-		$this->assertEquals('bar', $this->instance->getValue());
+		$this->instance->set('bar');
+		$this->assertEquals('bar', $this->instance->get());
 		$this->assertTrue($this->instance->isHit());
 	}
 
@@ -50,6 +50,6 @@ class ItemTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->instance = new Cache\Item('foo');
+		$this->instance = new Item('foo');
 	}
 }

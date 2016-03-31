@@ -7,7 +7,7 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache\Cache;
-use Joomla\Cache\Item;
+use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -88,7 +88,7 @@ class ConcreteCache extends Cache
 		try
 		{
 			$value = $this->getValue($key);
-			$item->setValue($value);
+			$item->set($value);
 		}
 		catch ( \Exception $e)
 		{
@@ -115,6 +115,7 @@ class ConcreteCache extends Cache
 	 * @return  mixed
 	 *
 	 * @since   1.0
+	 * @throws  \Exception
 	 */
 	public function getValue($key)
 	{
@@ -147,36 +148,34 @@ class ConcreteCache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		$oldCache = $this->db->getArrayCopy();
 
 		if (array_key_exists($key, $oldCache))
 		{
-			$keyArray = array($key => $key );
+			$keyArray = array($key => $key);
 			$newCache = array_diff_key($oldCache, $keyArray);
 			$this->db->exchangeArray($newCache);
 
 			return true;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
 	 * Method to set a value for a storage entry.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
 	 * @return  boolean
 	 *
 	 * @since   1.0
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
-		$this->db[$key] = $value;
+		$this->db[$item->getKey()] = $item->get();
 
 		return true;
 	}
@@ -190,7 +189,7 @@ class ConcreteCache extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		return array_key_exists($key, $this->db);
 	}

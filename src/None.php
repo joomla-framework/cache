@@ -9,6 +9,7 @@
 namespace Joomla\Cache;
 
 use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Item\Item;
 
 /**
  * Runtime cache only driver for the Joomla Framework.
@@ -38,7 +39,7 @@ class None extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
 		return new Item($key);
 	}
@@ -52,23 +53,19 @@ class None extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
 		return true;
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return  static  The invoked object.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
 		return true;
 	}
@@ -82,7 +79,7 @@ class None extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		return false;
 	}

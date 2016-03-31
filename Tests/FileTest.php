@@ -51,12 +51,22 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->removeMultiple(array('foo')), 'Checking removeMultiple.');
-		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
-		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking set.');
 	}
 
 	/**
@@ -90,13 +100,34 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testClear()
 	{
-		$this->instance->set('foo', 'bar');
-		$this->instance->set('goo', 'car');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('car');
+
+		$stub2->method('getKey')
+			->willReturn('goo');
+
+		$this->instance->save($stub2);
 
 		$this->instance->clear();
 
-		$this->assertFalse($this->instance->get('foo')->isHit());
-		$this->assertFalse($this->instance->get('goo')->isHit());
+		$this->assertFalse($this->instance->getItem('foo')->isHit());
+		$this->assertFalse($this->instance->getItem('goo')->isHit());
 	}
 
 	/**
@@ -109,148 +140,167 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$this->assertFalse($this->instance->get('foo')->isHit(), 'Checks an unknown key.');
+		$this->assertFalse($this->instance->getItem('foo')->isHit(), 'Checks an unknown key.');
 
-		$this->instance->setOption('ttl', 1);
-		$this->instance->set('foo', 'bar', 1);
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\AbstractItem')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$expireDate = new \DateTime;
+		$expireDate->setTimestamp(time());
+		$stub->method('getExpiration')
+			->willReturn($expireDate);
+
+		$this->instance->save($stub);
 
 		$this->assertEquals(
 			'bar',
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'The key should have not been deleted.'
 		);
 
-		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
-		touch($fileName, time() -2);
+		sleep(1);
 
 		$this->assertFalse(
-			$this->instance->get('foo')->isHit(),
+			$this->instance->getItem('foo')->isHit(),
 			'The key should have been deleted.'
 		);
 	}
 
 	/**
-	 * Tests the Joomla\Cache\File::get method.
+	 * Tests the Joomla\Cache\File::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\File::get
-	 * @expectedException  \RuntimeException
-	 * @since   1.1.3
+	 * @covers  Joomla\Cache\File::hasItem
+	 * @since   1.0
 	 */
-	public function testGetCantRemoveExpiredKeyException()
+	public function testHasItem()
 	{
-		$options = array(
-			'file.path' => __DIR__ . '/tmp'
-		);
+		$this->assertFalse($this->instance->hasItem('foo'));
 
-		$instance = $this->getMockBuilder('Joomla\Cache\File');
-		$instance = $instance->setMethods(array('remove'));
-		$instance = $instance->setConstructorArgs(array($options));
-		$instance = $instance->getMock();
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
 
-		$instance->expects($this->any())
-				->method('remove')
-				->will($this->returnValue(false));
+		$stub->method('get')
+			->willReturn('bar');
 
-		$instance->setOption('ttl', 1);
-		$instance->set('foo', 'bar', 1);
-		sleep(2);
+		$stub->method('getKey')
+			->willReturn('foo');
 
-		$this->assertNull(
-			$instance->get('foo')->getValue(),
-			'The key should have been deleted.'
-		);
+		$this->instance->save($stub);
+		$this->assertTrue($this->instance->hasItem('foo'));
 	}
 
 	/**
-	 * Tests the Joomla\Cache\File::exists method.
+	 * Tests the Joomla\Cache\File::deleteItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\File::exists
+	 * @covers  Joomla\Cache\File::deleteItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testDeleteItem()
 	{
-		$this->assertFalse(TestHelper::invoke($this->instance, 'exists', 'foo'));
-		$this->instance->set('foo', 'bar');
-		$this->assertTrue(TestHelper::invoke($this->instance, 'exists', 'foo'));
-	}
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
 
-	/**
-	 * Tests the Joomla\Cache\File::remove method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\File::remove
-	 * @since   1.0
-	 */
-	public function testRemove()
-	{
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
 		$this->assertTrue(
-			$this->instance->set('foo', 'bar'),
+			$this->instance->save($stub),
 			'Checks the value was set'
 		);
 		$this->assertTrue(
-			$this->instance->remove('foo'),
+			$this->instance->deleteItem('foo'),
 			'Checks the value was removed'
 		);
 		$this->assertNull(
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'Checks for the delete'
 		);
 	}
 
 	/**
-	 * Tests the Joomla\Cache\File::remove method fail to remove
+	 * Tests the Joomla\Cache\File::deleteItem method fail to remove
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\File::remove
+	 * @covers  Joomla\Cache\File::deleteItem
 	 * @since   1.1.4
 	 */
-	public function testRemove_fail()
+	public function testDeleteItemFail()
  	{
- 		$this->assertTrue($this->instance->set('foo', 'barabum'), 'Checks the value was set');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
 
-		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
- 		unlink($fileName);
+		$stub->method('get')
+			->willReturn('barabum');
 
-  		$this->assertFalse($this->instance->remove('foo'), 'Checks the value was removed');
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->assertTrue(
+			$this->instance->save($stub),
+			'Checks the value was set'
+		);
+
+  		$this->assertTrue($this->instance->deleteItem('foo'), 'Checks the value was removed');
  	}
 
 	/**
-	 * Tests the Joomla\Cache\File::set method.
+	 * Tests the Joomla\Cache\File::save method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\File::set
-	 * @covers  Joomla\Cache\File::get
-	 * @covers  Joomla\Cache\File::remove
+	 * @covers  Joomla\Cache\File::save
+	 * @covers  Joomla\Cache\File::getItem
+	 * @covers  Joomla\Cache\File::deleteItem
 	 * @since   1.0
-	 * @todo    Custom ttl is not working in set yet.
 	 */
-	public function testSet()
+	public function testSave()
 	{
 		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
 
 		$this->assertFileNotExists($fileName);
 
-		$this->instance->set('foo', 'bar');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->instance->save($stub);
 		$this->assertFileExists(
 			$fileName,
 			'Checks the cache file was created.'
 		);
 
 		$this->assertEquals(
-			'bar', $this->instance->get('foo')->getValue(),
+			'bar', $this->instance->getItem('foo')->get(),
 			'Checks we got the cached value back.'
 		);
 
-		$this->instance->remove('foo');
+		$this->instance->deleteItem('foo');
 		$this->assertNull(
-			$this->instance->get('foo')->getValue(),
+			$this->instance->getItem('foo')->get(),
 			'Checks for the delete.'
 		);
 	}
@@ -310,29 +360,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	public function testFetchStreamUri()
 	{
 		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'test');
-	}
-
-	/**
-	 * Tests the Joomla\Cache\File::isExpired method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\File::isExpired
-	 * @since   1.0
-	 */
-	public function testIsExpired()
-	{
-		$this->instance->setOption('ttl', 1);
-		$this->instance->set('foo', 'bar');
-
-		$fileName = TestHelper::invoke($this->instance, 'fetchStreamUri', 'foo');
-		touch($fileName, time() -2);
-
-		$this->assertTrue(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should be expired.');
-
-		$this->instance->setOption('ttl', 900);
-		$this->instance->set('foo', 'bar');
-		$this->assertFalse(TestHelper::invoke($this->instance, 'isExpired', 'foo'), 'Should not be expired.');
 	}
 
 	/**

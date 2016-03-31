@@ -32,12 +32,22 @@ class WincacheTest extends \PHPUnit_Framework_TestCase
 	public function testPsrCache()
 	{
 		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->removeMultiple(array('foo')), 'Checking removeMultiple.');
-		$this->assertInternalType('boolean', $this->instance->set('for', 'bar'), 'Checking set.');
-		$this->assertInternalType('boolean', $this->instance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
+		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking save.');
 	}
 
 	/**
@@ -54,40 +64,40 @@ class WincacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Wincache::exists method.
+	 * Tests the Joomla\Cache\Wincache::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Wincache::exists
+	 * @covers  Joomla\Cache\Wincache::hasItem
 	 * @since   1.0
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
 		$this->markTestIncomplete();
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Wincache::get method.
+	 * Tests the Joomla\Cache\Wincache::getItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Wincache::get
+	 * @covers  Joomla\Cache\Wincache::getItem
 	 * @since   1.0
 	 */
-	public function testGet()
+	public function testGetItem()
 	{
 		$this->markTestIncomplete();
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Wincache::remove method.
+	 * Tests the Joomla\Cache\Wincache::deleteItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Wincache::remove
+	 * @covers  Joomla\Cache\Wincache::deleteItem
 	 * @since   1.0
 	 */
-	public function testRemove()
+	public function testDeleteItem()
 	{
 		$this->markTestIncomplete();
 	}

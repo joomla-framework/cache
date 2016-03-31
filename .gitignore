@@ -2,8 +2,7 @@ composer.phar
 composer.lock
 phpunit.xml
 
+.idea
+
 # Required composer dependencies
 /vendor/*
-
-# But keep the old cache PSR code until refactored
-!/vendor/psr/cache/

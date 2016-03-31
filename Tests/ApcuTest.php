@@ -9,11 +9,11 @@ namespace Joomla\Cache\Tests;
 use Joomla\Cache;
 
 /**
- * Tests for the Joomla\Cache\Apc class.
+ * Tests for the Joomla\Cache\Apcu class.
  *
  * @since  1.0
  */
-class ApcTest extends CacheTest
+class ApcuTest extends CacheTest
 {
 	/**
 	 * Tests for the correct Psr\Cache return values.
@@ -45,11 +45,11 @@ class ApcTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apc::clear method.
+	 * Tests the Joomla\Cache\Apcu::clear method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apc::clear
+	 * @covers  Joomla\Cache\Apcu::clear
 	 * @since   1.0
 	 */
 	public function testClear()
@@ -58,11 +58,11 @@ class ApcTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apc::hasItem method.
+	 * Tests the Joomla\Cache\Apcu::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apc::hasItem
+	 * @covers  Joomla\Cache\Apcu::hasItem
 	 * @since   1.0
 	 */
 	public function testHasItem()
@@ -71,11 +71,11 @@ class ApcTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apc::get method.
+	 * Tests the Joomla\Cache\Apcu::get method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apc::get
+	 * @covers  Joomla\Cache\Apcu::get
 	 * @since   1.0
 	 */
 	public function testGet()
@@ -87,11 +87,11 @@ class ApcTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apc::remove method.
+	 * Tests the Joomla\Cache\Apcu::remove method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apc::remove
+	 * @covers  Joomla\Cache\Apcu::remove
 	 * @since   1.0
 	 */
 	public function testRemove()
@@ -100,11 +100,11 @@ class ApcTest extends CacheTest
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Apc::save method.
+	 * Tests the Joomla\Cache\Apcu::save method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Apc::save
+	 * @covers  Joomla\Cache\Apcu::save
 	 * @since   1.0
 	 */
 	public function testSave()
@@ -131,7 +131,7 @@ class ApcTest extends CacheTest
 	 */
 	protected function setUp()
 	{
-		$this->cacheClass = 'Joomla\\Cache\\Apc';
+		$this->cacheClass = 'Joomla\\Cache\\Apcu';
 
 		try
 		{

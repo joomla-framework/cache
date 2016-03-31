@@ -5,9 +5,8 @@
  */
 
 namespace Joomla\Cache\Tests;
-require_once __DIR__ . '/Stubs/Concrete.php';
 
-use Joomla\Test\TestHelper;
+use Psr\Cache\CacheItemInterface;
 
 /**
  * Tests for the Joomla\Cache\Cache class.
@@ -32,7 +31,23 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @var    array
 	 * @since  1.0
 	 */
-	public $cacheOptions = array();
+	public $cacheOptions = array('foo' => 900);
+
+	/**
+	 * Tests the registry options is correctly initialised.
+	 *
+	 * @return  void
+	 *
+	 * @covers  Joomla\Cache\Cache::__construct
+	 * @covers  Joomla\Cache\Apc::__construct
+	 * @covers  Joomla\Cache\Memcached::__construct
+	 *
+	 * @since   1.0
+	 */
+	public function test__construct()
+	{
+		$this->assertEquals('900', $this->instance->getOption('foo'));
+	}
 
 	/**
 	 * Tests the Joomla\Cache\Cache::__construct method.
@@ -42,14 +57,11 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @covers  Joomla\Cache\Cache::__construct
 	 * @covers  Joomla\Cache\Apc::__construct
 	 * @covers  Joomla\Cache\Memcached::__construct
-	 * @expectedException  \RuntimeException
+	 * @expectedException  \Joomla\Cache\Exception\InvalidArgumentException
 	 * @since   1.0
 	 */
-	public function test__construct()
+	public function test__constructWithInvalidParams()
 	{
-		// This checks the default ttl and also that the options registry was initialised.
-		$this->assertEquals('900', $this->instance->getOption('ttl'));
-
 		// Throws exception, options is null
 		$className = $this->cacheClass;
 		new $className(null);
@@ -70,17 +82,29 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheInstance->clear();
 
 		$this->assertFalse(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
+			__LINE__
+		);
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		// Configure the stub.
+		$stub->method('get')
+			->willReturn('barfoo');
+
+		// Configure the stub.
+		$stub->method('getKey')
+			->willReturn('foobar');
+
+		$this->assertTrue(
+			$cacheInstance->save($stub),
 			__LINE__
 		);
 
 		$this->assertTrue(
-			$cacheInstance->set('foobar', 'barfoo'),
-			__LINE__
-		);
-
-		$this->assertTrue(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 
@@ -90,7 +114,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$this->assertFalse(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 	}
@@ -108,7 +132,18 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
-		$cacheInstance->set('foo', 'bar');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$cacheInstance->save($stub);
 		$this->hitKey('foo', 'bar');
 		$this->missKey('foobar', 'foobar');
 	}
@@ -126,8 +161,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	protected function missKey($key = '', $value = '')
 	{
 		$cacheInstance = $this->instance;
-		$cacheItem = $cacheInstance->get($key);
-		$cacheValue = $cacheItem->getValue();
+		$cacheItem = $cacheInstance->getItem($key);
+		$cacheValue = $cacheItem->get();
 		$cacheKey = $cacheItem->getKey();
 		$cacheHit = $cacheItem->isHit();
 		$this->assertThat($cacheKey, $this->equalTo($key), __LINE__);
@@ -148,9 +183,9 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	protected function hitKey($key = '', $value = '')
 	{
 		$cacheInstance = $this->instance;
-		$cacheItem = $cacheInstance->get($key);
+		$cacheItem = $cacheInstance->getItem($key);
 		$cacheKey = $cacheItem->getKey();
-		$cacheValue = $cacheItem->getValue();
+		$cacheValue = $cacheItem->get();
 		$cacheHit = $cacheItem->isHit();
 		$this->assertThat($cacheKey, $this->equalTo($key), __LINE__);
 		$this->assertThat($cacheValue, $this->equalTo($value), __LINE__);
@@ -172,127 +207,234 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
 
-		$result = $cacheInstance->set('fooSet', 'barSet');
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('barSet');
+
+		$stub->method('getKey')
+			->willReturn('fooSet');
+
+		$result = $cacheInstance->save($stub);
 		$this->assertTrue($result, __LINE__);
 
-		$fooValue = $cacheInstance->get('fooSet')->getValue();
+		$fooValue = $cacheInstance->getItem('fooSet')->get();
 		$this->assertThat($fooValue, $this->equalTo('barSet'), __LINE__);
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::getMultiple method.
+	 * Tests the Joomla\Cache\Cache::getItems method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Cache::getMultiple
-	 * @covers  Joomla\Cache\Apc::getMultiple
+	 * @covers  Joomla\Cache\Cache::getItems
+	 * @covers  Joomla\Cache\Apc::getItems
 	 * @since   1.0
 	 */
-	public function testGetMultiple()
+	public function testGetItems()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
-		$samples = array( 'foo' => 'foo', 'bar' => 'bar', 'hello' => 'world');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('foo');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('bar');
+
+		$stub2->method('getKey')
+			->willReturn('bar');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub3 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub3->method('get')
+			->willReturn('world');
+
+		$stub3->method('getKey')
+			->willReturn('hello');
+
+		$samples = array($stub, $stub2, $stub3);
+		$expectedSamples = array('foo' => 'foo', 'bar' => 'bar', 'hello' => 'world');
 		$moreSamples = $samples;
-		$moreSamples['next'] = 'bar';
+
+		// Create a stub for the CacheItemInterface class.
+		$stub4 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub4->method('get')
+			->willReturn('bar');
+
+		$stub4->method('getKey')
+			->willReturn('next');
+
+		$moreSamples[] = $stub4;
 		$lessSamples = $samples;
-		$badSampleKeys = array( 'foobar', 'barfoo', 'helloworld');
+		$badSampleKeys = array('foobar', 'barfoo', 'helloworld');
 
 		// Pop an item from the array
 		array_pop($lessSamples);
-		$keys = array_keys($samples);
 
-		foreach ($samples as $key => $value)
+		$keys = array('foo', 'bar', 'hello');
+
+		foreach ($samples as $poolItem)
 		{
-			$cacheInstance->set($key, $value);
+			$cacheInstance->save($poolItem);
 		}
 
-		$results = $cacheInstance->getMultiple($keys);
+		$results = $cacheInstance->getItems($keys);
 		$this->assertSameSize($samples, $results, __LINE__);
 		$this->assertNotSameSize($moreSamples, $results, __LINE__);
 		$this->assertNotSameSize($lessSamples, $results, __LINE__);
 
+		/** @var CacheItemInterface $item */
 		foreach ($results as $item)
 		{
 			$itemKey = $item->getKey();
-			$itemValue = $item->getValue();
-			$sampleValue = $samples[$itemKey];
-			$this->assertThat($itemValue, $this->equalTo($sampleValue), __LINE__);
+			$itemValue = $item->get();
+			$this->assertEquals($itemValue, $expectedSamples[$itemKey], __LINE__);
 		}
 
 		// Even if no keys are set, we should still$ have an array of keys
-		$badResults = $cacheInstance->getMultiple($badSampleKeys);
+		$badResults = $cacheInstance->getItems($badSampleKeys);
 		$this->assertSameSize($badSampleKeys, $badResults, __LINE__);
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::removeMultiple method.
+	 * Tests the Joomla\Cache\Cache::testDeleteItems method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Cache::removeMultiple
+	 * @covers  Joomla\Cache\Cache::testDeleteItems
 	 * @since   1.0
 	 */
-	public function testRemoveMultiple()
+	public function testDeleteItems()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
-		$samples = array( 'foo' => 'bars', 'goo' => 'google', 'hello' => 'world');
 
-		foreach ($samples as $key => $value)
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bars');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('google');
+
+		$stub2->method('getKey')
+			->willReturn('goo');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub3 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub3->method('get')
+			->willReturn('world');
+
+		$stub3->method('getKey')
+			->willReturn('hello');
+
+		$samples = array($stub, $stub2, $stub3);
+
+		foreach ($samples as $cacheItem)
 		{
-			$cacheInstance->set($key, $value);
+			$cacheInstance->save($cacheItem);
 		}
 
+		$trueSampleKeys = array('foo', 'goo', 'hello');
+
 		$sampleKeys = array_merge(
-			array_keys($samples),
+			$trueSampleKeys,
 			array('foobar')
 		);
-		$results = $cacheInstance->removeMultiple($sampleKeys);
+		$results = $cacheInstance->deleteItems($sampleKeys);
 
 		foreach ($results as $key => $removed)
 		{
-			$msg = "Removal of $key was $removed::";
-
-			if (array_key_exists($key, $samples))
-			{
-				$this->assertTrue($removed, $msg . __LINE__);
-			}
-			else
-			{
-				$this->assertFalse($removed, $msg . __LINE__);
-			}
+			$this->assertTrue($removed, "The $key key should be removed even when it does not exist.");
 		}
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::remove method.
+	 * Tests the Joomla\Cache\Cache::deleteItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Cache::remove
-	 * @covers  Joomla\Cache\Memcached::remove
+	 * @covers  Joomla\Cache\Cache::deleteItem
+	 * @covers  Joomla\Cache\Memcached::deleteItem
 	 * @covers  Joomla\Cache\Memcached::connect
 	 * @since   1.0
 	 */
-	public function testRemove()
+	public function testDeleteItem()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
-		$samples = array( 'foo2' => 'bars', 'goo2' => 'google', 'hello2' => 'world');
 
-		foreach ($samples as $key => $value)
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bars');
+
+		$stub->method('getKey')
+			->willReturn('foo2');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('google');
+
+		$stub2->method('getKey')
+			->willReturn('goo2');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub3 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub3->method('get')
+			->willReturn('world');
+
+		$stub3->method('getKey')
+			->willReturn('hello2');
+
+		$samples = array($stub, $stub2, $stub3);
+
+		foreach ($samples as $cacheItem)
 		{
-			$cacheInstance->set($key, $value);
+			$cacheInstance->save($cacheItem);
 		}
 
-		$getFoo = $cacheInstance->get('foo2');
+		$getFoo = $cacheInstance->getItem('foo2');
 		$this->assertTrue($getFoo->isHit(), __LINE__);
-		$removeFoo = $cacheInstance->remove('foo2');
+		$removeFoo = $cacheInstance->deleteItem('foo2');
 		$this->assertTrue($removeFoo, __LINE__);
-		$removeFoobar = $cacheInstance->remove('foobar');
-		$this->assertFalse($removeFoobar, __LINE__);
-		$getResult = $cacheInstance->get('foo2');
+		$removeFoobar = $cacheInstance->deleteItem('foobar');
+		$this->assertTrue($removeFoobar, __LINE__);
+		$getResult = $cacheInstance->getItem('foo2');
 		$this->assertFalse($getResult->isHit(), __LINE__);
 	}
 
@@ -313,62 +455,40 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::setMultiple method.
+	 * Tests the Joomla\Cache\Cache::hasItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\Cache::setMultiple
-	 * @since   1.0
-	 */
-	public function testSetMultiple()
-	{
-		$cacheInstance = $this->instance;
-		$cacheInstance->clear();
-		$samples = array( 'foo' => 'fooSet', 'bar' => 'barSet', 'hello' => 'worldSet');
-		$keys = array_keys($samples);
-
-		$this->assertTrue(
-			$cacheInstance->setMultiple($samples, 50),
-			__LINE__
-		);
-
-		$i = 0;
-
-		foreach ($keys as $key)
-		{
-			$cacheValue = $cacheInstance->get($key)->getValue();
-			$sampleValue = $samples[$key];
-			$this->assertThat($cacheValue, $this->equalTo($sampleValue), __LINE__);
-			$i++;
-		}
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Cache::exists method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::exists
-	 * @covers  Joomla\Cache\Memcached::exists
+	 * @covers  Joomla\Cache\Cache::hasItem
+	 * @covers  Joomla\Cache\Memcached::hasItem
 	 * @since   1.1.3
 	 */
-	public function testExists()
+	public function testHasItem()
 	{
 		$cacheInstance = $this->instance;
 		$cacheInstance->clear();
 
 		$this->assertFalse(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
+			__LINE__
+		);
+
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('barfoo');
+
+		$stub->method('getKey')
+			->willReturn('foobar');
+
+		$this->assertTrue(
+			$cacheInstance->save($stub),
 			__LINE__
 		);
 
 		$this->assertTrue(
-			$cacheInstance->set('foobar', 'barfoo'),
-			__LINE__
-		);
-
-		$this->assertTrue(
-			TestHelper::invoke($cacheInstance, 'exists', 'foobar'),
+			$cacheInstance->hasItem('foobar'),
 			__LINE__
 		);
 	}
@@ -386,19 +506,28 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheInstance = $this->instance;
 		$cacheClass = get_class($cacheInstance);
 		$interfaces = class_implements($cacheClass);
-		$psrInterface = 'Psr\\Cache\\CacheInterface';
+		$psrInterface = 'Psr\\Cache\\CacheItemPoolInterface';
 		$targetClass = $this->cacheClass;
 		$this->assertArrayHasKey($psrInterface, $interfaces, __LINE__);
 		$cacheClass = get_class($cacheInstance);
-		$this->assertThat($cacheClass, $this->equalTo($targetClass), __LINE__);
+		$this->assertEquals($cacheClass, $targetClass, __LINE__);
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
 
 		$this->assertInternalType('boolean', $cacheInstance->clear(), 'Checking clear.');
-		$this->assertInternalType('boolean', $cacheInstance->set('foo', 'bar'), 'Checking set.');
-		$this->assertInternalType('string', $cacheInstance->get('foo')->getValue(), 'Checking get.');
-		$this->assertInternalType('boolean', $cacheInstance->remove('foo'), 'Checking remove.');
-		$this->assertInternalType('boolean', $cacheInstance->setMultiple(array('foo' => 'bar')), 'Checking setMultiple.');
-		$this->assertInternalType('array', $cacheInstance->getMultiple(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('array', $cacheInstance->removeMultiple(array('foo')), 'Checking removeMultiple.');
+		$this->assertInternalType('boolean', $cacheInstance->save($stub), 'Checking set.');
+		$this->assertInternalType('string', $cacheInstance->getItem('foo')->get(), 'Checking get.');
+		$this->assertInternalType('boolean', $cacheInstance->deleteItem('foo'), 'Checking remove.');
+		$this->assertInternalType('array', $cacheInstance->getItems(array('foo')), 'Checking getMultiple.');
+		$this->assertInternalType('array', $cacheInstance->deleteItems(array('foo')), 'Checking removeMultiple.');
 	}
 
 	/**

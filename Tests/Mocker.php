@@ -45,11 +45,11 @@ class Mocker
 		// Collect all the relevant methods in JDatabase.
 		$methods = array(
 			'clear',
-			'exists',
-			'get',
-			'getMultiple',
-			'remove',
-			'removeMultiple',
+			'hasItem',
+			'getItem',
+			'getItems',
+			'deleteItem',
+			'deleteItems',
 			'set',
 			'setMultiple',
 		);
@@ -96,7 +96,7 @@ class Mocker
 
 		// Create the mock.
 		$mockObject = $this->test->getMock(
-			'Joomla\Cache\Item',
+			'Joomla\Cache\Item\Item',
 			$methods,
 			// Constructor arguments.
 			array(),
@@ -110,7 +110,7 @@ class Mocker
 			$mockObject,
 			$this->test,
 			array(
-				'getValue' => array((is_callable(array($this->test, 'mockCacheItemGetValue')) ? $this->test : $this), 'mockCacheItemGetValue'),
+				'get' => array((is_callable(array($this->test, 'mockCacheItemGet')) ? $this->test : $this), 'mockCacheItemGet'),
 				'isHit' => array((is_callable(array($this->test, 'mockCacheItemIsHit')) ? $this->test : $this), 'mockCacheItemIsHit'),
 			)
 		);
@@ -139,7 +139,7 @@ class Mocker
 	 *
 	 * @since   1.0
 	 */
-	public function mockCacheItemGetValue()
+	public function mockCacheItemGet()
 	{
 		return 'value';
 	}

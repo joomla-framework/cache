@@ -37,9 +37,6 @@ $cache->clear();
 // Get multiple values from the cache at once.
 $values = $cache->getMultiple(array('key1', 'key2'));
 
-// Set multiple values from the cache at once.
-$values = $cache->setMultiple(array('key1' => 'value1', 'key2' => 'value2'));
-
 // Remove multiple values from the cache at once.
 $values = $cache->removeMultiple(array('key1', 'key2'));
 ```

@@ -8,21 +8,34 @@
 
 namespace Joomla\Cache;
 
-use Psr\Cache\CacheInterface;
+use Joomla\Cache\Item\HasExpirationDateInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Exception\InvalidArgumentException;
+use DateTime;
 
 /**
  * Joomla! Caching Class
  *
  * @since  1.0
  */
-abstract class Cache implements CacheInterface
+abstract class Cache implements CacheItemPoolInterface
 {
 	/**
-	 * @var    \ArrayAccess  The options for the cache object.
+	 * The options for the cache object.
+	 *
+	 * @var    \ArrayAccess
 	 * @since  1.0
 	 */
 	protected $options;
+
+	/**
+	 * The deferred items to store
+	 *
+	 * @var    array
+	 * @since  1.0
+	 */
+	private $deferred = array();
 
 	/**
 	 * Constructor.
@@ -36,38 +49,11 @@ abstract class Cache implements CacheInterface
 	{
 		if (! ($options instanceof \ArrayAccess || is_array($options)))
 		{
-			throw new \RuntimeException(sprintf('%s requires an options array or an object that implements \\ArrayAccess', __CLASS__));
-		}
-
-		// Set a default ttl if none is set in the options.
-		if (!isset($options['ttl']))
-		{
-			$options['ttl'] = 900;
+			throw new InvalidArgumentException(sprintf('%s requires an options array or an object that implements \\ArrayAccess', __CLASS__));
 		}
 
 		$this->options = $options;
 	}
-
-	/**
-	 * This will wipe out the entire cache's keys
-	 *
-	 * @return  boolean  The result of the clear operation.
-	 *
-	 * @since   1.0
-	 */
-	abstract public function clear();
-
-	/**
-	 * Get cached data by id.  If the cached data has expired then the cached data will be removed
-	 * and false will be returned.
-	 *
-	 * @param   string  $key  The cache data id.
-	 *
-	 * @return  CacheItemInterface  Cached data string if it exists.
-	 *
-	 * @since   1.0
-	 */
-	abstract public function get($key);
 
 	/**
 	 * Obtain multiple CacheItems by their unique keys.
@@ -78,13 +64,13 @@ abstract class Cache implements CacheInterface
 	 *
 	 * @since   1.0
 	 */
-	public function getMultiple($keys)
+	public function getItems(array $keys = array())
 	{
 		$result = array();
 
 		foreach ($keys as $key)
 		{
-			$result[$key] = $this->get($key);
+			$result[$key] = $this->getItem($key);
 		}
 
 		return $result;
@@ -113,7 +99,7 @@ abstract class Cache implements CacheInterface
 	 *
 	 * @since   1.0
 	 */
-	abstract public function remove($key);
+	abstract public function deleteItem($key);
 
 	/**
 	 * Remove multiple cache items in a single operation.
@@ -126,50 +112,16 @@ abstract class Cache implements CacheInterface
 	 *
 	 * @since   1.0
 	 */
-	public function removeMultiple($keys)
+	public function deleteItems(array $keys)
 	{
 		$result = array();
 
 		foreach ($keys as $key)
 		{
-			$result[$key] = $this->remove($key);
+			$result[$key] = $this->deleteItem($key);
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Store the cached data by id.
-	 *
-	 * @param   string   $key   The cache data id
-	 * @param   mixed    $data  The data to store
-	 * @param   integer  $ttl   The number of seconds before the stored data expires.
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
-	 */
-	abstract public function set($key, $data, $ttl = null);
-
-	/**
-	 * Persisting a set of key => value pairs in the cache, with an optional TTL.
-	 *
-	 * @param   array         $items  An array of key => value pairs for a multiple-set operation.
-	 * @param   null|integer  $ttl    Optional. The TTL value of this item. If no value is sent and the driver supports TTL
-	 *                                then the library may set a default value for it or let the driver take care of that.
-	 *
-	 * @return  boolean  The result of the multiple-set operation.
-	 *
-	 * @since   1.0
-	 */
-	public function setMultiple($items, $ttl = null)
-	{
-		foreach ($items as $key => $value)
-		{
-			$this->set($key, $value, $ttl);
-		}
-
-		return true;
 	}
 
 	/**
@@ -198,5 +150,60 @@ abstract class Cache implements CacheInterface
 	 *
 	 * @since   1.0
 	 */
-	abstract protected function exists($key);
+	abstract public function hasItem($key);
+
+	/**
+	 * Sets a cache item to be persisted later.
+	 *
+	 * @param   CacheItemInterface  $item  The cache item to save.
+	 *
+	 * @return  static  The invoked object.
+	 */
+	public function saveDeferred(CacheItemInterface $item)
+	{
+		$this->deferred[$item->getKey()] = $item;
+
+		return $this;
+	}
+
+	/**
+	 * Persists any deferred cache items.
+	 *
+	 * @return  bool  TRUE if all not-yet-saved items were successfully saved. FALSE otherwise.
+	 */
+	public function commit()
+	{
+		$result = true;
+
+		foreach ($this->deferred as $key => $deferred)
+		{
+			$saveResult = $this->save($deferred);
+
+			if (true === $saveResult)
+			{
+				unset($this->deferred[$key]);
+			}
+
+			$result = $result && $saveResult;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Converts the DateTime object from the cache item to the expiry time in seconds from the present
+	 *
+	 * @param   HasExpirationDateInterface  $item  The cache item
+	 *
+	 * @return  int  The time in seconds until expiry
+	 */
+	protected function convertItemExpiryToSeconds(HasExpirationDateInterface $item)
+	{
+		$itemExpiry = $item->getExpiration();
+		$itemTimezone = $itemExpiry->getTimezone();
+		$now = new DateTime('now', $itemTimezone);
+		$interval = $now->diff($itemExpiry);
+
+		return (int) $interval->format('%s');
+	}
 }

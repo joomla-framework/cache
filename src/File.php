@@ -8,13 +8,16 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Exception\RuntimeException;
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Exception\InvalidArgumentException;
+use Joomla\Cache\Item\Item;
 
 /**
  * Filesystem cache driver for the Joomla Framework.
  *
  * Supported options:
- * - ttl (integer)          : The default number of seconds for the cache life.
  * - file.locking (boolean) :
  * - file.path              : The path for cache files.
  *
@@ -39,7 +42,7 @@ class File extends Cache
 
 		if (!isset($options['file.path']))
 		{
-			throw new \RuntimeException('The file.path option must be set.');
+			throw new InvalidArgumentException('The file.path option must be set.');
 		}
 
 		$this->checkFilePath($options['file.path']);
@@ -88,20 +91,9 @@ class File extends Cache
 	 * @since   1.0
 	 * @throws  \RuntimeException
 	 */
-	public function get($key)
+	public function getItem($key)
 	{
-		// If the cached data has expired remove it and return.
-		if ($this->exists($key) && $this->isExpired($key))
-		{
-			if (!$this->remove($key))
-			{
-				throw new \RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null);
-			}
-
-			return new Item($key);
-		}
-
-		if (!$this->exists($key))
+		if (!$this->hasItem($key))
 		{
 			return new Item($key);
 		}
@@ -110,13 +102,13 @@ class File extends Cache
 
 		if (!$resource)
 		{
-			throw new \RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot open the resource.', $key));
+			throw new RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot open the resource.', $key));
 		}
 
 		// If locking is enabled get a shared lock for reading on the resource.
 		if ($this->options['file.locking'] && !flock($resource, LOCK_SH))
 		{
-			throw new \RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot obtain a lock.', $key));
+			throw new RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot obtain a lock.', $key));
 		}
 
 		$data = stream_get_contents($resource);
@@ -124,13 +116,26 @@ class File extends Cache
 		// If locking is enabled release the lock on the resource.
 		if ($this->options['file.locking'] && !flock($resource, LOCK_UN))
 		{
-			throw new \RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot release the lock.', $key));
+			throw new RuntimeException(sprintf('Unable to fetch cache entry for %s.  Connot release the lock.', $key));
 		}
 
 		fclose($resource);
 
 		$item = new Item($key);
-		$item->setValue(unserialize($data));
+		$information = unserialize($data);
+
+		// If the cached data has expired remove it and return.
+		if ($information[1] !== null && time() > $information[1])
+		{
+			if (!$this->deleteItem($key))
+			{
+				throw new RuntimeException(sprintf('Unable to clean expired cache entry for %s.', $key), null);
+			}
+
+			return $item;
+		}
+
+		$item->set($information[0]);
 
 		return $item;
 	}
@@ -144,25 +149,27 @@ class File extends Cache
 	 *
 	 * @since   1.0
 	 */
-	public function remove($key)
+	public function deleteItem($key)
 	{
-		return (bool) @unlink($this->fetchStreamUri($key));
+		if ($this->hasItem($key))
+		{
+			return (bool) @unlink($this->fetchStreamUri($key));
+		}
+
+		// If the item doesn't exist, no error
+		return true;
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
-	 * @param   string   $key    The storage entry identifier.
-	 * @param   mixed    $value  The data to be stored.
-	 * @param   integer  $ttl    The number of seconds before the stored data expires.
+	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return  bool  True if the item was successfully persisted. False if there was an error.
 	 */
-	public function set($key, $value, $ttl = null)
+	public function save(CacheItemInterface $item)
 	{
-		$fileName = $this->fetchStreamUri($key);
+		$fileName = $this->fetchStreamUri($item->getKey());
 		$filePath = pathinfo($fileName, PATHINFO_DIRNAME);
 
 		if (!is_dir($filePath))
@@ -170,9 +177,18 @@ class File extends Cache
 			mkdir($filePath, 0770, true);
 		}
 
+		if ($item instanceof HasExpirationDateInterface)
+		{
+			$contents = serialize(array($item->get(), time() + $this->convertItemExpiryToSeconds($item)));
+		}
+		else
+		{
+			$contents = serialize(array($item->get(), null));
+		}
+
 		$success = (bool) file_put_contents(
 			$fileName,
-			serialize($value),
+			$contents,
 			($this->options['file.locking'] ? LOCK_EX : null)
 		);
 
@@ -188,7 +204,7 @@ class File extends Cache
 	 *
 	 * @since   1.0
 	 */
-	protected function exists($key)
+	public function hasItem($key)
 	{
 		return is_file($this->fetchStreamUri($key));
 	}
@@ -207,11 +223,11 @@ class File extends Cache
 	{
 		if (!is_dir($filePath))
 		{
-			throw new \RuntimeException(sprintf('The base cache path `%s` does not exist.', $filePath));
+			throw new RuntimeException(sprintf('The base cache path `%s` does not exist.', $filePath));
 		}
 		elseif (!is_writable($filePath))
 		{
-			throw new \RuntimeException(sprintf('The base cache path `%s` is not writable.', $filePath));
+			throw new RuntimeException(sprintf('The base cache path `%s` is not writable.', $filePath));
 		}
 
 		return true;
@@ -238,25 +254,5 @@ class File extends Cache
 			substr(hash('md5', $key), 0, 4),
 			hash('sha1', $key)
 		);
-	}
-
-	/**
-	 * Check whether or not the cached data by id has expired.
-	 *
-	 * @param   string  $key  The storage entry identifier.
-	 *
-	 * @return  boolean  True if the data has expired.
-	 *
-	 * @since   1.0
-	 */
-	private function isExpired($key)
-	{
-		// Check to see if the cached data has expired.
-		if (filemtime($this->fetchStreamUri($key)) < (time() - $this->options['ttl']))
-		{
-			return true;
-		}
-
-		return false;
 	}
 }
