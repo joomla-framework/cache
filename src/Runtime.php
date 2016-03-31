@@ -19,12 +19,26 @@ use Joomla\Cache\Item\Item;
 class Runtime extends Cache
 {
 	/**
-	 * The runtime cache storage array.
+	 * @var    \ArrayObject  Database of cached items, we use ArrayObject so it can be easily
+	 *                       passed by reference
 	 *
-	 * @var    array
-	 * @since  1.0
+	 * @since  2.0
 	 */
-	private static $store = array();
+	private $db;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
+	 *
+	 * @since   2.0
+	 * @throws  \RuntimeException
+	 */
+	public function __construct($options = array())
+	{
+		parent::__construct($options);
+		$this->db = new \ArrayObject;
+	}
 
 	/**
 	 * This will wipe out the entire cache's keys
@@ -35,7 +49,9 @@ class Runtime extends Cache
 	 */
 	public function clear()
 	{
-		self::$store = array();
+		// Replace the db with a new blank array
+		$clearData = $this->db->exchangeArray(array());
+		unset($clearData);
 
 		return true;
 	}
@@ -53,9 +69,9 @@ class Runtime extends Cache
 	{
 		$item = new Item($key);
 
-		if (isset(self::$store[$key]))
+		if ($this->hasItem($key))
 		{
-			$item->set(self::$store[$key]);
+			$item->set($this->db[$key]);
 		}
 
 		return $item;
@@ -72,21 +88,27 @@ class Runtime extends Cache
 	 */
 	public function deleteItem($key)
 	{
-		unset(self::$store[$key]);
+		if ($this->hasItem($key))
+		{
+			$newCache = array_diff_key($this->db->getArrayCopy(), array($key => $key));
+			$this->db->exchangeArray($newCache);
+		}
 
 		return true;
 	}
 
 	/**
-	 * Persists a cache item immediately.
+	 * Method to set a value for a storage entry.
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  static  The invoked object.
+	 * @return  boolean
+	 *
+	 * @since   1.0
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		self::$store[$item->getKey()] = $item->get();
+		$this->db[$item->getKey()] = $item->get();
 
 		return true;
 	}
@@ -102,7 +124,7 @@ class Runtime extends Cache
 	 */
 	public function hasItem($key)
 	{
-		return isset(self::$store[$key]);
+		return array_key_exists($key, $this->db);
 	}
 
 	/**

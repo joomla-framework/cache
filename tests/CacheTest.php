@@ -13,7 +13,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * @since  1.0
  */
-class CacheTest extends \PHPUnit_Framework_TestCase
+abstract class CacheTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var    \Joomla\Cache\Cache
@@ -25,7 +25,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @var    string  Cache Classname to test
 	 * @since  1.0
 	 */
-	public $cacheClass = 'Joomla\\Cache\\Tests\\ConcreteCache';
+	public $cacheClass = '';
 
 	/**
 	 * @var    array
