@@ -17,5 +17,4 @@ use Psr\Cache\CacheException;
  */
 class RuntimeException extends \RuntimeException implements CacheException
 {
-
 }

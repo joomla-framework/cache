@@ -15,5 +15,4 @@ namespace Joomla\Cache\Exception;
  */
 class UnsupportedFormatException extends RuntimeException
 {
-
 }
