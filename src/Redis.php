@@ -126,17 +126,18 @@ class Redis extends Cache
 	{
 		$this->connect();
 
-		if (!$this->driver->set($item->getKey(), $item->get()))
-		{
-			return false;
-		}
-
 		if ($item instanceof HasExpirationDateInterface)
 		{
-			if (!$this->driver->expire($item->getKey(), $this->convertItemExpiryToSeconds($item)))
-			{
-				return false;
-			}
+			$ttl = $this->convertItemExpiryToSeconds($item);
+		}
+		else
+		{
+			$ttl = 0;
+		}
+
+		if (!$this->driver->set($item->getKey(), $item->get(), $ttl))
+		{
+			return false;
 		}
 
 		return true;
