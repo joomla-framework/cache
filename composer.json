@@ -23,7 +23,7 @@
         },
         "psr-4": {
             "Joomla\\Cache\\": "src/",
-            "Joomla\\Cache\\Tests\\": "Tests/"
+            "Joomla\\Cache\\Tests\\": "tests2/"
         }
     },
     "extra": {

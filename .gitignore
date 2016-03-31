@@ -3,6 +3,7 @@ composer.lock
 phpunit.xml
 
 .idea
+.DS_Store
 
 # Required composer dependencies
 /vendor/*
