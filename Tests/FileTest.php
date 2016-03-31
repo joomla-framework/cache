@@ -153,7 +153,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			->willReturn('foo');
 
 		$stub->method('getExpiration')
-			->willReturn(time() - 2);
+			->willReturn(new \Datetime(time() - 2));
 
 		$this->instance->save($stub);
 
@@ -210,7 +210,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 			->willReturn('foo');
 
 		$stub->method('getExpiration')
-			->willReturn(time() + 1);
+			->willReturn(new \DateTime(time() + 1));
 
 		$instance->save($stub);
 

@@ -107,7 +107,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 			->willReturn('foo');
 
 		$stub->method('getExpiration')
-			->willReturn(time() + 1);
+			->willReturn(new \DateTime(time() + 1));
 
 		$this->assertTrue(
 			$this->instance->save($stub),
