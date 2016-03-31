@@ -9,7 +9,7 @@
 namespace Joomla\Cache\Item;
 
 /**
- * CacheItemInterface containing a getExpired.
+ * CacheItemInterface containing an expiration time.
  *
  * @since  __DEPLOY_VERSION__
  */
@@ -18,10 +18,11 @@ interface HasExpirationDateInterface
 	/**
 	 * Returns the expiration time of a not-yet-expired cache item.
 	 *
-	 * If this cache item is a Cache Miss, this method MAY return the time at
-	 * which the item expired or the current time if that is not available.
+	 * If this cache item is a Cache Miss, this method MAY return the time at which the item expired or the current time if that is not available.
 	 *
 	 * @return  \DateTime  The timestamp at which this cache item will expire.
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function getExpiration();
 }

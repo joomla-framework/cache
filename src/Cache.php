@@ -8,11 +8,10 @@
 
 namespace Joomla\Cache;
 
-use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Exception\InvalidArgumentException;
-use DateTime;
+use Joomla\Cache\Item\HasExpirationDateInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Joomla! Caching Class
@@ -24,7 +23,7 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * The options for the cache object.
 	 *
-	 * @var    \ArrayAccess
+	 * @var    array|\ArrayAccess
 	 * @since  1.0
 	 */
 	protected $options;
@@ -35,19 +34,19 @@ abstract class Cache implements CacheItemPoolInterface
 	 * @var    array
 	 * @since  1.0
 	 */
-	private $deferred = array();
+	private $deferred = [];
 
 	/**
 	 * Constructor.
 	 *
-	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
+	 * @param   array|\ArrayAccess  $options  An options array, or an object that implements \ArrayAccess
 	 *
 	 * @since   1.0
 	 * @throws  \RuntimeException
 	 */
-	public function __construct($options = array())
+	public function __construct($options = [])
 	{
-		if (! ($options instanceof \ArrayAccess || is_array($options)))
+		if (!($options instanceof \ArrayAccess || is_array($options)))
 		{
 			throw new InvalidArgumentException(sprintf('%s requires an options array or an object that implements \\ArrayAccess', __CLASS__));
 		}
@@ -56,17 +55,17 @@ abstract class Cache implements CacheItemPoolInterface
 	}
 
 	/**
-	 * Obtain multiple CacheItems by their unique keys.
+	 * Returns a traversable set of cache items.
 	 *
 	 * @param   array  $keys  A list of keys that can obtained in a single operation.
 	 *
-	 * @return  array  An associative array of CacheItem objects keyed on the cache key.
+	 * @return  CacheItemInterface[]  An associative array of CacheItemInterface objects keyed on the cache key.
 	 *
 	 * @since   1.0
 	 */
-	public function getItems(array $keys = array())
+	public function getItems(array $keys = [])
 	{
-		$result = array();
+		$result = [];
 
 		foreach ($keys as $key)
 		{
@@ -91,9 +90,9 @@ abstract class Cache implements CacheItemPoolInterface
 	}
 
 	/**
-	 * Delete a cached data entry by id.
+	 * Removes the item from the pool.
 	 *
-	 * @param   string  $key  The cache data id.
+	 * @param   string  $key  The key for which to delete
 	 *
 	 * @return  boolean
 	 *
@@ -102,11 +101,11 @@ abstract class Cache implements CacheItemPoolInterface
 	abstract public function deleteItem($key);
 
 	/**
-	 * Remove multiple cache items in a single operation.
+	 * Removes multiple items from the pool.
 	 *
-	 * @param   array  $keys  The array of keys to be removed.
+	 * @param   array  $keys  An array of keys that should be removed from the pool.
 	 *
-	 * @return  bool  True if the items were successfully removed. False if there was an error.
+	 * @return  boolean
 	 *
 	 * @since   1.0
 	 */
@@ -131,7 +130,7 @@ abstract class Cache implements CacheItemPoolInterface
 	 * @param   string  $key    The name of the option to set.
 	 * @param   mixed   $value  The option value to set.
 	 *
-	 * @return  Cache  This object for method chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -143,22 +142,13 @@ abstract class Cache implements CacheItemPoolInterface
 	}
 
 	/**
-	 * Method to determine whether a storage entry has been set for a key.
-	 *
-	 * @param   string  $key  The storage entry identifier.
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
-	 */
-	abstract public function hasItem($key);
-
-	/**
 	 * Sets a cache item to be persisted later.
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  static  The invoked object.
+	 * @return  $this
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function saveDeferred(CacheItemInterface $item)
 	{
@@ -170,7 +160,9 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * Persists any deferred cache items.
 	 *
-	 * @return  bool  TRUE if all not-yet-saved items were successfully saved. FALSE otherwise.
+	 * @return  boolean
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function commit()
 	{
@@ -192,18 +184,20 @@ abstract class Cache implements CacheItemPoolInterface
 	}
 
 	/**
-	 * Converts the DateTime object from the cache item to the expiry time in seconds from the present
+	 * Converts a DateTime object from the cache item to the expiry time in seconds from the present
 	 *
-	 * @param   HasExpirationDateInterface  $item  The cache item
+	 * @param   HasExpirationDateInterface $item The cache item
 	 *
-	 * @return  int  The time in seconds until expiry
+	 * @return  integer  The time in seconds until expiry
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	protected function convertItemExpiryToSeconds(HasExpirationDateInterface $item)
 	{
-		$itemExpiry = $item->getExpiration();
+		$itemExpiry   = $item->getExpiration();
 		$itemTimezone = $itemExpiry->getTimezone();
-		$now = new DateTime('now', $itemTimezone);
-		$interval = $now->diff($itemExpiry);
+		$now          = new \DateTime('now', $itemTimezone);
+		$interval     = $now->diff($itemExpiry);
 
 		return (int) $interval->format('%s');
 	}
