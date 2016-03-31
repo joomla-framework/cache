@@ -143,7 +143,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$this->assertFalse($this->instance->getItem('foo')->isHit(), 'Checks an unknown key.');
 
 		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item')
+		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\AbstractItem')
 			->setConstructorArgs(array('foo'))
 			->getMock();
 

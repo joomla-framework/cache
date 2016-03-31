@@ -11,6 +11,7 @@ namespace Joomla\Cache;
 use Joomla\Cache\Exception\RuntimeException;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Exception\InvalidArgumentException;
+use Joomla\Cache\Item\Item;
 
 /**
  * Filesystem cache driver for the Joomla Framework.

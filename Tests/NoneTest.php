@@ -65,14 +65,14 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\None::get method.
+	 * Tests the Joomla\Cache\None::getItem method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\None::get
+	 * @covers  Joomla\Cache\None::getItem
 	 * @since   1.0
 	 */
-	public function testGet()
+	public function testGetItem()
 	{
 		// Create a stub for the CacheItemInterface class.
 		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
@@ -104,11 +104,11 @@ class NoneTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\None::set method.
+	 * Tests the Joomla\Cache\None::save method.
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Cache\None::set
+	 * @covers  Joomla\Cache\None::save
 	 * @since   1.0
 	 */
 	public function testSet()

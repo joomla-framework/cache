@@ -9,6 +9,7 @@
 namespace Joomla\Cache;
 
 use Joomla\Cache\Exception\UnsupportedFormatException;
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
 use Redis as RedisDriver;
 
@@ -125,9 +126,12 @@ class Redis extends Cache
 			return false;
 		}
 
-		if (!$this->driver->expire($item->getKey(), $this->convertItemExpiryToSeconds($item)))
+		if ($item instanceof HasExpirationDateInterface)
 		{
-			return false;
+			if (!$this->driver->expire($item->getKey(), $this->convertItemExpiryToSeconds($item)))
+			{
+				return false;
+			}
 		}
 
 		return true;

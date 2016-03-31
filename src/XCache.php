@@ -9,7 +9,9 @@
 namespace Joomla\Cache;
 
 use Joomla\Cache\Exception\UnsupportedFormatException;
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Item\Item;
 
 /**
  * XCache cache driver for the Joomla Framework.
@@ -91,7 +93,17 @@ class XCache extends Cache
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		return xcache_set($item->getKey(), $item->get(), $this->convertItemExpiryToSeconds($item));
+		// If we are able to find out when the item expires - find out. Else bail.
+		if ($item instanceof HasExpirationDateInterface)
+		{
+			$ttl = $this->convertItemExpiryToSeconds($item);
+		}
+		else
+		{
+			$ttl = 0;
+		}
+
+		return xcache_set($item->getKey(), $item->get(), $ttl);
 	}
 
 	/**

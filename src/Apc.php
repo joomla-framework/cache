@@ -9,7 +9,9 @@
 namespace Joomla\Cache;
 
 use Joomla\Cache\Exception\UnsupportedFormatException;
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Item\Item;
 
 /**
  * APC cache driver for the Joomla Framework.
@@ -127,7 +129,17 @@ class Apc extends Cache
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		return apc_store($item->getKey(), $item->get(), $this->convertItemExpiryToSeconds($item));
+		// If we are able to find out when the item expires - find out. Else bail.
+		if ($item instanceof HasExpirationDateInterface)
+		{
+			$ttl = $this->convertItemExpiryToSeconds($item);
+		}
+		else
+		{
+			$ttl = 0;
+		}
+		
+		return apc_store($item->getKey(), $item->get(), $ttl);
 	}
 
 	/**

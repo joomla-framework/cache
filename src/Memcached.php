@@ -9,8 +9,10 @@
 namespace Joomla\Cache;
 
 use Joomla\Cache\Exception\UnsupportedFormatException;
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Exception\RuntimeException;
+use Joomla\Cache\Item\Item;
 
 /**
  * Memcached cache driver for the Joomla Framework.
@@ -133,7 +135,15 @@ class Memcached extends Cache
 	public function save(CacheItemInterface $item)
 	{
 		$this->connect();
-		$ttl = $this->convertItemExpiryToSeconds($item);
+
+		if ($item instanceof HasExpirationDateInterface)
+		{
+			$ttl = $this->convertItemExpiryToSeconds($item);
+		}
+		else
+		{
+			$ttl = 0;
+		}
 
 		$this->driver->set($item->getKey(), $item->get(), $ttl);
 

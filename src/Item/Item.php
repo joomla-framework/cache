@@ -6,17 +6,16 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Item;
 
 use DateTime;
-use Psr\Cache\CacheItemInterface;
 
 /**
  * Cache item instance for the Joomla Framework.
  *
  * @since  1.0
  */
-class Item implements CacheItemInterface
+class Item extends AbstractItem
 {
 	/**
 	 * The time the object expires at

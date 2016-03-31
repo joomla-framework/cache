@@ -8,6 +8,7 @@
 
 namespace Joomla\Cache;
 
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Exception\InvalidArgumentException;
@@ -192,13 +193,12 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * Converts the DateTime object from the cache item to the expiry time in seconds from the present
 	 *
-	 * @param   CacheItemInterface  $item  The cache item
+	 * @param   HasExpirationDateInterface  $item  The cache item
 	 *
 	 * @return  int  The time in seconds until expiry
 	 */
-	protected function convertItemExpiryToSeconds(CacheItemInterface $item)
+	protected function convertItemExpiryToSeconds(HasExpirationDateInterface $item)
 	{
-		/** @var DateTime $itemExpiry */
 		$itemExpiry = $item->getExpiration();
 		$itemTimezone = $itemExpiry->getTimezone();
 		$now = new DateTime('now', $itemTimezone);
