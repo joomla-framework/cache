@@ -10,6 +10,7 @@ namespace Joomla\Cache;
 
 use Joomla\Cache\Exception\UnsupportedFormatException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
+use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
 use Redis as RedisDriver;
 
