@@ -2,7 +2,11 @@
 
 The following changes were made to the Cache package between v1 and v2.
 
-### PSR 6 Changes
+### PHP 5.3 support dropped
+
+The Cache package now requires PHP 5.4 or newer.
+
+### PSR-6 Changes
 #### CachePoolInterface
 
 Version 1 of the cache package used an early version of the PSR-6 package.
@@ -32,5 +36,5 @@ The following methods have a 1:1 mapping:
 
 3. Setting expiration of cache items is now done at the Cache item level rather than the cache adapter level.
 
-### APCu
-APCu cache adapter was added to the present options
+### APCu Support Added
+A handler natively supporting APCu was added.
