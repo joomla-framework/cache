@@ -199,7 +199,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 		$instance->setOption('ttl', 1);
 
-		$stub = $this->getMockBuilder('Joomla\Cache\Item');
+		$stub = $this->getMockBuilder('Joomla\Cache\Item\Item');
 		$stub = $stub->setMethods(array('get', 'getKey', 'getExpiration'));
 		$stub = $stub->setConstructorArgs(array('foo'));
 		$stub = $stub->getMock();

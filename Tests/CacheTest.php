@@ -5,9 +5,7 @@
  */
 
 namespace Joomla\Cache\Tests;
-require_once __DIR__ . '/Stubs/Concrete.php';
 
-use Joomla\Test\TestHelper;
 use Psr\Cache\CacheItemInterface;
 
 /**

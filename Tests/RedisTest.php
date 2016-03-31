@@ -255,14 +255,14 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 		$this->assertArrayHasKey('boo', $fooResult, 'Missing array key');
 
 		$this->assertInstanceOf(
-			'Joomla\Cache\Item',
+			'Joomla\Cache\Item\Item',
 			$fooResult['foo'],
-			'Expected instance of Joomla\Cache\Item'
+			'Expected instance of Joomla\Cache\Item\Item'
 		);
 		$this->assertInstanceOf(
-			'Joomla\Cache\Item',
+			'Joomla\Cache\Item\Item',
 			$fooResult['boo'],
-			'Expected instance of Joomla\Cache\Item'
+			'Expected instance of Joomla\Cache\Item\Item'
 		);
 
 		$this->assertTrue(

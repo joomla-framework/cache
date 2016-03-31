@@ -96,7 +96,7 @@ class Mocker
 
 		// Create the mock.
 		$mockObject = $this->test->getMock(
-			'Joomla\Cache\Item',
+			'Joomla\Cache\Item\Item',
 			$methods,
 			// Constructor arguments.
 			array(),
