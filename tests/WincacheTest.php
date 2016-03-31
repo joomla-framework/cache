@@ -35,7 +35,7 @@ class WincacheTest extends \PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
 		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
 		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
+		$this->assertInternalType('boolean', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
 
 		// Create a stub for the CacheItemInterface class.
 		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')

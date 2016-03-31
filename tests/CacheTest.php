@@ -371,10 +371,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		);
 		$results = $cacheInstance->deleteItems($sampleKeys);
 
-		foreach ($results as $key => $removed)
-		{
-			$this->assertTrue($removed, "The $key key should be removed even when it does not exist.");
-		}
+		$this->assertTrue($results, "The keys should all be removed even when they do not exist.");
 	}
 
 	/**
@@ -527,7 +524,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 		$this->assertInternalType('string', $cacheInstance->getItem('foo')->get(), 'Checking get.');
 		$this->assertInternalType('boolean', $cacheInstance->deleteItem('foo'), 'Checking remove.');
 		$this->assertInternalType('array', $cacheInstance->getItems(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('array', $cacheInstance->deleteItems(array('foo')), 'Checking removeMultiple.');
+		$this->assertInternalType('boolean', $cacheInstance->deleteItems(array('foo')), 'Checking removeMultiple.');
 	}
 
 	/**

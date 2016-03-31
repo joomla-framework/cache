@@ -29,7 +29,7 @@ class ApcTest extends CacheTest
 		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking getItem.');
 		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getItems.');
 		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking deleteItem.');
-		$this->assertInternalType('array', $this->instance->deleteItems(array('foo')), 'Checking deleteItems.');
+		$this->assertInternalType('boolean', $this->instance->deleteItems(array('foo')), 'Checking deleteItems.');
 
 		// Create a stub for the CacheItemInterface class.
 		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')

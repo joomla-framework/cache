@@ -106,19 +106,20 @@ abstract class Cache implements CacheItemPoolInterface
 	 *
 	 * @param   array  $keys  The array of keys to be removed.
 	 *
-	 * @return  array  An associative array of 'key' => result, elements. Each array row has the key being deleted
-	 *                 and the result of that operation. The result will be a boolean of true or false
-	 *                 representing if the cache item was removed or not
+	 * @return  bool  True if the items were successfully removed. False if there was an error.
 	 *
 	 * @since   1.0
 	 */
 	public function deleteItems(array $keys)
 	{
-		$result = array();
+		$result = true;
 
 		foreach ($keys as $key)
 		{
-			$result[$key] = $this->deleteItem($key);
+			if (!$this->deleteItem($key))
+			{
+				$result = false;
+			}
 		}
 
 		return $result;
