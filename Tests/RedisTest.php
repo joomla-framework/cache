@@ -62,8 +62,18 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetAndSave()
 	{
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
 		$this->assertTrue(
-			$this->instance->set('foo', 'bar'),
+			$this->instance->save($stub),
 			'Should store the data properly'
 		);
 
@@ -86,8 +96,21 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetAndSaveWithTimeout()
 	{
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\Item')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$stub->method('getExpiration')
+			->willReturn(time() + 1);
+
 		$this->assertTrue(
-			$this->instance->set('foo', 'bar', 1),
+			$this->instance->save($stub),
 			'Should store the data properly'
 		);
 
