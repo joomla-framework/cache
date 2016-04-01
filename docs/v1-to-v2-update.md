@@ -53,3 +53,7 @@ The Runtime Adapter now stores it's data in a non-static object
 ### Memcached Adapter
 
 A configured `Memcached` instance must be injected to the Memcached adapter now as its first constructor parameter.
+
+### Redis Adapter
+
+A configured `Redis` instance must be injected to the Redis adapter now as its first constructor parameter.

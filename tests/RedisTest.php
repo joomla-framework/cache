@@ -26,6 +26,14 @@ class RedisTest extends CacheTest
 			$this->markTestSkipped('Redis Cache Handler is not supported on this system.');
 		}
 
-		$this->instance = new Cache\Redis($this->cacheOptions);
+		$driver = new \Redis;
+
+		if (!$driver->connect('127.0.0.1', 6379))
+		{
+			unset($driver);
+			$this->markTestSkipped('Cannot connect to Redis.');
+		}
+
+		$this->instance = new Cache\Redis($driver, $this->cacheOptions);
 	}
 }

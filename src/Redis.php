@@ -11,7 +11,6 @@ namespace Joomla\Cache;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
-use Redis as RedisDriver;
 
 /**
  * Redis cache driver for the Joomla Framework.
@@ -21,20 +20,29 @@ use Redis as RedisDriver;
 class Redis extends Cache
 {
 	/**
-	 * Default hostname of redis server
-	 */
-	const REDIS_HOST = '127.0.0.1';
-
-	/**
-	 * Default port of redis server
-	 */
-	const REDIS_PORT = 6379;
-
-	/**
-	 * @var    \Redis  The redis driver.
+	 * The redis driver.
+	 *
+	 * @var    \Redis
 	 * @since  1.0
 	 */
 	private $driver;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param   \Redis              $redis    The Redis driver being used for this pool
+	 * @param   array|\ArrayAccess  $options  An options array, or an object that implements \ArrayAccess
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \RuntimeException
+	 */
+	public function __construct(\Redis $redis, $options = [])
+	{
+		// Parent sets up the caching options and checks their type
+		parent::__construct($options);
+
+		$this->driver = $redis;
+	}
 
 	/**
 	 * This will wipe out the entire cache's keys
@@ -45,8 +53,6 @@ class Redis extends Cache
 	 */
 	public function clear()
 	{
-		$this->connect();
-
 		return $this->driver->flushDB();
 	}
 
@@ -61,8 +67,6 @@ class Redis extends Cache
 	 */
 	public function getItem($key)
 	{
-		$this->connect();
-
 		$value = $this->driver->get($key);
 		$item = new Item($key);
 
@@ -85,8 +89,6 @@ class Redis extends Cache
 	 */
 	public function deleteItem($key)
 	{
-		$this->connect();
-
 		if ($this->hasItem($key))
 		{
 			return (bool) $this->driver->del($key);
@@ -105,8 +107,6 @@ class Redis extends Cache
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		$this->connect();
-
 		if ($item instanceof HasExpirationDateInterface)
 		{
 			$ttl = $this->convertItemExpiryToSeconds($item);
@@ -131,8 +131,6 @@ class Redis extends Cache
 	 */
 	public function hasItem($key)
 	{
-		$this->connect();
-
 		return $this->driver->exists($key);
 	}
 
@@ -146,35 +144,5 @@ class Redis extends Cache
 	public static function isSupported()
 	{
 		return (extension_loaded('redis') && class_exists('Redis'));
-	}
-
-	/**
-	 * Connect to the Redis servers if the connection does not already exist.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
-	 */
-	private function connect()
-	{
-		// We want to only create the driver once.
-		if (isset($this->driver))
-		{
-			return;
-		}
-
-		$host = isset($this->options['redis.host'])? $this->options['redis.host'] : self::REDIS_HOST;
-		$port = isset($this->options['redis.port'])? $this->options['redis.port'] : self::REDIS_PORT;
-
-		$this->driver = new RedisDriver;
-
-		if (($host == 'localhost' || filter_var($host, FILTER_VALIDATE_IP)))
-		{
-			$this->driver->connect('tcp://' . $host . ':' . $port, $port);
-		}
-		else
-		{
-			$this->driver->connect($host, null);
-		}
 	}
 }

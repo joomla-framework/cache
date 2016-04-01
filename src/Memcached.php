@@ -31,8 +31,8 @@ class Memcached extends Cache
 	/**
 	 * Constructor.
 	 *
-	 * @param   \Memcached  $memcached  The Memcached driver being used for this pool
-	 * @param   array|\ArrayAccess  $options  An options array, or an object that implements \ArrayAccess
+	 * @param   \Memcached          $memcached  The Memcached driver being used for this pool
+	 * @param   array|\ArrayAccess  $options    An options array, or an object that implements \ArrayAccess
 	 *
 	 * @since   1.0
 	 * @throws  \RuntimeException
