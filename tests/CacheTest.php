@@ -98,8 +98,23 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 		$stub->method('getKey')
 			->willReturn('foobar');
 
+		// Create a stub for the CacheItemInterface class.
+		$stub2 = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub2->method('get')
+			->willReturn('car');
+
+		$stub2->method('getKey')
+			->willReturn('boo');
+
 		$this->assertTrue(
 			$cacheInstance->save($stub),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->save($stub2),
 			__LINE__
 		);
 
@@ -115,6 +130,11 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertFalse(
 			$cacheInstance->hasItem('foobar'),
+			__LINE__
+		);
+
+		$this->assertFalse(
+			$cacheInstance->hasItem('boo'),
 			__LINE__
 		);
 	}
