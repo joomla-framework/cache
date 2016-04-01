@@ -549,6 +549,43 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Tests the Joomla\Cache\Cache::getItem and Joomla\Cache\Cache::save methods with timeout
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public function testGetAndSaveWithTimeout()
+	{
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\AbstractItem')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$expireDate = new \DateTime;
+		$expireDate->setTimestamp(time() - 1);
+		$stub->method('getExpiration')
+			->willReturn($expireDate);
+
+		$this->assertTrue(
+			$this->instance->save($stub),
+			'Should store the data properly'
+		);
+
+		sleep(2);
+
+		$this->assertFalse(
+			$this->instance->getItem('foo')->isHit(),
+			'Checks expired get.'
+		);
+	}
+
+	/**
 	 * Setup the tests.
 	 *
 	 * @return  void
