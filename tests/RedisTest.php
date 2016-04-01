@@ -26,6 +26,6 @@ class RedisTest extends CacheTest
 			$this->markTestSkipped('Redis Cache Handler is not supported on this system.');
 		}
 
-		$this->instance = new Cache\Redis($options);
+		$this->instance = new Cache\Redis($this->cacheOptions);
 	}
 }

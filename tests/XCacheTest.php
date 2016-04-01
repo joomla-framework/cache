@@ -26,6 +26,6 @@ class XCacheTest extends CacheTest
 			$this->markTestSkipped('XCache Cache Handler is not supported on this system.');
 		}
 
-		$this->instance = new Cache\XCache($options);
+		$this->instance = new Cache\XCache($this->cacheOptions);
 	}
 }

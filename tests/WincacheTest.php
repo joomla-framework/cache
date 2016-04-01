@@ -26,6 +26,6 @@ class WincacheTest extends CacheTest
 			$this->markTestSkipped('WinCache Cache Handler is not supported on this system.');
 		}
 
-		$this->instance = new Cache\Wincache($options);
+		$this->instance = new Cache\Wincache($this->cacheOptions);
 	}
 }
