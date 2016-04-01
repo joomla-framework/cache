@@ -525,7 +525,7 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheInstance = $this->instance;
 		$cacheClass = get_class($cacheInstance);
 		$interfaces = class_implements($cacheClass);
-		$psrInterface = 'Psr\\Cache\\CacheItemPoolInterface';
+		$psrInterface = '\\Psr\\Cache\\CacheItemPoolInterface';
 		$targetClass = $this->cacheClass;
 		$this->assertArrayHasKey($psrInterface, $interfaces, __LINE__);
 		$cacheClass = get_class($cacheInstance);
