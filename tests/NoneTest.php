@@ -10,161 +10,113 @@ use Joomla\Cache;
 
 /**
  * Tests for the Joomla\Cache\None class.
- *
- * @since  1.0
  */
-class NoneTest extends \PHPUnit_Framework_TestCase
+class NoneTest extends CacheTest
 {
 	/**
-	 * @var    Cache\None
-	 * @since  1.0
-	 */
-	private $instance;
-
-	/**
-	 * Tests for the correct Psr\Cache return values.
-	 *
-	 * @return  void
-	 *
-	 * @coversNothing
-	 * @since   1.0
-	 */
-	public function testPsrCache()
-	{
-		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
-		$this->assertInternalType('boolean', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
-
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking set.');
-	}
-
-	/**
-	 * Tests the Joomla\Cache\None::clear method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\None::clear
-	 * @since   1.0
-	 */
-	public function testClear()
-	{
-		$this->instance->clear();
-	}
-
-	/**
-	 * Tests the Joomla\Cache\None::getItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\None::getItem
-	 * @since   1.0
-	 */
-	public function testGetItem()
-	{
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->instance->save($stub);
-		$item = $this->instance->getItem('foo');
-		$this->assertNull($item->get());
-		$this->assertFalse($item->isHit());
-	}
-
-	/**
-	 * Tests the Joomla\Cache\None::deleteItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\None::deleteItem
-	 * @since   1.0
-	 */
-	public function testDeleteItem()
-	{
-		$this->instance->deleteItem('foo');
-	}
-
-	/**
-	 * Tests the Joomla\Cache\None::save method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\None::save
-	 * @since   1.0
-	 */
-	public function testSet()
-	{
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->instance->save($stub);
-		$item = $this->instance->getItem('foo');
-		$this->assertNull($item->get());
-		$this->assertFalse($item->isHit());
-	}
-
-	/**
-	 * Tests the Joomla\Cache\None::hasItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\None::hasItem
-	 * @since   1.0
-	 */
-	public function testHasItem()
-	{
-		$this->assertFalse($this->instance->hasItem('foo'));
-
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->instance->save($stub);
-		$this->assertFalse($this->instance->hasItem('foo'));
-	}
-
-	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
 	protected function setUp()
 	{
 		parent::setUp();
 
-		$this->instance = new Cache\None;
+		$this->instance = new Cache\None($this->cacheOptions);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::clear method.
+	 */
+	public function testClear()
+	{
+		$this->assertTrue($this->instance->clear());
+	}
+
+	/**
+	 * Tests the the Joomla\Cache\Cache::getItem method.
+	 */
+	public function testGetItem()
+	{
+		$this->assertInstanceOf('Joomla\Cache\Item\Item', $this->instance->getItem('foo'));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::save method.
+	 */
+	public function testSave()
+	{
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('Psr\Cache\CacheItemInterface')
+			->getMock();
+
+		$this->assertTrue($this->instance->save($stub));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::getItems method.
+	 */
+	public function testGetItems()
+	{
+		$keys = ['foo', 'bar', 'hello'];
+
+		$this->assertContainsOnlyInstancesOf('Psr\Cache\CacheItemInterface', $this->instance->getItems($keys));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::deleteItems method.
+	 */
+	public function testDeleteItems()
+	{
+		$keys = ['foo', 'bar', 'hello'];
+
+		$this->assertTrue($this->instance->deleteItems($keys));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::deleteItem method.
+	 */
+	public function testDeleteItem()
+	{
+		$this->assertTrue($this->instance->deleteItem('foo'));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::hasItem method.
+	 */
+	public function testHasItem()
+	{
+		$this->assertFalse($this->instance->hasItem('foo'));
+	}
+
+	/**
+	 * Tests for the correct Psr\Cache return values.
+	 *
+	 * @coversNothing
+	 */
+	public function testPsrCache()
+	{
+		$cacheInstance = $this->instance;
+		$cacheClass = get_class($cacheInstance);
+		$interfaces = class_implements($cacheClass);
+		$psrInterface = 'Psr\\Cache\\CacheItemPoolInterface';
+		$this->assertArrayHasKey($psrInterface, $interfaces, __LINE__);
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('bar');
+
+		$stub->method('getKey')
+			->willReturn('foo');
+
+		$this->assertInternalType('boolean', $cacheInstance->clear(), 'Checking clear.');
+		$this->assertInternalType('boolean', $cacheInstance->save($stub), 'Checking save.');
+		$this->assertNull($cacheInstance->getItem('foo')->get(), 'Checking get.');
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $cacheInstance->getItem('foo'), 'Checking getItem.');
+		$this->assertInternalType('boolean', $cacheInstance->deleteItem('foo'), 'Checking deleteItem.');
+		$this->assertInternalType('array', $cacheInstance->getItems(['foo']), 'Checking getItems.');
+		$this->assertInternalType('boolean', $cacheInstance->deleteItems(['foo']), 'Checking deleteItems.');
 	}
 }

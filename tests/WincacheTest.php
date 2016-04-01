@@ -6,23 +6,26 @@
 
 namespace Joomla\Cache\Tests;
 
+use Joomla\Cache;
+
 /**
  * Tests for the Joomla\Cache\Wincache class.
- *
- * @since  1.0
  */
 class WincacheTest extends CacheTest
 {
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
 	protected function setUp()
 	{
-		$this->cacheClass = 'Joomla\\Cache\\Wincache';
 		parent::setUp();
+
+		if (!Cache\Wincache::isSupported())
+		{
+			$this->markTestSkipped('WinCache Cache Handler is not supported on this system.');
+		}
+
+		$this->instance = new Cache\Wincache($options);
 	}
 }

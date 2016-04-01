@@ -10,22 +10,22 @@ use Joomla\Cache;
 
 /**
  * Tests for the Joomla\Cache\Redis class.
- *
- * @since  1.0
  */
 class RedisTest extends CacheTest
 {
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Redis::__construct
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
 	protected function setUp()
 	{
-		$this->cacheClass = 'Joomla\\Cache\\Redis';
 		parent::setUp();
+
+		if (!Cache\Redis::isSupported())
+		{
+			$this->markTestSkipped('Redis Cache Handler is not supported on this system.');
+		}
+
+		$this->instance = new Cache\Redis($options);
 	}
 }

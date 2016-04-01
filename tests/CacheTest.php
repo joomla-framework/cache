@@ -9,40 +9,22 @@ namespace Joomla\Cache\Tests;
 use Psr\Cache\CacheItemInterface;
 
 /**
- * Tests for the Joomla\Cache\Cache class.
- *
- * @since  1.0
+ * Abstract test case for Joomla! CacheItemPool objects
  */
 abstract class CacheTest extends \PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var    \Joomla\Cache\Cache
-	 * @since  1.0
+	 * @var  \Joomla\Cache\Cache
 	 */
-	public $instance;
+	protected $instance;
 
 	/**
-	 * @var    string  Cache Classname to test
-	 * @since  1.0
+	 * @var  array
 	 */
-	public $cacheClass = '';
+	protected $cacheOptions = ['foo' => 900];
 
 	/**
-	 * @var    array
-	 * @since  1.0
-	 */
-	public $cacheOptions = array('foo' => 900);
-
-	/**
-	 * Tests the registry options is correctly initialised.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::__construct
-	 * @covers  Joomla\Cache\Apc::__construct
-	 * @covers  Joomla\Cache\Memcached::__construct
-	 *
-	 * @since   1.0
+	 * Tests the registry options are correctly initialised.
 	 */
 	public function test__construct()
 	{
@@ -50,31 +32,7 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::__construct method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::__construct
-	 * @covers  Joomla\Cache\Apc::__construct
-	 * @covers  Joomla\Cache\Memcached::__construct
-	 * @expectedException  \Joomla\Cache\Exception\InvalidArgumentException
-	 * @since   1.0
-	 */
-	public function test__constructWithInvalidParams()
-	{
-		// Throws exception, options is null
-		$className = $this->cacheClass;
-		new $className(null);
-	}
-
-	/**
 	 * Tests the Joomla\Cache\Cache::clear method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::clear
-	 * @covers  Joomla\Cache\Memcached::clear
-	 * @since   1.1.3
 	 */
 	public function testClear()
 	{
@@ -141,12 +99,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the the Joomla\Cache\Cache::getItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Memcached::getItem
-	 * @covers  Joomla\Cache\Memcached::connect
-	 * @since   1.0
 	 */
 	public function testGetItem()
 	{
@@ -175,8 +127,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @param   string  $value  Value cache item should be
 	 *
 	 * @return  void
-	 *
-	 * @since   1.1
 	 */
 	protected function missKey($key = '', $value = '')
 	{
@@ -197,8 +147,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 	 * @param   string  $value  Value cache item should be
 	 *
 	 * @return  void
-	 *
-	 * @since   1.1
 	 */
 	protected function hitKey($key = '', $value = '')
 	{
@@ -214,13 +162,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the Joomla\Cache\Cache::save method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::save
-	 * @covers  Joomla\Cache\Memcached::save
-	 * @covers  Joomla\Cache\Memcached::connect
-	 * @since   1.0
 	 */
 	public function testSave()
 	{
@@ -248,12 +189,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the Joomla\Cache\Cache::getItems method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::getItems
-	 * @covers  Joomla\Cache\Apc::getItems
-	 * @since   1.0
 	 */
 	public function testGetItems()
 	{
@@ -338,11 +273,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the Joomla\Cache\Cache::deleteItems method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::deleteItems
-	 * @since   1.0
 	 */
 	public function testDeleteItems()
 	{
@@ -398,13 +328,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the Joomla\Cache\Cache::deleteItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::deleteItem
-	 * @covers  Joomla\Cache\Memcached::deleteItem
-	 * @covers  Joomla\Cache\Memcached::connect
-	 * @since   1.0
 	 */
 	public function testDeleteItem()
 	{
@@ -459,12 +382,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the Joomla\Cache\Cache::setOption method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::getOption
-	 * @covers  Joomla\Cache\Cache::setOption
-	 * @since   1.0
 	 */
 	public function testSetOption()
 	{
@@ -475,12 +392,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the Joomla\Cache\Cache::hasItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Cache::hasItem
-	 * @covers  Joomla\Cache\Memcached::hasItem
-	 * @since   1.1.3
 	 */
 	public function testHasItem()
 	{
@@ -515,10 +426,7 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Tests for the correct Psr\Cache return values.
 	 *
-	 * @return  void
-	 *
 	 * @coversNothing
-	 * @since   1.0
 	 */
 	public function testPsrCache()
 	{
@@ -526,10 +434,7 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 		$cacheClass = get_class($cacheInstance);
 		$interfaces = class_implements($cacheClass);
 		$psrInterface = 'Psr\\Cache\\CacheItemPoolInterface';
-		$targetClass = $this->cacheClass;
 		$this->assertArrayHasKey($psrInterface, $interfaces, __LINE__);
-		$cacheClass = get_class($cacheInstance);
-		$this->assertEquals($cacheClass, $targetClass, __LINE__);
 
 		// Create a stub for the CacheItemInterface class.
 		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
@@ -552,10 +457,6 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests the Joomla\Cache\Cache::getItem and Joomla\Cache\Cache::save methods with timeout
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
 	 */
 	public function testGetAndSaveWithTimeout()
 	{
@@ -588,35 +489,8 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
-	 */
-	protected function setUp()
-	{
-		$options = $this->cacheOptions;
-		$className = $this->cacheClass;
-
-		if (!$className::isSupported())
-		{
-			$this->markTestSkipped(sprintf('Cache Handler Class %sis not supported on this system.', $className));
-		}
-
-		$cacheInstance = new $className($options);
-
-		$this->instance =& $cacheInstance;
-
-		parent::setUp();
-	}
-
-	/**
-	 * Teardown the test.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Tears down the fixture, for example, close a network connection.
+	 * This method is called after a test is executed.
 	 */
 	protected function tearDown()
 	{
@@ -624,5 +498,7 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 		{
 			$this->instance->clear();
 		}
+
+		parent::tearDown();
 	}
 }

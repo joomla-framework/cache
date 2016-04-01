@@ -10,42 +10,26 @@ use Joomla\Cache;
 
 /**
  * Tests for the Joomla\Cache\Memcached class.
- *
- * @since  1.0
  */
 class MemcachedTest extends CacheTest
 {
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
-	public function setUp()
+	protected function setUp()
 	{
-		$options = $this->cacheOptions;
-
-		if (!$options)
-		{
-			$options = array();
-		}
-
-		if (!is_array($options))
-		{
-			$options = array($options);
-		}
-
-		if (!isset($options['memcache.servers']))
-		{
-			$server = new \stdClass;
-			$server->host = 'localhost';
-			$server->port = '11211';
-			$options['memcache.servers'] = array($server);
-		}
-
-		$this->cacheOptions = $options;
-		$this->cacheClass = 'Joomla\\Cache\\Memcached';
 		parent::setUp();
+
+		if (!Cache\Memcached::isSupported())
+		{
+			$this->markTestSkipped('Memcached Cache Handler is not supported on this system.');
+		}
+
+		$options = array_merge(
+			$this->cacheOptions, ['memcache.servers' => [(object) ['host' => 'localhost', 'port' => 11211]]]
+		);
+
+		$this->instance = new Cache\Memcached($options);
 	}
 }

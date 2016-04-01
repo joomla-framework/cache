@@ -10,31 +10,27 @@ use Joomla\Cache;
 
 /**
  * Tests for the Joomla\Cache\Apcu class.
- *
- * @since  1.0
  */
 class ApcuTest extends CacheTest
 {
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
 	protected function setUp()
 	{
-		$this->cacheClass = 'Joomla\\Cache\\Apcu';
-
 		parent::setUp();
+
+		if (!Cache\Apcu::isSupported())
+		{
+			$this->markTestSkipped('APCu Cache Handler is not supported on this system.');
+		}
+
+		$this->instance = new Cache\Apcu($this->cacheOptions);
 	}
 
 	/**
 	 * Tests the Joomla\Cache\Cache::getItem and Joomla\Cache\Cache::save methods with timeout
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
 	 */
 	public function testGetAndSaveWithTimeout()
 	{

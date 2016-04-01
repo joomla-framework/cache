@@ -10,21 +10,22 @@ use Joomla\Cache;
 
 /**
  * Tests for the Joomla\Cache\XCache class.
- *
- * @since  1.0
  */
 class XCacheTest extends CacheTest
 {
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
 	protected function setUp()
 	{
-		$this->cacheClass = 'Joomla\\Cache\\XCache';
 		parent::setUp();
+
+		if (!Cache\XCache::isSupported())
+		{
+			$this->markTestSkipped('XCache Cache Handler is not supported on this system.');
+		}
+
+		$this->instance = new Cache\XCache($options);
 	}
 }

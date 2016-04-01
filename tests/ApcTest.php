@@ -10,31 +10,27 @@ use Joomla\Cache;
 
 /**
  * Tests for the Joomla\Cache\Apc class.
- *
- * @since  1.0
  */
 class ApcTest extends CacheTest
 {
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
 	protected function setUp()
 	{
-		$this->cacheClass = 'Joomla\\Cache\\Apc';
-
 		parent::setUp();
+
+		if (!Cache\Apc::isSupported())
+		{
+			$this->markTestSkipped('APC Cache Handler is not supported on this system.');
+		}
+
+		$this->instance = new Cache\Apc($this->cacheOptions);
 	}
 
 	/**
 	 * Tests the Joomla\Cache\Cache::getItem and Joomla\Cache\Cache::save methods with timeout
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
 	 */
 	public function testGetAndSaveWithTimeout()
 	{

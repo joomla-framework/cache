@@ -16,15 +16,13 @@ use Joomla\Cache;
 class RuntimeTest extends CacheTest
 {
 	/**
-	 * Setup the tests.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
+	 * Sets up the fixture, for example, open a network connection.
+	 * This method is called before a test is executed.
 	 */
 	protected function setUp()
 	{
-		$this->cacheClass = 'Joomla\\Cache\\Runtime';
 		parent::setUp();
+
+		$this->instance = new Cache\Runtime($this->cacheOptions);
 	}
 }
