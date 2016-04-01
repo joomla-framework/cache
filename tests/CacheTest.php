@@ -110,32 +110,32 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue(
 			$cacheInstance->save($stub),
-			__LINE__
+			'Checks first item was saved.'
 		);
 
 		$this->assertTrue(
 			$cacheInstance->save($stub2),
-			__LINE__
+			'Checks second item was saved.'
 		);
 
 		$this->assertTrue(
 			$cacheInstance->hasItem('foobar'),
-			__LINE__
+			'Checks first item was saved into adapter.'
 		);
 
 		$this->assertTrue(
 			$cacheInstance->clear(),
-			__LINE__
+			'Checks clear returns true'
 		);
 
 		$this->assertFalse(
 			$cacheInstance->hasItem('foobar'),
-			__LINE__
+			'Checks first item was cleared.'
 		);
 
 		$this->assertFalse(
 			$cacheInstance->hasItem('boo'),
-			__LINE__
+			'Checks second item was cleared.'
 		);
 	}
 
