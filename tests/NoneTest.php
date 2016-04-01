@@ -7,7 +7,6 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache;
-use Joomla\Test\TestHelper;
 
 /**
  * Tests for the Joomla\Cache\None class.
