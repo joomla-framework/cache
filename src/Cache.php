@@ -89,17 +89,6 @@ abstract class Cache implements CacheItemPoolInterface
 	}
 
 	/**
-	 * Removes the item from the pool.
-	 *
-	 * @param   string  $key  The key for which to delete
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
-	 */
-	abstract public function deleteItem($key);
-
-	/**
 	 * Removes multiple items from the pool.
 	 *
 	 * @param   array  $keys  An array of keys that should be removed from the pool.
