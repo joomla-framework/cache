@@ -24,11 +24,6 @@ class XCacheTest extends CacheTest
 	 */
 	protected function setUp()
 	{
-		if (!Cache\XCache::isSupported())
-		{
-			$this->markTestSkipped('XCache Cache Handler is not supported on this system.');
-		}
-
 		$this->cacheClass = 'Joomla\\Cache\\XCache';
 		parent::setUp();
 	}

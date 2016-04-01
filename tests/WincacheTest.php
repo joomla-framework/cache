@@ -6,8 +6,6 @@
 
 namespace Joomla\Cache\Tests;
 
-use Joomla\Cache;
-
 /**
  * Tests for the Joomla\Cache\Wincache class.
  *
@@ -24,11 +22,6 @@ class WincacheTest extends CacheTest
 	 */
 	protected function setUp()
 	{
-		if (!Cache\Wincache::isSupported())
-		{
-			$this->markTestSkipped('WinCache Cache Handler is not supported on this system.');
-		}
-
 		$this->cacheClass = 'Joomla\\Cache\\Wincache';
 		parent::setUp();
 	}

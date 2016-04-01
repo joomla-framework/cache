@@ -24,11 +24,6 @@ class ApcTest extends CacheTest
 	 */
 	protected function setUp()
 	{
-		if (!Cache\Apc::isSupported())
-		{
-			$this->markTestSkipped('APC Cache Handler is not supported on this system.');
-		}
-
 		$this->cacheClass = 'Joomla\\Cache\\Apc';
 
 		parent::setUp();

@@ -24,11 +24,6 @@ class RuntimeTest extends CacheTest
 	 */
 	protected function setUp()
 	{
-		if (!Cache\Runtime::isSupported())
-		{
-			$this->markTestSkipped('Runtime Cache Handler is not supported on this system.');
-		}
-
 		$this->cacheClass = 'Joomla\\Cache\\Runtime';
 		parent::setUp();
 	}

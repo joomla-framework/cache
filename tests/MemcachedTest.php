@@ -24,11 +24,6 @@ class MemcachedTest extends CacheTest
 	 */
 	public function setUp()
 	{
-		if (!Cache\Memcached::isSupported())
-		{
-			$this->markTestSkipped('Memcached Cache Handler is not supported on this system.');
-		}
-
 		$options = $this->cacheOptions;
 
 		if (!$options)

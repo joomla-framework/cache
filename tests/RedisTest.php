@@ -25,14 +25,7 @@ class RedisTest extends CacheTest
 	 */
 	protected function setUp()
 	{
-		if (!Cache\Redis::isSupported())
-		{
-			$this->markTestSkipped('Redis Cache Handler is not supported on this system.');
-		}
-
 		$this->cacheClass = 'Joomla\\Cache\\Redis';
 		parent::setUp();
-
-		$this->instance->clear();
 	}
 }

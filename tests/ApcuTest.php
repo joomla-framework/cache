@@ -24,11 +24,6 @@ class ApcuTest extends CacheTest
 	 */
 	protected function setUp()
 	{
-		if (!Cache\Apcu::isSupported())
-		{
-			$this->markTestSkipped('APCu Cache Handler is not supported on this system.');
-		}
-
 		$this->cacheClass = 'Joomla\\Cache\\Apcu';
 
 		parent::setUp();
