@@ -145,7 +145,7 @@ abstract class Cache implements CacheItemPoolInterface
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  $this
+	 * @return  boolean  False if the item could not be queued or if a commit was attempted and failed. True otherwise.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
@@ -153,7 +153,7 @@ abstract class Cache implements CacheItemPoolInterface
 	{
 		$this->deferred[$item->getKey()] = $item;
 
-		return $this;
+		return true;
 	}
 
 	/**
