@@ -16,35 +16,6 @@ use Joomla\Cache;
 class ApcuTest extends CacheTest
 {
 	/**
-	 * Tests for the correct Psr\Cache return values.
-	 *
-	 * @return  void
-	 *
-	 * @coversNothing
-	 * @since   1.0
-	 */
-	public function testPsrCache()
-	{
-		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking getItem.');
-		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getItems.');
-		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking deleteItem.');
-		$this->assertInternalType('boolean', $this->instance->deleteItems(array('foo')), 'Checking deleteItems.');
-
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking save.');
-	}
-
-	/**
 	 * Tests the Joomla\Cache\Apcu::clear method.
 	 *
 	 * @return  void
