@@ -13,108 +13,8 @@ use Joomla\Cache;
  *
  * @since  1.0
  */
-class WincacheTest extends \PHPUnit_Framework_TestCase
+class WincacheTest extends CacheTest
 {
-	/**
-	 * @var    Cache\Wincache
-	 * @since  1.0
-	 */
-	private $instance;
-
-	/**
-	 * Tests for the correct Psr\Cache return values.
-	 *
-	 * @return  void
-	 *
-	 * @coversNothing
-	 * @since   1.0
-	 */
-	public function testPsrCache()
-	{
-		$this->assertInternalType('boolean', $this->instance->clear(), 'Checking clear.');
-		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->getItem('foo'), 'Checking get.');
-		$this->assertInternalType('array', $this->instance->getItems(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $this->instance->deleteItem('foo'), 'Checking remove.');
-		$this->assertInternalType('boolean', $this->instance->deleteItems(array('foo')), 'Checking removeMultiple.');
-
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->assertInternalType('boolean', $this->instance->save($stub), 'Checking save.');
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Wincache::clear method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Wincache::clear
-	 * @since   1.0
-	 */
-	public function testClear()
-	{
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Wincache::hasItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Wincache::hasItem
-	 * @since   1.0
-	 */
-	public function testHasItem()
-	{
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Wincache::getItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Wincache::getItem
-	 * @since   1.0
-	 */
-	public function testGetItem()
-	{
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Wincache::deleteItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Wincache::deleteItem
-	 * @since   1.0
-	 */
-	public function testDeleteItem()
-	{
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Wincache::set method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Wincache::set
-	 * @since   1.0
-	 */
-	public function testSet()
-	{
-		$this->markTestIncomplete();
-	}
-
 	/**
 	 * Setup the tests.
 	 *
@@ -129,8 +29,7 @@ class WincacheTest extends \PHPUnit_Framework_TestCase
 			$this->markTestSkipped('WinCache Cache Handler is not supported on this system.');
 		}
 
+		$this->cacheClass = 'Joomla\\Cache\\Wincache';
 		parent::setUp();
-
-		$this->instance = new Cache\Wincache;
 	}
 }
