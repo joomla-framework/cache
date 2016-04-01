@@ -26,10 +26,18 @@ class MemcachedTest extends CacheTest
 			$this->markTestSkipped('Memcached Cache Handler is not supported on this system.');
 		}
 
-		$options = array_merge(
-			$this->cacheOptions, ['memcache.servers' => [(object) ['host' => 'localhost', 'port' => 11211]]]
-		);
+		$memcached = new \Memcached;
+		$memcached->setOption(\Memcached::OPT_COMPRESSION, false);
+		$memcached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+		$memcached->addServer('127.0.0.1', 11211);
 
-		$this->instance = new Cache\Memcached($options);
+		// Validate we can connect to the Memcached instance
+		if (@fsockopen('127.0.0.1', 11211) === false)
+		{
+			unset($memcached);
+			$this->markTestSkipped('Cannot connect to Memcached.');
+		}
+
+		$this->instance = new Cache\Memcached($memcached, $this->cacheOptions);
 	}
 }

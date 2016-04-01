@@ -21,39 +21,28 @@ use Joomla\Cache\Item\Item;
 class Memcached extends Cache
 {
 	/**
-	 * @var    \Memcached  The memcached driver, initialize to false to avoid having to repeated run isset before using it..
+	 * The Memcached driver
+	 *
+	 * @var    \Memcached
 	 * @since  1.0
 	 */
-	private $driver = false;
+	private $driver;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
+	 * @param   \Memcached  $memcached  The Memcached driver being used for this pool
+	 * @param   array|\ArrayAccess  $options  An options array, or an object that implements \ArrayAccess
 	 *
 	 * @since   1.0
 	 * @throws  \RuntimeException
 	 */
-	public function __construct($options = array())
+	public function __construct(\Memcached $memcached, $options = [])
 	{
 		// Parent sets up the caching options and checks their type
 		parent::__construct($options);
 
-		// These options must be set to something, so if not set make them false
-		if (!isset($this->options['memcache.pool']))
-		{
-			$this->options['memcache.pool'] = false;
-		}
-
-		if (!isset($this->options['memcache.compress']))
-		{
-			$this->options['memcache.compress'] = false;
-		}
-
-		if (!isset($this->options['memcache.servers']))
-		{
-			$this->options['memcache.servers'] = false;
-		}
+		$this->driver = $memcached;
 	}
 
 	/**
@@ -65,8 +54,6 @@ class Memcached extends Cache
 	 */
 	public function clear()
 	{
-		$this->connect();
-
 		return $this->driver->flush();
 	}
 
@@ -81,7 +68,6 @@ class Memcached extends Cache
 	 */
 	public function getItem($key)
 	{
-		$this->connect();
 		$value = $this->driver->get($key);
 		$code = $this->driver->getResultCode();
 		$item = new Item($key);
@@ -105,8 +91,6 @@ class Memcached extends Cache
 	 */
 	public function deleteItem($key)
 	{
-		$this->connect();
-
 		if ($this->hasItem($key))
 		{
 			$this->driver->delete($key);
@@ -131,8 +115,6 @@ class Memcached extends Cache
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		$this->connect();
-
 		if ($item instanceof HasExpirationDateInterface)
 		{
 			$ttl = $this->convertItemExpiryToSeconds($item);
@@ -158,8 +140,6 @@ class Memcached extends Cache
 	 */
 	public function hasItem($key)
 	{
-		$this->connect();
-
 		$this->driver->get($key);
 
 		return ($this->driver->getResultCode() != \Memcached::RES_NOTFOUND);
@@ -179,47 +159,5 @@ class Memcached extends Cache
 		 * If the class is there, we can assume it works.
 		 */
 		return (class_exists('Memcached'));
-	}
-
-	/**
-	 * Connect to the Memcached servers if the connection does not already exist.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
-	 */
-	private function connect()
-	{
-		// We want to only create the driver once.
-		if ($this->driver)
-		{
-			return;
-		}
-
-		$pool = $this->options['memcache.pool'];
-
-		if ($pool)
-		{
-			$this->driver = new \Memcached($pool);
-		}
-		else
-		{
-			$this->driver = new \Memcached;
-		}
-
-		$this->driver->setOption(\Memcached::OPT_COMPRESSION, $this->options['memcache.compress'] ?: false);
-		$this->driver->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
-		$serverList = $this->driver->getServerList();
-
-		// If we are using a persistent pool we don't want to add the servers again.
-		if (empty($serverList))
-		{
-			$servers = $this->options['memcache.servers'] ?: array();
-
-			foreach ($servers as $server)
-			{
-				$this->driver->addServer($server->host, $server->port);
-			}
-		}
 	}
 }
