@@ -520,11 +520,12 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 			->willReturn('foo');
 
 		$this->assertInternalType('boolean', $cacheInstance->clear(), 'Checking clear.');
-		$this->assertInternalType('boolean', $cacheInstance->save($stub), 'Checking set.');
+		$this->assertInternalType('boolean', $cacheInstance->save($stub), 'Checking save.');
 		$this->assertInternalType('string', $cacheInstance->getItem('foo')->get(), 'Checking get.');
-		$this->assertInternalType('boolean', $cacheInstance->deleteItem('foo'), 'Checking remove.');
-		$this->assertInternalType('array', $cacheInstance->getItems(array('foo')), 'Checking getMultiple.');
-		$this->assertInternalType('boolean', $cacheInstance->deleteItems(array('foo')), 'Checking removeMultiple.');
+		$this->assertInternalType('\Psr\Cache\CacheItemInterface', $cacheInstance->getItem('foo'), 'Checking getItem.');
+		$this->assertInternalType('boolean', $cacheInstance->deleteItem('foo'), 'Checking deleteItem.');
+		$this->assertInternalType('array', $cacheInstance->getItems(array('foo')), 'Checking getItems.');
+		$this->assertInternalType('boolean', $cacheInstance->deleteItems(array('foo')), 'Checking deleteItems.');
 	}
 
 	/**
