@@ -571,4 +571,19 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 
 		parent::setUp();
 	}
+
+	/**
+	 * Teardown the test.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	protected function tearDown()
+	{
+		if ($this->instance)
+		{
+			$this->instance->clear();
+		}
+	}
 }
