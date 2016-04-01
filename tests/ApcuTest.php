@@ -16,84 +16,6 @@ use Joomla\Cache;
 class ApcuTest extends CacheTest
 {
 	/**
-	 * Tests the Joomla\Cache\Apcu::clear method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Apcu::clear
-	 * @since   1.0
-	 */
-	public function testClear()
-	{
-		$this->assertTrue($this->instance->clear());
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Apcu::hasItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Apcu::hasItem
-	 * @since   1.0
-	 */
-	public function testHasItem()
-	{
-		$this->assertTrue($this->instance->hasItem('foo'));
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Apcu::getItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Apcu::getItem
-	 * @since   1.0
-	 */
-	public function testGetItem()
-	{
-		$this->assertInstanceOf(
-			'\Psr\Cache\CacheItemInterface',
-			$this->instance->getItem('foo')
-		);
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Apcu::deleteItem method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Apcu::deleteItem
-	 * @since   1.0
-	 */
-	public function testDeleteItem()
-	{
-		$this->assertTrue($this->instance->deleteItem('foo'));
-	}
-
-	/**
-	 * Tests the Joomla\Cache\Apcu::save method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Cache\Apcu::save
-	 * @since   1.0
-	 */
-	public function testSave()
-	{
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('car');
-
-		$stub->method('getKey')
-			->willReturn('boo');
-
-		$this->assertTrue($this->instance->save($stub));
-	}
-
-	/**
 	 * Setup the tests.
 	 *
 	 * @return  void
@@ -110,17 +32,5 @@ class ApcuTest extends CacheTest
 		$this->cacheClass = 'Joomla\\Cache\\Apcu';
 
 		parent::setUp();
-
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
-			->getMock();
-
-		$stub->method('get')
-			->willReturn('bar');
-
-		$stub->method('getKey')
-			->willReturn('foo');
-
-		$this->instance->save($stub);
 	}
 }

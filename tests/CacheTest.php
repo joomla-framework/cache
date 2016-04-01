@@ -237,8 +237,10 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 		$stub->method('getKey')
 			->willReturn('fooSet');
 
-		$result = $cacheInstance->save($stub);
-		$this->assertTrue($result, __LINE__);
+		$this->assertTrue(
+			$cacheInstance->save($stub),
+			'Save should return true for a valid item'
+		);
 
 		$fooValue = $cacheInstance->getItem('fooSet')->get();
 		$this->assertThat($fooValue, $this->equalTo('barSet'), __LINE__);
