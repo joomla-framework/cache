@@ -20,7 +20,7 @@ interface HasExpirationDateInterface
 	 *
 	 * If this cache item is a Cache Miss, this method MAY return the time at which the item expired or the current time if that is not available.
 	 *
-	 * @return  \DateTime  The timestamp at which this cache item will expire.
+	 * @return  \DateTimeInterface  The timestamp at which this cache item will expire.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */

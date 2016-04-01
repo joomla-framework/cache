@@ -18,7 +18,7 @@ class Item extends AbstractItem
 	/**
 	 * The time the object expires at
 	 *
-	 * @var    \DateTime
+	 * @var    \DateTimeInterface
 	 * @since  __DEPLOY_VERSION__
 	 */
 	private $expiration;
@@ -50,8 +50,8 @@ class Item extends AbstractItem
 	/**
 	 * Class constructor.
 	 *
-	 * @param   string                  $key  The key for the cache item.
-	 * @param   \DateTime|integer|null  $ttl  The expiry time for the cache item in seconds or as a datetime object
+	 * @param   string                           $key  The key for the cache item.
+	 * @param   \DateTimeInterface|integer|null  $ttl  The expiry time for the cache item in seconds or as a datetime object
 	 *
 	 * @since   1.0
 	 */
@@ -198,7 +198,7 @@ class Item extends AbstractItem
 	 *
 	 * If this cache item is a Cache Miss, this method MAY return the time at which the item expired or the current time if that is not available.
 	 *
-	 * @return  \DateTime  The timestamp at which this cache item will expire.
+	 * @return  \DateTimeInterface  The timestamp at which this cache item will expire.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
