@@ -28,4 +28,16 @@ class ApcTest extends CacheTest
 
 		parent::setUp();
 	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::getItem and Joomla\Cache\Cache::save methods with timeout
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public function testGetAndSaveWithTimeout()
+	{
+		$this->markTestSkipped('The APC cache TTL is not working in a single process/request. See https://bugs.php.net/bug.php?id=58084');
+	}
 }
