@@ -25,4 +25,13 @@ class RuntimeTest extends CacheTest
 
 		$this->instance = new Cache\Runtime($this->cacheOptions);
 	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::getItem and Joomla\Cache\Cache::save methods with timeout
+	 */
+	public function testGetAndSaveWithTimeout()
+	{
+		$this->markTestSkipped('Runtime cache currently does not support timeouts');
+	}
+
 }
