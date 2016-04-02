@@ -7,6 +7,7 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache;
+use Joomla\Test\TestHelper;
 
 /**
  * Tests for the Joomla\Cache\None class.
@@ -86,6 +87,31 @@ class NoneTest extends CacheTest
 	public function testHasItem()
 	{
 		$this->assertFalse($this->instance->hasItem('foo'));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::commit method.
+	 */
+	public function testCommit()
+	{
+		$stubKey = 'fooCommit';
+		$this->assertFalse($this->instance->hasItem($stubKey), 'Item should not exist at test start');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('barCommit');
+
+		$stub->method('getKey')
+			->willReturn($stubKey);
+
+		TestHelper::setValue($this->instance, 'deferred', array($stubKey => $stub));
+
+		$this->assertTrue($this->instance->commit(), 'Commit should return boolean true as successful');
+
+		$this->assertFalse($this->instance->hasItem($stubKey));
 	}
 
 	/**

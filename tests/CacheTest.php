@@ -6,6 +6,7 @@
 
 namespace Joomla\Cache\Tests;
 
+use Joomla\Test\TestHelper;
 use Psr\Cache\CacheItemInterface;
 
 /**
@@ -486,6 +487,59 @@ abstract class CacheTest extends \PHPUnit_Framework_TestCase
 			$this->instance->getItem('foo')->isHit(),
 			'Checks expired get.'
 		);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::saveDeferred method.
+	 */
+	public function testSaveDeferred()
+	{
+		$cacheInstance = $this->instance;
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('barDeferred');
+
+		$stub->method('getKey')
+			->willReturn('fooDeferred');
+
+		$this->assertTrue(
+			$cacheInstance->saveDeferred($stub),
+			'Save deferred should return true for a valid item'
+		);
+
+		$this->assertEquals(
+			array('fooDeferred' => $stub),
+			TestHelper::getValue($this->instance, 'deferred')
+		);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::commit method.
+	 */
+	public function testCommit()
+	{
+		$stubKey = 'fooCommit';
+		$this->assertFalse($this->instance->hasItem($stubKey), 'Item should not exist at test start');
+
+		// Create a stub for the CacheItemInterface class.
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('barCommit');
+
+		$stub->method('getKey')
+			->willReturn($stubKey);
+
+		TestHelper::setValue($this->instance, 'deferred', array($stubKey => $stub));
+
+		$this->assertTrue($this->instance->commit(), 'Commit should return boolean true as successful');
+
+		$this->assertTrue($this->instance->hasItem($stubKey), 'Item should exist in storage');
 	}
 
 	/**

@@ -148,7 +148,7 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * Persists any deferred cache items.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if all not-yet-saved items were successfully saved or there were none. False otherwise.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
