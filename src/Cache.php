@@ -30,7 +30,7 @@ abstract class Cache implements CacheItemPoolInterface
 	/**
 	 * The deferred items to store
 	 *
-	 * @var    array
+	 * @var    \Joomla\Cache\Item\Item[]
 	 * @since  1.0
 	 */
 	private $deferred = [];
