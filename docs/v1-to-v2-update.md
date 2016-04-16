@@ -36,23 +36,27 @@ The following methods have a 1:1 mapping:
 
 3. Setting expiration of cache items is now done at the Cache item level rather than the cache adapter level.
 
-### APCu Support Added
-
-A handler natively supporting APCu was added.
-
 ### UnsupportedFormatException Removed
 
 The `Joomla\Cache\Exception\UnsupportedFormatException` class has been removed. This was previously thrown when an adapter is not
 supported on an environment. Instead, a `Joomla\Cache\CacheItemPoolInterface` interface extending the `Psr\Cache\CacheItemPoolInterface`
 interface has been added and all CacheItemPool implementations offer a static `isSupported()` method to test for support.
 
+### `Joomla\Cache\Cache` Renamed
+
+The `Joomla\Cache\Cache` class has been renamed to `Joomla\Cache\AbstractCacheItemPool`
+
 ### Adapter Namespace
 
 All cache pool adapters are now in the `Joomla\Cache\Adapter` namespace
 
+### APCu Support Added
+
+A handler natively supporting APCu was added.
+
 ### Runtime Adapter
 
-The Runtime Adapter now stores it's data in a non-static object
+The Runtime Adapter now stores its data in a non-static object
 
 ### Memcached Adapter
 

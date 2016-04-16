@@ -8,7 +8,7 @@
 
 namespace Joomla\Cache\Adapter;
 
-use Joomla\Cache\Cache;
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Exception\InvalidArgumentException;
 use Joomla\Cache\Exception\RuntimeException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
@@ -24,7 +24,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * @since  1.0
  */
-class File extends Cache
+class File extends AbstractCacheItemPool
 {
 	/**
 	 * Constructor.

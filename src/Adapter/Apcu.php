@@ -8,7 +8,7 @@
 
 namespace Joomla\Cache\Adapter;
 
-use Joomla\Cache\Cache;
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
@@ -18,7 +18,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * @since  __DEPLOY_VERSION__
  */
-class Apcu extends Cache
+class Apcu extends AbstractCacheItemPool
 {
 	/**
 	 * This will wipe out the entire cache's keys

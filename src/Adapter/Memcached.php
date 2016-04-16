@@ -8,7 +8,7 @@
 
 namespace Joomla\Cache\Adapter;
 
-use Joomla\Cache\Cache;
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Exception\RuntimeException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Joomla\Cache\Item\Item;
@@ -19,7 +19,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * @since  1.0
  */
-class Memcached extends Cache
+class Memcached extends AbstractCacheItemPool
 {
 	/**
 	 * The Memcached driver

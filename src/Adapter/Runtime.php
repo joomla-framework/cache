@@ -8,7 +8,7 @@
 
 namespace Joomla\Cache\Adapter;
 
-use Joomla\Cache\Cache;
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
 
@@ -17,7 +17,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * @since  1.0
  */
-class Runtime extends Cache
+class Runtime extends AbstractCacheItemPool
 {
 	/**
 	 * Database of cached items, we use ArrayObject so it can be easily passed by reference
