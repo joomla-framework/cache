@@ -4,12 +4,13 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache\Tests;
+namespace Joomla\Cache\Tests\Adapter;
 
-use Joomla\Cache;
+use Joomla\Cache\Adapter\File;
+use Joomla\Cache\Tests\CacheTest;
 
 /**
- * Tests for the Joomla\Cache\File class.
+ * Tests for the Joomla\Cache\Adapter\File class.
  */
 class FileTest extends CacheTest
 {
@@ -22,9 +23,9 @@ class FileTest extends CacheTest
 		parent::setUp();
 
 		$options = array_merge(
-			$this->cacheOptions, ['file.path' => __DIR__ . '/tmp']
+			$this->cacheOptions, ['file.path' => dirname(__DIR__) . '/tmp']
 		);
 
-		$this->instance = new Cache\File($options);
+		$this->instance = new File($options);
 	}
 }

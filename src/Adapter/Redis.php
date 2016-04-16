@@ -6,29 +6,55 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
+use Joomla\Cache\Cache;
 use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
- * APCu cache driver for the Joomla Framework.
+ * Redis cache driver for the Joomla Framework.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.0
  */
-class Apcu extends Cache
+class Redis extends Cache
 {
+	/**
+	 * The redis driver.
+	 *
+	 * @var    \Redis
+	 * @since  1.0
+	 */
+	private $driver;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param   \Redis              $redis    The Redis driver being used for this pool
+	 * @param   array|\ArrayAccess  $options  An options array, or an object that implements \ArrayAccess
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \RuntimeException
+	 */
+	public function __construct(\Redis $redis, $options = [])
+	{
+		// Parent sets up the caching options and checks their type
+		parent::__construct($options);
+
+		$this->driver = $redis;
+	}
+
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
 	 * @return  boolean  The result of the clear operation.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function clear()
 	{
-		return apcu_clear_cache();
+		return $this->driver->flushDB();
 	}
 
 	/**
@@ -38,52 +64,19 @@ class Apcu extends Cache
 	 *
 	 * @return  CacheItemInterface
 	 *
-	 * @since   __DEPLOY_VERSION__
-	 * @throws  \RuntimeException
+	 * @since   1.0
 	 */
 	public function getItem($key)
 	{
-		$success = false;
-		$value = apcu_fetch($key, $success);
+		$value = $this->driver->get($key);
 		$item = new Item($key);
 
-		if ($success)
+		if ($value !== false)
 		{
 			$item->set($value);
 		}
 
 		return $item;
-	}
-
-	/**
-	 * Obtain multiple CacheItems by their unique keys.
-	 *
-	 * @param   array  $keys  A list of keys that can obtained in a single operation.
-	 *
-	 * @return  array  An associative array of CacheItem objects keyed on the cache key.
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function getItems(array $keys = array())
-	{
-		$items = array();
-		$success = false;
-		$values = apcu_fetch($keys, $success);
-
-		if ($success && is_array($values))
-		{
-			foreach ($keys as $key)
-			{
-				$items[$key] = new Item($key);
-
-				if (isset($values[$key]))
-				{
-					$items[$key]->set($values[$key]);
-				}
-			}
-		}
-
-		return $items;
 	}
 
 	/**
@@ -93,13 +86,13 @@ class Apcu extends Cache
 	 *
 	 * @return  boolean
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function deleteItem($key)
 	{
 		if ($this->hasItem($key))
 		{
-			return apcu_delete($key);
+			return (bool) $this->driver->del($key);
 		}
 
 		// If the item doesn't exist, no error
@@ -111,22 +104,21 @@ class Apcu extends Cache
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return static
-	 *   The invoked object.
+	 * @return  bool  True if the item was successfully persisted. False if there was an error.
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		// If we are able to find out when the item expires - find out. Else bail.
 		if ($item instanceof HasExpirationDateInterface)
 		{
 			$ttl = $this->convertItemExpiryToSeconds($item);
-		}
-		else
-		{
-			$ttl = 0;
+
+			if ($ttl > 0)
+			{
+				return $this->driver->setex($item->getKey(), $ttl, $item->get());
+			}
 		}
 
-		return apcu_store($item->getKey(), $item->get(), $ttl);
+		return $this->driver->set($item->getKey(), $item->get());
 	}
 
 	/**
@@ -136,11 +128,11 @@ class Apcu extends Cache
 	 *
 	 * @return  boolean
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function hasItem($key)
 	{
-		return apcu_exists($key);
+		return $this->driver->exists($key);
 	}
 
 	/**
@@ -152,14 +144,6 @@ class Apcu extends Cache
 	 */
 	public static function isSupported()
 	{
-		$supported = extension_loaded('apcu') && ini_get('apc.enabled');
-
-		// If on the CLI interface, the `apc.enable_cli` option must also be enabled
-		if ($supported && php_sapi_name() === 'cli')
-		{
-			$supported = ini_get('apc.enable_cli');
-		}
-
-		return (bool) $supported;
+		return (extension_loaded('redis') && class_exists('Redis'));
 	}
 }

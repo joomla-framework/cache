@@ -4,12 +4,13 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache\Tests;
+namespace Joomla\Cache\Tests\Adapter;
 
-use Joomla\Cache;
+use Joomla\Cache\Adapter\Memcached;
+use Joomla\Cache\Tests\CacheTest;
 
 /**
- * Tests for the Joomla\Cache\Memcached class.
+ * Tests for the Joomla\Cache\Adapter\Memcached class.
  */
 class MemcachedTest extends CacheTest
 {
@@ -21,7 +22,7 @@ class MemcachedTest extends CacheTest
 	{
 		parent::setUp();
 
-		if (!Cache\Memcached::isSupported())
+		if (!Memcached::isSupported())
 		{
 			$this->markTestSkipped('Memcached Cache Handler is not supported on this system.');
 		}
@@ -38,6 +39,6 @@ class MemcachedTest extends CacheTest
 			$this->markTestSkipped('Cannot connect to Memcached.');
 		}
 
-		$this->instance = new Cache\Memcached($memcached, $this->cacheOptions);
+		$this->instance = new Memcached($memcached, $this->cacheOptions);
 	}
 }

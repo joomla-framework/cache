@@ -6,40 +6,20 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
-use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Cache;
+use Joomla\Cache\Item\HasExpirationDateInterface;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
- * Runtime memory cache driver.
+ * XCache cache driver for the Joomla Framework.
  *
  * @since  1.0
  */
-class Runtime extends Cache
+class XCache extends Cache
 {
-	/**
-	 * @var    \ArrayObject  Database of cached items, we use ArrayObject so it can be easily
-	 *                       passed by reference
-	 *
-	 * @since  2.0
-	 */
-	private $db;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
-	 *
-	 * @since   2.0
-	 * @throws  \RuntimeException
-	 */
-	public function __construct($options = array())
-	{
-		parent::__construct($options);
-		$this->db = new \ArrayObject;
-	}
-
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
@@ -49,11 +29,6 @@ class Runtime extends Cache
 	 */
 	public function clear()
 	{
-		// Replace the db with a new blank array
-		$clearData = $this->db->exchangeArray(array());
-		unset($clearData);
-
-		return true;
 	}
 
 	/**
@@ -71,7 +46,7 @@ class Runtime extends Cache
 
 		if ($this->hasItem($key))
 		{
-			$item->set($this->db[$key]);
+			$item->set(xcache_get($key));
 		}
 
 		return $item;
@@ -90,27 +65,33 @@ class Runtime extends Cache
 	{
 		if ($this->hasItem($key))
 		{
-			$newCache = array_diff_key($this->db->getArrayCopy(), array($key => $key));
-			$this->db->exchangeArray($newCache);
+			return xcache_unset($key);
 		}
 
+		// If the item doesn't exist, no error
 		return true;
 	}
 
 	/**
-	 * Method to set a value for a storage entry.
+	 * Persists a cache item immediately.
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
+	 * @return  static  The invoked object.
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		$this->db[$item->getKey()] = $item->get();
+		// If we are able to find out when the item expires - find out. Else bail.
+		if ($item instanceof HasExpirationDateInterface)
+		{
+			$ttl = $this->convertItemExpiryToSeconds($item);
+		}
+		else
+		{
+			$ttl = 0;
+		}
 
-		return true;
+		return xcache_set($item->getKey(), $item->get(), $ttl);
 	}
 
 	/**
@@ -124,7 +105,7 @@ class Runtime extends Cache
 	 */
 	public function hasItem($key)
 	{
-		return array_key_exists($key, $this->db);
+		return xcache_isset($key);
 	}
 
 	/**
@@ -136,6 +117,7 @@ class Runtime extends Cache
 	 */
 	public static function isSupported()
 	{
-		return true;
+		// XCache is not supported on CLI
+		return extension_loaded('xcache') && php_sapi_name() != 'cli';
 	}
 }

@@ -4,13 +4,14 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache\Tests;
+namespace Joomla\Cache\Tests\Adapter;
 
-use Joomla\Cache;
+use Joomla\Cache\Adapter\None;
+use Joomla\Cache\Tests\CacheTest;
 use Joomla\Test\TestHelper;
 
 /**
- * Tests for the Joomla\Cache\None class.
+ * Tests for the Joomla\Cache\Adapter\None class.
  */
 class NoneTest extends CacheTest
 {
@@ -22,7 +23,7 @@ class NoneTest extends CacheTest
 	{
 		parent::setUp();
 
-		$this->instance = new Cache\None($this->cacheOptions);
+		$this->instance = new None($this->cacheOptions);
 	}
 
 	/**

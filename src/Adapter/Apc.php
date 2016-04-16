@@ -6,11 +6,12 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
+use Joomla\Cache\Cache;
 use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
  * APC cache driver for the Joomla Framework.

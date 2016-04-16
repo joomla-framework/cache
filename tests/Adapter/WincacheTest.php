@@ -4,14 +4,15 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache\Tests;
+namespace Joomla\Cache\Tests\Adapter;
 
-use Joomla\Cache;
+use Joomla\Cache\Adapter\Wincache;
+use Joomla\Cache\Tests\CacheTest;
 
 /**
- * Tests for the Joomla\Cache\XCache class.
+ * Tests for the Joomla\Cache\Adapter\Wincache class.
  */
-class XCacheTest extends CacheTest
+class WincacheTest extends CacheTest
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.
@@ -21,11 +22,11 @@ class XCacheTest extends CacheTest
 	{
 		parent::setUp();
 
-		if (!Cache\XCache::isSupported())
+		if (!Wincache::isSupported())
 		{
-			$this->markTestSkipped('XCache Cache Handler is not supported on this system.');
+			$this->markTestSkipped('WinCache Cache Handler is not supported on this system.');
 		}
 
-		$this->instance = new Cache\XCache($this->cacheOptions);
+		$this->instance = new Wincache($this->cacheOptions);
 	}
 }

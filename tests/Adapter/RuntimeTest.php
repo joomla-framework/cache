@@ -4,12 +4,13 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache\Tests;
+namespace Joomla\Cache\Tests\Adapter;
 
-use Joomla\Cache;
+use Joomla\Cache\Adapter\Runtime;
+use Joomla\Cache\Tests\CacheTest;
 
 /**
- * Tests for the Joomla\Cache\Runtime class.
+ * Tests for the Joomla\Cache\Adapter\Runtime class.
  *
  * @since  1.0
  */
@@ -23,7 +24,7 @@ class RuntimeTest extends CacheTest
 	{
 		parent::setUp();
 
-		$this->instance = new Cache\Runtime($this->cacheOptions);
+		$this->instance = new Runtime($this->cacheOptions);
 	}
 
 	/**

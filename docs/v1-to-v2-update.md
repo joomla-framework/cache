@@ -46,6 +46,10 @@ The `Joomla\Cache\Exception\UnsupportedFormatException` class has been removed. 
 supported on an environment. Instead, a `Joomla\Cache\CacheItemPoolInterface` interface extending the `Psr\Cache\CacheItemPoolInterface`
 interface has been added and all CacheItemPool implementations offer a static `isSupported()` method to test for support.
 
+### Adapter Namespace
+
+All cache pool adapters are now in the `Joomla\Cache\Adapter` namespace
+
 ### Runtime Adapter
 
 The Runtime Adapter now stores it's data in a non-static object

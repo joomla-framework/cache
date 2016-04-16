@@ -6,19 +6,41 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
-use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\Cache;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
- * WinCache cache driver for the Joomla Framework.
+ * Runtime memory cache driver.
  *
  * @since  1.0
  */
-class Wincache extends Cache
+class Runtime extends Cache
 {
+	/**
+	 * Database of cached items, we use ArrayObject so it can be easily passed by reference
+	 *
+	 * @var    \ArrayObject
+	 * @since  __DEPLOY_VERSION__
+	 */
+	private $db;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param   mixed  $options  An options array, or an object that implements \ArrayAccess
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  \RuntimeException
+	 */
+	public function __construct($options = array())
+	{
+		parent::__construct($options);
+		$this->db = new \ArrayObject;
+	}
+
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
@@ -28,6 +50,11 @@ class Wincache extends Cache
 	 */
 	public function clear()
 	{
+		// Replace the db with a new blank array
+		$clearData = $this->db->exchangeArray(array());
+		unset($clearData);
+
+		return true;
 	}
 
 	/**
@@ -42,12 +69,10 @@ class Wincache extends Cache
 	public function getItem($key)
 	{
 		$item = new Item($key);
-		$success = true;
-		$value = wincache_ucache_get($key, $success);
 
-		if ($success)
+		if ($this->hasItem($key))
 		{
-			$item->set($value);
+			$item->set($this->db[$key]);
 		}
 
 		return $item;
@@ -66,33 +91,27 @@ class Wincache extends Cache
 	{
 		if ($this->hasItem($key))
 		{
-			return wincache_ucache_delete($key);
+			$newCache = array_diff_key($this->db->getArrayCopy(), array($key => $key));
+			$this->db->exchangeArray($newCache);
 		}
 
-		// If the item doesn't exist, no error
 		return true;
 	}
 
 	/**
-	 * Persists a cache item immediately.
+	 * Method to set a value for a storage entry.
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  static  The invoked object.
+	 * @return  boolean
+	 *
+	 * @since   1.0
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		// If we are able to find out when the item expires - find out. Else bail.
-		if ($item instanceof HasExpirationDateInterface)
-		{
-			$ttl = $this->convertItemExpiryToSeconds($item);
-		}
-		else
-		{
-			$ttl = 0;
-		}
+		$this->db[$item->getKey()] = $item->get();
 
-		return wincache_ucache_set($item->getKey(), $item->get(), $ttl);
+		return true;
 	}
 
 	/**
@@ -106,7 +125,7 @@ class Wincache extends Cache
 	 */
 	public function hasItem($key)
 	{
-		return wincache_ucache_exists($key);
+		return array_key_exists($key, $this->db);
 	}
 
 	/**
@@ -118,6 +137,6 @@ class Wincache extends Cache
 	 */
 	public static function isSupported()
 	{
-		return (extension_loaded('wincache') && function_exists('wincache_ucache_get') && !strcmp(ini_get('wincache.ucenabled'), "1"));
+		return true;
 	}
 }
