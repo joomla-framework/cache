@@ -4,14 +4,15 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache\Tests;
+namespace Joomla\Cache\Tests\Adapter;
 
-use Joomla\Cache;
+use Joomla\Cache\Adapter\Redis;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
- * Tests for the Joomla\Cache\Redis class.
+ * Tests for the Joomla\Cache\Adapter\Redis class.
  */
-class RedisTest extends CacheTest
+class RedisTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.
@@ -21,7 +22,7 @@ class RedisTest extends CacheTest
 	{
 		parent::setUp();
 
-		if (!Cache\Redis::isSupported())
+		if (!Redis::isSupported())
 		{
 			$this->markTestSkipped('Redis Cache Handler is not supported on this system.');
 		}
@@ -34,6 +35,6 @@ class RedisTest extends CacheTest
 			$this->markTestSkipped('Cannot connect to Redis.');
 		}
 
-		$this->instance = new Cache\Redis($driver, $this->cacheOptions);
+		$this->instance = new Redis($driver, $this->cacheOptions);
 	}
 }

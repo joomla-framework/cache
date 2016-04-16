@@ -6,17 +6,18 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
-use Psr\Cache\CacheItemInterface;
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
  * Runtime cache only driver for the Joomla Framework.
  *
  * @since  1.0
  */
-class None extends Cache
+class None extends AbstractCacheItemPool
 {
 	/**
 	 * This will wipe out the entire cache's keys

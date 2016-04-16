@@ -17,7 +17,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * @since  1.0
  */
-abstract class Cache implements CacheItemPoolInterface
+abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 {
 	/**
 	 * The options for the cache object.

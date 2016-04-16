@@ -4,14 +4,15 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache\Tests;
+namespace Joomla\Cache\Tests\Adapter;
 
-use Joomla\Cache;
+use Joomla\Cache\Adapter\Apc;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
- * Tests for the Joomla\Cache\Apcu class.
+ * Tests for the Joomla\Cache\Adapter\Apc class.
  */
-class ApcuTest extends CacheTest
+class ApcTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.
@@ -21,12 +22,12 @@ class ApcuTest extends CacheTest
 	{
 		parent::setUp();
 
-		if (!Cache\Apcu::isSupported())
+		if (!Apc::isSupported())
 		{
-			$this->markTestSkipped('APCu Cache Handler is not supported on this system.');
+			$this->markTestSkipped('APC Cache Handler is not supported on this system.');
 		}
 
-		$this->instance = new Cache\Apcu($this->cacheOptions);
+		$this->instance = new Apc($this->cacheOptions);
 	}
 
 	/**

@@ -6,8 +6,9 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Joomla\Cache\Item\Item;
 use Psr\Cache\CacheItemInterface;
@@ -17,7 +18,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * @since  1.0
  */
-class Redis extends Cache
+class Redis extends AbstractCacheItemPool
 {
 	/**
 	 * The redis driver.

@@ -6,29 +6,30 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
- * APCu cache driver for the Joomla Framework.
+ * APC cache driver for the Joomla Framework.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.0
  */
-class Apcu extends Cache
+class Apc extends AbstractCacheItemPool
 {
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
 	 * @return  boolean  The result of the clear operation.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function clear()
 	{
-		return apcu_clear_cache();
+		return apc_clear_cache('user');
 	}
 
 	/**
@@ -38,13 +39,13 @@ class Apcu extends Cache
 	 *
 	 * @return  CacheItemInterface
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 * @throws  \RuntimeException
 	 */
 	public function getItem($key)
 	{
 		$success = false;
-		$value = apcu_fetch($key, $success);
+		$value = apc_fetch($key, $success);
 		$item = new Item($key);
 
 		if ($success)
@@ -62,13 +63,13 @@ class Apcu extends Cache
 	 *
 	 * @return  array  An associative array of CacheItem objects keyed on the cache key.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function getItems(array $keys = array())
 	{
 		$items = array();
 		$success = false;
-		$values = apcu_fetch($keys, $success);
+		$values = apc_fetch($keys, $success);
 
 		if ($success && is_array($values))
 		{
@@ -93,13 +94,13 @@ class Apcu extends Cache
 	 *
 	 * @return  boolean
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function deleteItem($key)
 	{
 		if ($this->hasItem($key))
 		{
-			return apcu_delete($key);
+			return apc_delete($key);
 		}
 
 		// If the item doesn't exist, no error
@@ -126,7 +127,7 @@ class Apcu extends Cache
 			$ttl = 0;
 		}
 
-		return apcu_store($item->getKey(), $item->get(), $ttl);
+		return apc_store($item->getKey(), $item->get(), $ttl);
 	}
 
 	/**
@@ -136,11 +137,11 @@ class Apcu extends Cache
 	 *
 	 * @return  boolean
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.0
 	 */
 	public function hasItem($key)
 	{
-		return apcu_exists($key);
+		return apc_exists($key);
 	}
 
 	/**
@@ -152,7 +153,7 @@ class Apcu extends Cache
 	 */
 	public static function isSupported()
 	{
-		$supported = extension_loaded('apcu') && ini_get('apc.enabled');
+		$supported = extension_loaded('apc') && ini_get('apc.enabled');
 
 		// If on the CLI interface, the `apc.enable_cli` option must also be enabled
 		if ($supported && php_sapi_name() === 'cli')

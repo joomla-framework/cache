@@ -12,7 +12,7 @@ use Psr\Cache\CacheItemInterface;
 /**
  * Abstract test case for Joomla! CacheItemPool objects
  */
-abstract class CacheTest extends \PHPUnit_Framework_TestCase
+abstract class CacheTestCase extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var  \Joomla\Cache\Cache

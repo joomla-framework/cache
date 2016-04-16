@@ -6,13 +6,14 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
+use Joomla\Cache\AbstractCacheItemPool;
+use Joomla\Cache\Exception\InvalidArgumentException;
 use Joomla\Cache\Exception\RuntimeException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemInterface;
-use Joomla\Cache\Exception\InvalidArgumentException;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
  * Filesystem cache driver for the Joomla Framework.
@@ -23,7 +24,7 @@ use Joomla\Cache\Item\Item;
  *
  * @since  1.0
  */
-class File extends Cache
+class File extends AbstractCacheItemPool
 {
 	/**
 	 * Constructor.

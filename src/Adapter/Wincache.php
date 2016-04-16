@@ -6,45 +6,20 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
+use Joomla\Cache\AbstractCacheItemPool;
 use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemInterface;
-use Joomla\Cache\Exception\RuntimeException;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
- * Memcached cache driver for the Joomla Framework.
+ * WinCache cache driver for the Joomla Framework.
  *
  * @since  1.0
  */
-class Memcached extends Cache
+class Wincache extends AbstractCacheItemPool
 {
-	/**
-	 * The Memcached driver
-	 *
-	 * @var    \Memcached
-	 * @since  1.0
-	 */
-	private $driver;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param   \Memcached          $memcached  The Memcached driver being used for this pool
-	 * @param   array|\ArrayAccess  $options    An options array, or an object that implements \ArrayAccess
-	 *
-	 * @since   1.0
-	 * @throws  \RuntimeException
-	 */
-	public function __construct(\Memcached $memcached, $options = [])
-	{
-		// Parent sets up the caching options and checks their type
-		parent::__construct($options);
-
-		$this->driver = $memcached;
-	}
-
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
@@ -54,7 +29,6 @@ class Memcached extends Cache
 	 */
 	public function clear()
 	{
-		return $this->driver->flush();
 	}
 
 	/**
@@ -68,11 +42,11 @@ class Memcached extends Cache
 	 */
 	public function getItem($key)
 	{
-		$value = $this->driver->get($key);
-		$code = $this->driver->getResultCode();
 		$item = new Item($key);
+		$success = true;
+		$value = wincache_ucache_get($key, $success);
 
-		if ($code === \Memcached::RES_SUCCESS)
+		if ($success)
 		{
 			$item->set($value);
 		}
@@ -93,16 +67,10 @@ class Memcached extends Cache
 	{
 		if ($this->hasItem($key))
 		{
-			$this->driver->delete($key);
-
-			$rc = $this->driver->getResultCode();
-
-			if ( ($rc != \Memcached::RES_SUCCESS))
-			{
-				throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
-			}
+			return wincache_ucache_delete($key);
 		}
 
+		// If the item doesn't exist, no error
 		return true;
 	}
 
@@ -115,6 +83,7 @@ class Memcached extends Cache
 	 */
 	public function save(CacheItemInterface $item)
 	{
+		// If we are able to find out when the item expires - find out. Else bail.
 		if ($item instanceof HasExpirationDateInterface)
 		{
 			$ttl = $this->convertItemExpiryToSeconds($item);
@@ -124,9 +93,7 @@ class Memcached extends Cache
 			$ttl = 0;
 		}
 
-		$this->driver->set($item->getKey(), $item->get(), $ttl);
-
-		return (bool) ($this->driver->getResultCode() == \Memcached::RES_SUCCESS);
+		return wincache_ucache_set($item->getKey(), $item->get(), $ttl);
 	}
 
 	/**
@@ -140,9 +107,7 @@ class Memcached extends Cache
 	 */
 	public function hasItem($key)
 	{
-		$this->driver->get($key);
-
-		return ($this->driver->getResultCode() != \Memcached::RES_NOTFOUND);
+		return wincache_ucache_exists($key);
 	}
 
 	/**
@@ -154,10 +119,6 @@ class Memcached extends Cache
 	 */
 	public static function isSupported()
 	{
-		/*
-		 * GAE and HHVM have both had instances where Memcached the class was defined but no extension was loaded.
-		 * If the class is there, we can assume it works.
-		 */
-		return (class_exists('Memcached'));
+		return (extension_loaded('wincache') && function_exists('wincache_ucache_get') && !strcmp(ini_get('wincache.ucenabled'), "1"));
 	}
 }

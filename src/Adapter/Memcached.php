@@ -6,19 +6,46 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Cache;
+namespace Joomla\Cache\Adapter;
 
+use Joomla\Cache\AbstractCacheItemPool;
+use Joomla\Cache\Exception\RuntimeException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
-use Psr\Cache\CacheItemInterface;
 use Joomla\Cache\Item\Item;
+use Psr\Cache\CacheItemInterface;
 
 /**
- * XCache cache driver for the Joomla Framework.
+ * Memcached cache driver for the Joomla Framework.
  *
  * @since  1.0
  */
-class XCache extends Cache
+class Memcached extends AbstractCacheItemPool
 {
+	/**
+	 * The Memcached driver
+	 *
+	 * @var    \Memcached
+	 * @since  1.0
+	 */
+	private $driver;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param   \Memcached          $memcached  The Memcached driver being used for this pool
+	 * @param   array|\ArrayAccess  $options    An options array, or an object that implements \ArrayAccess
+	 *
+	 * @since   1.0
+	 * @throws  \RuntimeException
+	 */
+	public function __construct(\Memcached $memcached, $options = [])
+	{
+		// Parent sets up the caching options and checks their type
+		parent::__construct($options);
+
+		$this->driver = $memcached;
+	}
+
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
@@ -28,6 +55,7 @@ class XCache extends Cache
 	 */
 	public function clear()
 	{
+		return $this->driver->flush();
 	}
 
 	/**
@@ -41,11 +69,13 @@ class XCache extends Cache
 	 */
 	public function getItem($key)
 	{
+		$value = $this->driver->get($key);
+		$code = $this->driver->getResultCode();
 		$item = new Item($key);
 
-		if ($this->hasItem($key))
+		if ($code === \Memcached::RES_SUCCESS)
 		{
-			$item->set(xcache_get($key));
+			$item->set($value);
 		}
 
 		return $item;
@@ -64,10 +94,16 @@ class XCache extends Cache
 	{
 		if ($this->hasItem($key))
 		{
-			return xcache_unset($key);
+			$this->driver->delete($key);
+
+			$rc = $this->driver->getResultCode();
+
+			if ( ($rc != \Memcached::RES_SUCCESS))
+			{
+				throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
+			}
 		}
 
-		// If the item doesn't exist, no error
 		return true;
 	}
 
@@ -80,7 +116,6 @@ class XCache extends Cache
 	 */
 	public function save(CacheItemInterface $item)
 	{
-		// If we are able to find out when the item expires - find out. Else bail.
 		if ($item instanceof HasExpirationDateInterface)
 		{
 			$ttl = $this->convertItemExpiryToSeconds($item);
@@ -90,7 +125,9 @@ class XCache extends Cache
 			$ttl = 0;
 		}
 
-		return xcache_set($item->getKey(), $item->get(), $ttl);
+		$this->driver->set($item->getKey(), $item->get(), $ttl);
+
+		return (bool) ($this->driver->getResultCode() == \Memcached::RES_SUCCESS);
 	}
 
 	/**
@@ -104,7 +141,9 @@ class XCache extends Cache
 	 */
 	public function hasItem($key)
 	{
-		return xcache_isset($key);
+		$this->driver->get($key);
+
+		return ($this->driver->getResultCode() != \Memcached::RES_NOTFOUND);
 	}
 
 	/**
@@ -116,7 +155,10 @@ class XCache extends Cache
 	 */
 	public static function isSupported()
 	{
-		// XCache is not supported on CLI
-		return extension_loaded('xcache') && php_sapi_name() != 'cli';
+		/*
+		 * GAE and HHVM have both had instances where Memcached the class was defined but no extension was loaded.
+		 * If the class is there, we can assume it works.
+		 */
+		return (class_exists('Memcached'));
 	}
 }
