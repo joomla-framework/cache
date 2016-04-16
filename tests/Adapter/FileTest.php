@@ -7,12 +7,12 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\File;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
  * Tests for the Joomla\Cache\Adapter\File class.
  */
-class FileTest extends CacheTest
+class FileTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.

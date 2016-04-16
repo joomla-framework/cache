@@ -7,12 +7,12 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\XCache;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
  * Tests for the Joomla\Cache\Adapter\XCache class.
  */
-class XCacheTest extends CacheTest
+class XCacheTestCase extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.

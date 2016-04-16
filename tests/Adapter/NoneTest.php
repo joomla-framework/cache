@@ -7,13 +7,13 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\None;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 use Joomla\Test\TestHelper;
 
 /**
  * Tests for the Joomla\Cache\Adapter\None class.
  */
-class NoneTest extends CacheTest
+class NoneTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.

@@ -7,12 +7,12 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\Apcu;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
  * Tests for the Joomla\Cache\Adapter\Apcu class.
  */
-class ApcuTest extends CacheTest
+class ApcuTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.

@@ -7,12 +7,12 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\Wincache;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
  * Tests for the Joomla\Cache\Adapter\Wincache class.
  */
-class WincacheTest extends CacheTest
+class WinCacheTestCase extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.

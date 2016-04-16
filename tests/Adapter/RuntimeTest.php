@@ -7,14 +7,14 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\Runtime;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
  * Tests for the Joomla\Cache\Adapter\Runtime class.
  *
  * @since  1.0
  */
-class RuntimeTest extends CacheTest
+class RuntimeTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.

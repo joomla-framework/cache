@@ -7,12 +7,12 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\Redis;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
  * Tests for the Joomla\Cache\Adapter\Redis class.
  */
-class RedisTest extends CacheTest
+class RedisTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.

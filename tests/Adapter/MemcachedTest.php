@@ -7,12 +7,12 @@
 namespace Joomla\Cache\Tests\Adapter;
 
 use Joomla\Cache\Adapter\Memcached;
-use Joomla\Cache\Tests\CacheTest;
+use Joomla\Cache\Tests\CacheTestCase;
 
 /**
  * Tests for the Joomla\Cache\Adapter\Memcached class.
  */
-class MemcachedTest extends CacheTest
+class MemcachedTest extends CacheTestCase
 {
 	/**
 	 * Sets up the fixture, for example, open a network connection.
