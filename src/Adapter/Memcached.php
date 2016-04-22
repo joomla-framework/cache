@@ -99,7 +99,8 @@ class Memcached extends AbstractCacheItemPool
 		{
 			$item = new Item($key);
 
-			if (array_key_exists($key, $data))
+			// On some platforms $data may be a boolean false
+			if (is_array($data) && array_key_exists($key, $data))
 			{
 				$item->set($data[$key]);
 			}
