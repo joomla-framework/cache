@@ -36,7 +36,6 @@ class Memcached extends AbstractCacheItemPool
 	 * @param   array|\ArrayAccess  $options    An options array, or an object that implements \ArrayAccess
 	 *
 	 * @since   1.0
-	 * @throws  \RuntimeException
 	 */
 	public function __construct(\Memcached $memcached, $options = [])
 	{
@@ -89,16 +88,10 @@ class Memcached extends AbstractCacheItemPool
 	 * @return  CacheItemInterface[]  An associative array of CacheItemInterface objects keyed on the cache key.
 	 *
 	 * @since   __DEPLOY_VERSION__
-	 * @throws  RuntimeException
 	 */
 	public function getItems(array $keys = [])
 	{
 		$data = $this->driver->getMulti($keys);
-
-		if ($this->driver->getResultCode() !== \Memcached::RES_SUCCESS)
-		{
-			throw new RuntimeException('Error retrieving data from cache store: ' . $this->driver->getResultMessage());
-		}
 
 		$result = [];
 
@@ -125,6 +118,7 @@ class Memcached extends AbstractCacheItemPool
 	 * @return  boolean
 	 *
 	 * @since   1.0
+	 * @throws  RuntimeException
 	 */
 	public function deleteItem($key)
 	{
