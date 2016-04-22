@@ -267,7 +267,7 @@ abstract class CacheTestCase extends \PHPUnit_Framework_TestCase
 			$this->assertEquals($itemValue, $expectedSamples[$itemKey], __LINE__);
 		}
 
-		// Even if no keys are set, we should still$ have an array of keys
+		// Even if no keys are set, we should still have an array of keys
 		$badResults = $cacheInstance->getItems($badSampleKeys);
 		$this->assertSameSize($badSampleKeys, $badResults, __LINE__);
 	}

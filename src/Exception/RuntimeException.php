@@ -11,7 +11,7 @@ namespace Joomla\Cache\Exception;
 use Psr\Cache\CacheException;
 
 /**
- * Joomla! Caching Class Invalid Argument Exception
+ * Joomla! Caching Class Runtime Exception
  *
  * @since  1.0
  */

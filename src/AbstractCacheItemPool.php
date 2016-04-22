@@ -99,17 +99,15 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 	 */
 	public function deleteItems(array $keys)
 	{
-		$result = true;
-
 		foreach ($keys as $key)
 		{
 			if (!$this->deleteItem($key))
 			{
-				$result = false;
+				return false;
 			}
 		}
 
-		return $result;
+		return true;
 	}
 
 	/**

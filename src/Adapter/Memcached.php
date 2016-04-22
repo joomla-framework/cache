@@ -82,6 +82,42 @@ class Memcached extends AbstractCacheItemPool
 	}
 
 	/**
+	 * Returns a traversable set of cache items.
+	 *
+	 * @param   array  $keys  A list of keys that can obtained in a single operation.
+	 *
+	 * @return  CacheItemInterface[]  An associative array of CacheItemInterface objects keyed on the cache key.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  RuntimeException
+	 */
+	public function getItems(array $keys = [])
+	{
+		$data = $this->driver->getMulti($keys);
+
+		if ($this->driver->getResultCode() !== \Memcached::RES_SUCCESS)
+		{
+			throw new RuntimeException('Error retrieving data from cache store: ' . $this->driver->getResultMessage());
+		}
+
+		$result = [];
+
+		foreach ($keys as $key)
+		{
+			$item = new Item($key);
+
+			if (array_key_exists($key, $data))
+			{
+				$item->set($data[$key]);
+			}
+
+			$result[$key] = $item;
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Method to remove a storage entry for a key.
 	 *
 	 * @param   string  $key  The storage entry identifier.
@@ -98,9 +134,44 @@ class Memcached extends AbstractCacheItemPool
 
 			$rc = $this->driver->getResultCode();
 
-			if ( ($rc != \Memcached::RES_SUCCESS))
+			// If the item was not successfully removed nor did not exist then raise an error
+			if (($rc !== \Memcached::RES_SUCCESS))
 			{
 				throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Removes multiple items from the pool.
+	 *
+	 * @param   array  $keys  An array of keys that should be removed from the pool.
+	 *
+	 * @return  boolean
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function deleteItems(array $keys)
+	{
+		// HHVM doesn't support deleteMulti
+		if (!method_exists($this->driver, 'deleteMulti'))
+		{
+			return parent::deleteItems($keys);
+		}
+
+		$deleted = $this->driver->deleteMulti($keys);
+
+		foreach ($deleted as $key => $value)
+		{
+			/*
+			 * The return of deleteMulti is not consistent with the documentation for error cases,
+			 * so check for an explicit boolean true for successful deletion
+			 */
+			if ($value !== true && $value !== \Memcached::RES_NOTFOUND)
+			{
+				return false;
 			}
 		}
 
@@ -112,7 +183,9 @@ class Memcached extends AbstractCacheItemPool
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  static  The invoked object.
+	 * @return  boolean
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function save(CacheItemInterface $item)
 	{
@@ -143,7 +216,7 @@ class Memcached extends AbstractCacheItemPool
 	{
 		$this->driver->get($key);
 
-		return ($this->driver->getResultCode() != \Memcached::RES_NOTFOUND);
+		return ($this->driver->getResultCode() !== \Memcached::RES_NOTFOUND);
 	}
 
 	/**
