@@ -27,7 +27,7 @@ class Memcached extends AbstractCacheItemPool
 	 * @var    \Memcached
 	 * @since  1.0
 	 */
-	private $driver;
+	protected $driver;
 
 	/**
 	 * Constructor.

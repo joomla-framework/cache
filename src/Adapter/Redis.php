@@ -26,7 +26,7 @@ class Redis extends AbstractCacheItemPool
 	 * @var    \Redis
 	 * @since  1.0
 	 */
-	private $driver;
+	protected $driver;
 
 	/**
 	 * Constructor.

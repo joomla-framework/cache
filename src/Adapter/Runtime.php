@@ -25,7 +25,7 @@ class Runtime extends AbstractCacheItemPool
 	 * @var    \ArrayObject
 	 * @since  __DEPLOY_VERSION__
 	 */
-	private $db;
+	protected $db;
 
 	/**
 	 * Constructor.
