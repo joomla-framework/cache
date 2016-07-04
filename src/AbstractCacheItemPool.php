@@ -185,6 +185,6 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 		$now          = new \DateTime('now', $itemTimezone);
 		$interval     = $now->diff($itemExpiry);
 
-		return (int) $interval->format('%s');
+		return (int) $interval->format('%i') * 60;
 	}
 }
