@@ -29,6 +29,7 @@ class Wincache extends AbstractCacheItemPool
 	 */
 	public function clear()
 	{
+		return wincache_ucache_clear();
 	}
 
 	/**
