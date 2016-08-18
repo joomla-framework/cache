@@ -44,6 +44,7 @@ class Wincache extends Cache
 	 */
 	public function clear()
 	{
+		return wincache_ucache_clear();
 	}
 
 	/**
