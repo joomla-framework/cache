@@ -22,6 +22,9 @@
         "ext-wincache": "To use WinCache caching",
         "ext-xcache": "To use XCache caching"
     },
+    "provide": {
+        "psr/cache-implementation": "~1.0"
+    },
     "autoload": {
         "psr-4": {
             "Joomla\\Cache\\": "src/"
