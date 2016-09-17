@@ -63,7 +63,7 @@ class Item extends AbstractItem
 		{
 			$this->expiresAfter($ttl);
 		}
-		elseif ($ttl instanceof \DateTime)
+		elseif ($ttl instanceof \DateTimeInterface)
 		{
 			$this->expiresAt($ttl);
 		}
