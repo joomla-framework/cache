@@ -23,7 +23,7 @@ class Apc extends AbstractCacheItemPool
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
-	 * @return  boolean  The result of the clear operation.
+	 * @return  boolean  True if the pool was successfully cleared. False if there was an error.
 	 *
 	 * @since   1.0
 	 */
@@ -33,14 +33,13 @@ class Apc extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to get a storage entry value from a key.
+	 * Returns a Cache Item representing the specified key.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key for which to return the corresponding Cache Item.
 	 *
-	 * @return  CacheItemInterface
+	 * @return  CacheItemInterface  The corresponding Cache Item.
 	 *
-	 * @since   1.0
-	 * @throws  \RuntimeException
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function getItem($key)
 	{
@@ -57,19 +56,20 @@ class Apc extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Obtain multiple CacheItems by their unique keys.
+	 * Returns a traversable set of cache items.
 	 *
-	 * @param   array  $keys  A list of keys that can obtained in a single operation.
+	 * @param   string[]  $keys  An indexed array of keys of items to retrieve.
 	 *
-	 * @return  array  An associative array of CacheItem objects keyed on the cache key.
+	 * @return  array  A traversable collection of Cache Items keyed by the cache keys of each item.
+	 *                 A Cache item will be returned for each key, even if that key is not found.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getItems(array $keys = array())
+	public function getItems(array $keys = [])
 	{
-		$items = array();
+		$items   = [];
 		$success = false;
-		$values = apc_fetch($keys, $success);
+		$values  = apc_fetch($keys, $success);
 
 		if ($success && is_array($values))
 		{
@@ -88,13 +88,13 @@ class Apc extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to remove a storage entry for a key.
+	 * Removes the item from the pool.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key to delete.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if the item was successfully removed. False if there was an error.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function deleteItem($key)
 	{
@@ -112,8 +112,9 @@ class Apc extends AbstractCacheItemPool
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return static
-	 *   The invoked object.
+	 * @return  boolean  True if the item was successfully persisted. False if there was an error.
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function save(CacheItemInterface $item)
 	{
@@ -131,11 +132,11 @@ class Apc extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to determine whether a storage entry has been set for a key.
+	 * Confirms if the cache contains specified cache item.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key for which to check existence.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if item exists in the cache, false otherwise.
 	 *
 	 * @since   1.0
 	 */

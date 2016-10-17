@@ -34,7 +34,7 @@ class File extends AbstractCacheItemPool
 	 * @since   1.0
 	 * @throws  \RuntimeException
 	 */
-	public function __construct($options = array())
+	public function __construct($options = [])
 	{
 		if (!isset($options['file.locking']))
 		{
@@ -52,9 +52,9 @@ class File extends AbstractCacheItemPool
 	}
 
 	/**
-	 * This will wipe out the entire cache's keys....
+	 * This will wipe out the entire cache's keys
 	 *
-	 * @return  boolean  The result of the clear operation.
+	 * @return  boolean  True if the pool was successfully cleared. False if there was an error.
 	 *
 	 * @since   1.0
 	 */
@@ -83,14 +83,14 @@ class File extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to get a storage entry value from a key.
+	 * Returns a Cache Item representing the specified key.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key for which to return the corresponding Cache Item.
 	 *
-	 * @return  CacheItemInterface
+	 * @return  CacheItemInterface  The corresponding Cache Item.
 	 *
-	 * @since   1.0
-	 * @throws  \RuntimeException
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  RuntimeException
 	 */
 	public function getItem($key)
 	{
@@ -142,13 +142,13 @@ class File extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to remove a storage entry for a key.
+	 * Removes the item from the pool.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key to delete.
 	 *
-	 * @return  boolean  True on success
+	 * @return  boolean  True if the item was successfully removed. False if there was an error.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function deleteItem($key)
 	{
@@ -166,7 +166,9 @@ class File extends AbstractCacheItemPool
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  bool  True if the item was successfully persisted. False if there was an error.
+	 * @return  boolean  True if the item was successfully persisted. False if there was an error.
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function save(CacheItemInterface $item)
 	{
@@ -197,11 +199,11 @@ class File extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to determine whether a storage entry has been set for a key.
+	 * Confirms if the cache contains specified cache item.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key for which to check existence.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if item exists in the cache, false otherwise.
 	 *
 	 * @since   1.0
 	 */
@@ -230,7 +232,7 @@ class File extends AbstractCacheItemPool
 	 * @return  boolean  The method will always return true, if it returns.
 	 *
 	 * @since   1.0
-	 * @throws  \RuntimeException if the file path is invalid.
+	 * @throws  RuntimeException if the file path is invalid.
 	 */
 	private function checkFilePath($filePath)
 	{

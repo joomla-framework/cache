@@ -5,26 +5,16 @@
 [![Latest Unstable Version](https://poser.pugx.org/joomla/cache/v/unstable)](https://packagist.org/packages/joomla/cache)
 [![License](https://poser.pugx.org/joomla/cache/license)](https://packagist.org/packages/joomla/cache)
 
-This cache package complies with `Psr\Cache` standard PSR-6.
+This package provides an implementation of the [PSR-6 caching interface](http://www.php-fig.org/psr/psr-6/).
 
 ## Requirements
 
-* PHP 5.4 or later
+* PHP 5.5.9 or later
 
 ## Installation via Composer
 
-Add `"joomla/cache": "2.0.*@dev"` to the require block in your composer.json and then run `composer install`.
-
-```json
-{
-	"require": {
-		"joomla/cache": "2.0.*@dev"
-	}
-}
-```
-
-Alternatively, you can simply run the following from the command line:
+You can simply run the following from the command line:
 
 ```sh
-composer require joomla/cache "2.0.*@dev"
+composer require joomla/cache "~2.0@dev"
 ```

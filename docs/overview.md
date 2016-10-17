@@ -1,18 +1,32 @@
-## Options and General Usage
+## Overview
 
-## Cache Storage Types
+The Cache package provides an implementation of the [PSR-6 caching interface](http://www.php-fig.org/psr/psr-6/).
+
+### Options and General Usage
+
+**TODO - Write this section**
+
+### Cache Storage Types
 
 The following storage types are supported.
 
-### Apc
+#### APC
 
 ```php
-use Joomla\Cache\Apc;
+use Joomla\Cache\Adapter\Apc;
 
 $cache = new Apc;
 ```
 
-### File
+#### APCu
+
+```php
+use Joomla\Cache\Adapter\Apcu;
+
+$cache = new Apcu;
+```
+
+#### Filesystem
 
 The **File** cache allows the following additional options:
 
@@ -20,56 +34,76 @@ The **File** cache allows the following additional options:
 * file.locking
 
 ```php
-use Joomla\Cache\File;
+use Joomla\Cache\Adapter\File;
 
-$options = array(
+$options = [
 	'file.path' => __DIR__ . '/cache',
-);
+];
 
 $cache = new File($options);
 ```
 
-### Memcached
+#### Memcached
+
+To use Memcached storage, a configured [Memcached](https://secure.php.net/manual/en/class.memcached.php) instance must be provided.
 
 ```php
-use Joomla\Cache\Memcached;
+use Joomla\Cache\Adapter\Memcached as MemcachedAdapter;
 
-$cache = new Memcached;
+$memcached = new \Memcached;
+
+// Configure the instance
+
+$cache = new MemcachedAdapter($memcached);
 ```
 
-### None
+#### None
 
 ```php
-use Joomla\Cache\None;
+use Joomla\Cache\Adapter\None;
 
-$cache = new Cache;
+$cache = new None;
 ```
 
-### Runtime
+#### Redis
+
+To use Redis storage, a configured `Redis` instance must be provided.
 
 ```php
-use Joomla\Cache\Runtime;
+use Joomla\Cache\Adapter\Redis as RedisAdapter;
+
+$redis = new \Redis;
+
+// Configure the instance
+
+$cache = new RedisAdapter($redis);
+```
+
+#### Runtime
+
+```php
+use Joomla\Cache\Adapter\Runtime;
 
 $cache = new Runtime;
 ```
 
-### Wincache
+#### Wincache
 
 ```php
-use Joomla\Cache\Wincache;
+use Joomla\Cache\Adapter\Wincache;
 
 $cache = new Wincache;
 ```
 
-### XCache
+#### XCache
 
 ```php
-use Joomla\Cache\XCache;
+use Joomla\Cache\Adapter\XCache;
 
 $cache = new XCache;
 ```
 
-## Test Mocking
+### Test Mocking
 
 The `Cache` package provide a **PHPUnit** helper to mock a `Cache\Cache` object or an `Cache\Item` object. You can include your own optional overrides in the test class for the following methods:
 

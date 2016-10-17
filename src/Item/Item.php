@@ -135,7 +135,7 @@ class Item extends AbstractItem
 	/**
 	 * Confirms if the cache item lookup resulted in a cache hit.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if the request resulted in a cache hit. False otherwise.
 	 *
 	 * @since   1.0
 	 */
@@ -147,10 +147,10 @@ class Item extends AbstractItem
 	/**
 	 * Sets the expiration time for this cache item.
 	 *
-	 * @param   \DateTimeInterface  $expiration  The point in time after which the item MUST be considered expired.
-	 *                                           If null is passed explicitly, a default value MAY be used. If none is
-	 *                                           set, the value should be stored permanently or for as long as the
-	 *                                           implementation allows.
+	 * @param   \DateTimeInterface|null  $expiration  The point in time after which the item MUST be considered expired.
+	 *                                                If null is passed explicitly, a default value MAY be used. If none is
+	 *                                                set, the value should be stored permanently or for as long as the
+	 *                                                implementation allows.
 	 *
 	 * @return  $this
 	 *
@@ -166,9 +166,9 @@ class Item extends AbstractItem
 	/**
 	 * Sets the expiration time for this cache item.
 	 *
-	 * @param   int|\DateInterval  $time  The period of time from the present after which the item MUST be considered
-	 *                                    expired. An integer parameter is understood to be the time in seconds until
-	 *                                    expiration.
+	 * @param   int|\DateInterval|null  $time  The period of time from the present after which the item MUST be considered
+	 *                                         expired. An integer parameter is understood to be the time in seconds until
+	 *                                         expiration.
 	 *
 	 * @return  $this
 	 *
@@ -180,7 +180,7 @@ class Item extends AbstractItem
 		{
 			$this->expiration = new \DateTime('now +' . $time . ' seconds');
 		}
-		elseif($time instanceof \DateInterval)
+		elseif ($time instanceof \DateInterval)
 		{
 			$this->expiration = new \DateTime('now');
 			$this->expiration->add($time);

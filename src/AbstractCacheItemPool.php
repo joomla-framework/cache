@@ -30,7 +30,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 	/**
 	 * The deferred items to store
 	 *
-	 * @var    \Joomla\Cache\Item\Item[]
+	 * @var    Item\Item[]
 	 * @since  1.0
 	 */
 	private $deferred = [];
@@ -41,13 +41,13 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 	 * @param   array|\ArrayAccess  $options  An options array, or an object that implements \ArrayAccess
 	 *
 	 * @since   1.0
-	 * @throws  \RuntimeException
+	 * @throws  InvalidArgumentException
 	 */
 	public function __construct($options = [])
 	{
 		if (!($options instanceof \ArrayAccess || is_array($options)))
 		{
-			throw new InvalidArgumentException(sprintf('%s requires an options array or an object that implements \\ArrayAccess', __CLASS__));
+			throw new InvalidArgumentException(sprintf('%s requires an options array or an object that implements \\ArrayAccess', get_class($this)));
 		}
 
 		$this->options = $options;
@@ -56,11 +56,12 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 	/**
 	 * Returns a traversable set of cache items.
 	 *
-	 * @param   array  $keys  A list of keys that can obtained in a single operation.
+	 * @param   string[]  $keys  An indexed array of keys of items to retrieve.
 	 *
-	 * @return  CacheItemInterface[]  An associative array of CacheItemInterface objects keyed on the cache key.
+	 * @return  array  A traversable collection of Cache Items keyed by the cache keys of each item.
+	 *                 A Cache item will be returned for each key, even if that key is not found.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function getItems(array $keys = [])
 	{
@@ -93,9 +94,9 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 	 *
 	 * @param   array  $keys  An array of keys that should be removed from the pool.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if the items were successfully removed. False if there was an error.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function deleteItems(array $keys)
 	{

@@ -23,7 +23,7 @@ class Wincache extends AbstractCacheItemPool
 	/**
 	 * This will wipe out the entire cache's keys
 	 *
-	 * @return  boolean  The result of the clear operation.
+	 * @return  boolean  True if the pool was successfully cleared. False if there was an error.
 	 *
 	 * @since   1.0
 	 */
@@ -33,13 +33,13 @@ class Wincache extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to get a storage entry value from a key.
+	 * Returns a Cache Item representing the specified key.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key for which to return the corresponding Cache Item.
 	 *
-	 * @return  CacheItemInterface
+	 * @return  CacheItemInterface  The corresponding Cache Item.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function getItem($key)
 	{
@@ -56,13 +56,13 @@ class Wincache extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to remove a storage entry for a key.
+	 * Removes the item from the pool.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key to delete.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if the item was successfully removed. False if there was an error.
 	 *
-	 * @since   1.0
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function deleteItem($key)
 	{
@@ -80,7 +80,9 @@ class Wincache extends AbstractCacheItemPool
 	 *
 	 * @param   CacheItemInterface  $item  The cache item to save.
 	 *
-	 * @return  static  The invoked object.
+	 * @return  boolean  True if the item was successfully persisted. False if there was an error.
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function save(CacheItemInterface $item)
 	{
@@ -98,11 +100,11 @@ class Wincache extends AbstractCacheItemPool
 	}
 
 	/**
-	 * Method to determine whether a storage entry has been set for a key.
+	 * Confirms if the cache contains specified cache item.
 	 *
-	 * @param   string  $key  The storage entry identifier.
+	 * @param   string  $key  The key for which to check existence.
 	 *
-	 * @return  boolean
+	 * @return  boolean  True if item exists in the cache, false otherwise.
 	 *
 	 * @since   1.0
 	 */
