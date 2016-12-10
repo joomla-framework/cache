@@ -5,7 +5,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/joomla/cache/v/unstable)](https://packagist.org/packages/joomla/cache)
 [![License](https://poser.pugx.org/joomla/cache/license)](https://packagist.org/packages/joomla/cache)
 
-This cache package complies with the proposed `Psr\Cache` standard.
+This cache package is based on a version of the now accepted PSR-6 as it was in 2013.
 
 ## Options and General Usage
 
