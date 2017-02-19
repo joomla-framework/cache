@@ -11,8 +11,11 @@
     },
     "require-dev": {
         "joomla/test": "~1.0",
-        "phpunit/phpunit": "~4.8|~5.0",
+        "phpunit/phpunit": "^4.8.35|^5.4.3|~6.0",
         "squizlabs/php_codesniffer": "1.*"
+    },
+    "conflict": {
+        "psr/cache": "*"
     },
     "suggest": {
         "ext-apc": "To use APC caching",

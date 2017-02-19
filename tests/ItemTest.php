@@ -7,13 +7,14 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache\Item\Item;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Joomla\Cache\Item class.
  *
  * @since  1.0
  */
-class ItemTest extends \PHPUnit_Framework_TestCase
+class ItemTest extends TestCase
 {
 	/**
 	 * @var    Item

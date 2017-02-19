@@ -6,4 +6,4 @@ phpunit.xml
 .DS_Store
 
 # Required composer dependencies
-/vendor/*
+/vendor/
