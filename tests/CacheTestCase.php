@@ -7,12 +7,13 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
 
 /**
  * Abstract test case for Joomla! CacheItemPool objects
  */
-abstract class CacheTestCase extends \PHPUnit_Framework_TestCase
+abstract class CacheTestCase extends TestCase
 {
 	/**
 	 * @var  \Joomla\Cache\Cache
