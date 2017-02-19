@@ -7,13 +7,14 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Joomla\Cache\XCache class.
  *
  * @since  1.0
  */
-class XCacheTest extends \PHPUnit_Framework_TestCase
+class XCacheTest extends TestCase
 {
 	/**
 	 * @var    Cache\XCache

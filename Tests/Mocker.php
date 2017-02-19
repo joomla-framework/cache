@@ -7,6 +7,7 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class to mock Joomla\Mocker\Cache.
@@ -16,7 +17,7 @@ use Joomla\Test\TestHelper;
 class Mocker
 {
 	/**
-	 * @var    \PHPUnit_Framework_TestCase
+	 * @var    TestCase
 	 * @since  1.0
 	 */
 	private $test;
@@ -24,11 +25,11 @@ class Mocker
 	/**
 	 * Class contructor.
 	 *
-	 * @param   \PHPUnit_Framework_TestCase  $test  A test class.
+	 * @param   TestCase  $test  A test class.
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(\PHPUnit_Framework_TestCase $test)
+	public function __construct(TestCase $test)
 	{
 		$this->test = $test;
 	}
@@ -55,16 +56,11 @@ class Mocker
 		);
 
 		// Create the mock.
-		$mockObject = $this->test->getMock(
-			'Joomla\Cache\Cache',
-			$methods,
-			// Constructor arguments.
-			array(),
-			// Mock class name.
-			'',
-			// Call original constructor.
-			false
-		);
+		$mockObject = $this->test->getMockBuilder('Joomla\Cache\Cache')
+			->setMethods($methods)
+			->setConstructorArgs(array())
+			->disableOriginalConstructor()
+			->getMock();
 
 		TestHelper::assignMockCallbacks(
 			$mockObject,
@@ -95,16 +91,11 @@ class Mocker
 		);
 
 		// Create the mock.
-		$mockObject = $this->test->getMock(
-			'Joomla\Cache\Item',
-			$methods,
-			// Constructor arguments.
-			array(),
-			// Mock class name.
-			'',
-			// Call original constructor.
-			false
-		);
+		$mockObject = $this->test->getMockBuilder('Joomla\Cache\Item')
+			->setMethods($methods)
+			->setConstructorArgs(array())
+			->disableOriginalConstructor()
+			->getMock();
 
 		TestHelper::assignMockCallbacks(
 			$mockObject,

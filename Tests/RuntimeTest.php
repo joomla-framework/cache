@@ -8,13 +8,14 @@ namespace Joomla\Cache\Tests;
 
 use Joomla\Cache;
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Joomla\Cache\Runtime class.
  *
  * @since  1.0
  */
-class RuntimeTest extends \PHPUnit_Framework_TestCase
+class RuntimeTest extends TestCase
 {
 	/**
 	 * @var    Cache\Runtime

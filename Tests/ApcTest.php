@@ -6,8 +6,6 @@
 
 namespace Joomla\Cache\Tests;
 
-use Joomla\Cache;
-
 /**
  * Tests for the Joomla\Cache\Apc class.
  *

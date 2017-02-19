@@ -7,13 +7,14 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Joomla\Cache\Redis class.
  *
  * @since  1.0
  */
-class RedisTest extends \PHPUnit_Framework_TestCase
+class RedisTest extends TestCase
 {
 	/**
 	 * @var	Cache\Redis

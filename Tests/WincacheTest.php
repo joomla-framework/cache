@@ -7,13 +7,14 @@
 namespace Joomla\Cache\Tests;
 
 use Joomla\Cache;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Joomla\Cache\Wincache class.
  *
  * @since  1.0
  */
-class WincacheTest extends \PHPUnit_Framework_TestCase
+class WincacheTest extends TestCase
 {
 	/**
 	 * @var    Cache\Wincache

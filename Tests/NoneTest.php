@@ -8,13 +8,14 @@ namespace Joomla\Cache\Tests;
 
 use Joomla\Cache;
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Joomla\Cache\None class.
  *
  * @since  1.0
  */
-class NoneTest extends \PHPUnit_Framework_TestCase
+class NoneTest extends TestCase
 {
 	/**
 	 * @var    Cache\None
