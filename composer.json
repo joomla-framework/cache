@@ -13,6 +13,9 @@
         "phpunit/phpunit": "^4.8.35|^5.4.3|~6.0",
         "squizlabs/php_codesniffer": "1.*"
     },
+    "conflict": {
+        "psr/cache": "*"
+    },
     "suggest": {
         "joomla/registry": "Registry can be used as an alternative to using an array for the package options.",
         "ext-apc": "To use APC caching",
