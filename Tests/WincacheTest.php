@@ -51,7 +51,7 @@ class WincacheTest extends TestCase
 	 */
 	public function testClear()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->clear());
 	}
 
 	/**
@@ -64,7 +64,7 @@ class WincacheTest extends TestCase
 	 */
 	public function testExists()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->exists('foo'));
 	}
 
 	/**
@@ -77,7 +77,7 @@ class WincacheTest extends TestCase
 	 */
 	public function testGet()
 	{
-		$this->markTestIncomplete();
+		$this->assertInstanceOf('\Psr\Cache\CacheItemInterface', $this->instance->get('foo'));
 	}
 
 	/**
@@ -90,7 +90,7 @@ class WincacheTest extends TestCase
 	 */
 	public function testRemove()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->remove('foo'));
 	}
 
 	/**
@@ -103,7 +103,7 @@ class WincacheTest extends TestCase
 	 */
 	public function testSet()
 	{
-		$this->markTestIncomplete();
+		$this->assertTrue($this->instance->set('foo', 'bar'));
 	}
 
 	/**
@@ -120,6 +120,7 @@ class WincacheTest extends TestCase
 		try
 		{
 			$this->instance = new Cache\Wincache;
+			$this->instance->set('foo', 'bar');
 		}
 		catch (\Exception $e)
 		{
