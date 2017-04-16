@@ -3,3 +3,8 @@
 .gitmodules export-ignore
 .travis/ export-ignore
 .travis.yml export-ignore
+phpunit.xml.dist export-ignore
+build/ export-ignore
+Tests/ export-ignore
+CONTRIBUTING.md export-ignore
+README.md export-ignore
