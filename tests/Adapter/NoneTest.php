@@ -43,6 +43,14 @@ class NoneTest extends CacheTestCase
 	}
 
 	/**
+	 * Tests the the Joomla\Cache\AbstractCacheItemPool::get method.
+	 */
+	public function testGet()
+	{
+		$this->assertNull($this->instance->get('foo'));
+	}
+
+	/**
 	 * Tests the Joomla\Cache\Cache::save method.
 	 */
 	public function testSave()
@@ -55,6 +63,28 @@ class NoneTest extends CacheTestCase
 	}
 
 	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::set method.
+	 */
+	public function testSet()
+	{
+		$this->assertTrue(
+			$this->instance->set('fooSet', 'barSet'),
+			'Set should return true for a valid item'
+		);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::setMultiple method.
+	 */
+	public function testSetMultiple()
+	{
+		$this->assertTrue(
+			$this->instance->setMultiple(['key0' => 'value0', 'key1' => 'value1']),
+			'setMultiple() must return true if success'
+		);
+	}
+
+	/**
 	 * Tests the Joomla\Cache\Cache::getItems method.
 	 */
 	public function testGetItems()
@@ -62,6 +92,21 @@ class NoneTest extends CacheTestCase
 		$keys = ['foo', 'bar', 'hello'];
 
 		$this->assertContainsOnlyInstancesOf('Psr\Cache\CacheItemInterface', $this->instance->getItems($keys));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::getMultiple method.
+	 */
+	public function testGetMultiple()
+	{
+		$keys = ['foo', 'bar', 'hello'];
+
+		$items = $this->instance->getMultiple($keys);
+
+		foreach ($items as $item)
+		{
+			$this->assertNull($item);
+		}
 	}
 
 	/**
@@ -83,11 +128,27 @@ class NoneTest extends CacheTestCase
 	}
 
 	/**
+	 * Tests the Joomla\Cache\Cache::delete method.
+	 */
+	public function testDelete()
+	{
+		$this->assertTrue($this->instance->delete('foo'));
+	}
+
+	/**
 	 * Tests the Joomla\Cache\Cache::hasItem method.
 	 */
 	public function testHasItem()
 	{
 		$this->assertFalse($this->instance->hasItem('foo'));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\Cache::has method.
+	 */
+	public function testHas()
+	{
+		$this->assertFalse($this->instance->has('foo'));
 	}
 
 	/**

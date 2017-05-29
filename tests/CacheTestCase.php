@@ -16,7 +16,7 @@ use Psr\Cache\CacheItemInterface;
 abstract class CacheTestCase extends TestCase
 {
 	/**
-	 * @var  \Joomla\Cache\Cache
+	 * @var  \Joomla\Cache\AbstractCacheItemPool
 	 */
 	protected $instance;
 
@@ -34,7 +34,7 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::clear method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::clear method.
 	 */
 	public function testClear()
 	{
@@ -100,7 +100,7 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the the Joomla\Cache\Cache::getItem method.
+	 * Tests the the Joomla\Cache\AbstractCacheItemPool::getItem method.
 	 */
 	public function testGetItem()
 	{
@@ -120,6 +120,19 @@ abstract class CacheTestCase extends TestCase
 		$cacheInstance->save($stub);
 		$this->hitKey('foo', 'bar');
 		$this->missKey('foobar', 'foobar');
+	}
+
+	/**
+	 * Tests the the Joomla\Cache\AbstractCacheItemPool::get method.
+	 */
+	public function testGet()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$cacheInstance->set('foo', 'bar');
+		$this->simpleHitKey('foo', 'bar');
+		$this->simpleMissKey('foobar', 'foobar');
 	}
 
 	/**
@@ -163,7 +176,37 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::save method.
+	 * Checks to ensure a that $key is not set at all in the Cache
+	 *
+	 * @param   string  $key    Key of cache item to check
+	 * @param   string  $value  Value cache item should be
+	 *
+	 * @return  void
+	 */
+	protected function simpleMissKey($key = '', $value = '')
+	{
+		$cacheInstance = $this->instance;
+		$cacheValue = $cacheInstance->get($key);
+		$this->assertNull($cacheValue,  __LINE__);
+	}
+
+	/**
+	 * Checks to ensure a that $key is set to $value in the Cache
+	 *
+	 * @param   string  $key    Key of cache item to check
+	 * @param   string  $value  Value cache item should be
+	 *
+	 * @return  void
+	 */
+	protected function simpleHitKey($key = '', $value = '')
+	{
+		$cacheInstance = $this->instance;
+		$cacheValue = $cacheInstance->get($key, $value);
+		$this->assertThat($cacheValue, $this->equalTo($value), __LINE__);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::save method.
 	 */
 	public function testSave()
 	{
@@ -190,7 +233,38 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::getItems method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::set method.
+	 */
+	public function testSet()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$this->assertTrue(
+			$cacheInstance->set('fooSet', 'barSet'),
+			'Set should return true for a valid item'
+		);
+
+		$fooValue = $cacheInstance->get('fooSet');
+		$this->assertThat($fooValue, $this->equalTo('barSet'), __LINE__);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::setMultiple method.
+	 */
+	public function testSetMultiple()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$result = $cacheInstance->setMultiple(['key0' => 'value0', 'key1' => 'value1']);
+		$this->assertTrue($result, 'setMultiple() must return true if success');
+		$this->assertEquals('value0', $cacheInstance->get('key0'));
+		$this->assertEquals('value1', $cacheInstance->get('key1'));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::getItems method.
 	 */
 	public function testGetItems()
 	{
@@ -274,7 +348,51 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::deleteItems method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::getMultiple method.
+	 */
+	public function testGetMultiple()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$result = $cacheInstance->getMultiple(['key0', 'key1']);
+		$keys   = [];
+
+		foreach ($result as $i => $r)
+		{
+			$keys[] = $i;
+			$this->assertNull($r);
+		}
+
+		sort($keys);
+
+		$this->assertSame(['key0', 'key1'], $keys);
+		$cacheInstance->set('key3', 'value');
+
+		$result = $cacheInstance->getMultiple(['key2', 'key3', 'key4'], 'foo');
+		$keys   = [];
+
+		foreach ($result as $key => $r)
+		{
+			$keys[] = $key;
+
+			if ($key === 'key3')
+			{
+				$this->assertEquals('value', $r);
+			}
+			else
+			{
+				$this->assertEquals('foo', $r);
+			}
+		}
+
+		sort($keys);
+
+		$this->assertSame(['key2', 'key3', 'key4'], $keys);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::deleteItems method.
 	 */
 	public function testDeleteItems()
 	{
@@ -329,7 +447,7 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::deleteItem method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::deleteItem method.
 	 */
 	public function testDeleteItem()
 	{
@@ -383,7 +501,48 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::setOption method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::deleteMultiplemethod.
+	 */
+	public function testDeleteMultiple()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$sampleData = ['key0' => 'value0', 'key1' => 'value1'];
+
+		$cacheInstance->setMultiple($sampleData);
+
+		$sampleKeys = array_merge(
+			array_keys($sampleData),
+			['foobar']
+		);
+
+		$this->assertTrue($cacheInstance->deleteItems($sampleKeys), "The keys should all be removed even when they do not exist.");
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::delete method.
+	 */
+	public function testDelete()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$samples = array('foo1' => 'bar1', 'foo2' => 'bar2', 'foo3' => 'bar3');
+
+		foreach ($samples as $key => $value)
+		{
+			$cacheInstance->set($key, $value);
+		}
+
+		$this->assertNotNull($cacheInstance->get('foo2'));
+		$this->assertTrue($cacheInstance->delete('foo2'));
+		$this->assertTrue($cacheInstance->delete('foobar'));
+		$this->assertNull($cacheInstance->get('foo2'));
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::setOption method.
 	 */
 	public function testSetOption()
 	{
@@ -393,7 +552,7 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::hasItem method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::hasItem method.
 	 */
 	public function testHasItem()
 	{
@@ -421,6 +580,39 @@ abstract class CacheTestCase extends TestCase
 
 		$this->assertTrue(
 			$cacheInstance->hasItem('foobar'),
+			__LINE__
+		);
+	}
+
+	/**
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::has method.
+	 */
+	public function testHas()
+	{
+		$cacheInstance = $this->instance;
+		$cacheInstance->clear();
+
+		$this->assertFalse(
+			$cacheInstance->has('foobar'),
+			__LINE__
+		);
+
+		$stub = $this->getMockBuilder('\\Psr\\Cache\\CacheItemInterface')
+			->getMock();
+
+		$stub->method('get')
+			->willReturn('barfoo');
+
+		$stub->method('getKey')
+			->willReturn('foobar');
+
+		$this->assertTrue(
+			$cacheInstance->set('foobar', 'barfoo'),
+			__LINE__
+		);
+
+		$this->assertTrue(
+			$cacheInstance->has('foobar'),
 			__LINE__
 		);
 	}
@@ -458,7 +650,7 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::getItem and Joomla\Cache\Cache::save methods with timeout
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::getItem and Joomla\Cache\AbstractCacheItemPool::save methods with timeout
 	 */
 	public function testGetAndSaveWithTimeout()
 	{
@@ -491,7 +683,7 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::saveDeferred method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::saveDeferred method.
 	 */
 	public function testSaveDeferred()
 	{
@@ -519,7 +711,7 @@ abstract class CacheTestCase extends TestCase
 	}
 
 	/**
-	 * Tests the Joomla\Cache\Cache::commit method.
+	 * Tests the Joomla\Cache\AbstractCacheItemPool::commit method.
 	 */
 	public function testCommit()
 	{
