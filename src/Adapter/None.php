@@ -88,6 +88,21 @@ class None extends AbstractCacheItemPool
 	}
 
 	/**
+	 * Fetches a value from the cache.
+	 *
+	 * @param   string  $key      The unique key of this item in the cache.
+	 * @param   mixed   $default  Default value to return if the key does not exist.
+	 *
+	 * @return  mixed  The value of the item from the cache, or $default in case of cache miss.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function get($key, $default = null)
+	{
+		return $default;
+	}
+
+	/**
 	 * Test to see if the CacheItemPoolInterface is available
 	 *
 	 * @return  boolean  True on success, false otherwise

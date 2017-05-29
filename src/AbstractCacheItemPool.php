@@ -11,13 +11,14 @@ namespace Joomla\Cache;
 use Joomla\Cache\Exception\InvalidArgumentException;
 use Joomla\Cache\Item\HasExpirationDateInterface;
 use Psr\Cache\CacheItemInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Joomla! Caching Class
  *
  * @since  1.0
  */
-abstract class AbstractCacheItemPool implements CacheItemPoolInterface
+abstract class AbstractCacheItemPool implements CacheItemPoolInterface, CacheInterface
 {
 	/**
 	 * The options for the cache object.
@@ -171,6 +172,189 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 	}
 
 	/**
+	 * Fetches a value from the cache.
+	 *
+	 * @param   string  $key      The unique key of this item in the cache.
+	 * @param   mixed   $default  Default value to return if the key does not exist.
+	 *
+	 * @return  mixed  The value of the item from the cache, or $default in case of cache miss.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function get($key, $default = null)
+	{
+		$item = $this->getItem($key);
+
+		if (!$item->isHit())
+		{
+			return $default;
+		}
+
+		return $item->get();
+	}
+
+	/**
+	 * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
+	 *
+	 * @param   string                 $key    The key of the item to store.
+	 * @param   mixed                  $value  The value of the item to store, must be serializable.
+	 * @param   null|int|DateInterval  $ttl    Optional. The TTL value of this item. If no value is sent and
+	 *                                         the driver supports TTL then the library may set a default value
+	 *                                         for it or let the driver take care of that.
+	 *
+	 * @return  boolean True on success and false on failure.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function set($key, $value, $ttl = null)
+	{
+		$item = $this->getItem($key);
+		$item->set($value);
+		$item->expiresAfter($ttl);
+
+		return $this->save($item);
+	}
+
+	/**
+	 * Delete an item from the cache by its unique key.
+	 *
+	 * @param   string  $key  The unique cache key of the item to delete.
+	 *
+	 * @return  boolean  True if the item was successfully removed. False if there was an error.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function delete($key)
+	{
+		return $this->deleteItem($key);
+	}
+
+	/**
+	 * Obtains multiple cache items by their unique keys.
+	 *
+	 * @param   iterable  $keys     A list of keys that can obtained in a single operation.
+	 * @param   mixed     $default  Default value to return for keys that do not exist.
+	 *
+	 * @return  iterable  A list of key => value pairs. Cache keys that do not exist or are stale will have $default as value.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  InvalidArgumentException
+	 */
+	public function getMultiple($keys, $default = null)
+	{
+		if (!is_array($keys))
+		{
+			if (!($keys instanceof \Traversable))
+			{
+				throw new InvalidArgumentException('$keys is neither an array nor Traversable');
+			}
+
+			$keys = iterator_to_array($keys, false);
+		}
+
+		$items = $this->getItems($keys);
+
+		return $this->generateValues($default, $items);
+	}
+
+	/**
+	 * Persists a set of key => value pairs in the cache, with an optional TTL.
+	 *
+	 * @param   iterable               $values  A list of key => value pairs for a multiple-set operation.
+	 * @param   null|int|DateInterval  $ttl     Optional. The TTL value of this item. If no value is sent and
+	 *                                          the driver supports TTL then the library may set a default value
+	 *                                          for it or let the driver take care of that.
+	 *
+	 * @return  boolean  True on success and false on failure.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  InvalidArgumentException
+	 */
+	public function setMultiple($values, $ttl = null)
+	{
+		if (!is_array($values))
+		{
+			if (!$values instanceof \Traversable)
+			{
+				throw new InvalidArgumentException('$values is neither an array nor Traversable');
+			}
+		}
+
+		$keys        = [];
+		$arrayValues = [];
+
+		foreach ($values as $key => $value)
+		{
+			if (is_int($key))
+			{
+				$key = (string) $key;
+			}
+
+			$keys[]            = $key;
+			$arrayValues[$key] = $value;
+		}
+
+		$items       = $this->getItems($keys);
+		$itemSuccess = true;
+
+		/** @var $item CacheItemInterface */
+		foreach ($items as $key => $item)
+		{
+			$item->set($arrayValues[$key]);
+			$item->expiresAfter($ttl);
+
+			$itemSuccess = $itemSuccess && $this->saveDeferred($item);
+		}
+
+		return $itemSuccess && $this->commit();
+	}
+
+	/**
+	 * Deletes multiple cache items in a single operation.
+	 *
+	 * @param   iterable  $keys  A list of string-based keys to be deleted.
+	 *
+	 * @return  boolean  True if the items were successfully removed. False if there was an error.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  InvalidArgumentException
+	 */
+	public function deleteMultiple($keys)
+	{
+		if (!is_array($keys))
+		{
+			if (!$keys instanceof \Traversable)
+			{
+				throw new InvalidArgumentException('$keys is neither an array nor Traversable');
+			}
+
+			$keys = iterator_to_array($keys, false);
+		}
+
+		return $this->deleteItems($keys);
+	}
+
+	/**
+	 * Determines whether an item is present in the cache.
+	 *
+	 * NOTE: It is recommended that has() is only to be used for cache warming type purposes
+	 * and not to be used within your live applications operations for get/set, as this method
+	 * is subject to a race condition where your has() will return true and immediately after,
+	 * another script can remove it making the state of your app out of date.
+	 *
+	 * @param   string  $key  The cache item key.
+	 *
+	 * @return  bool
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 * @throws  InvalidArgumentException
+	 */
+	public function has($key)
+	{
+		return $this->hasItem($key);
+	}
+
+	/**
 	 * Converts a DateTime object from the cache item to the expiry time in seconds from the present
 	 *
 	 * @param   HasExpirationDateInterface  $item  The cache item
@@ -187,5 +371,31 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
 		$interval     = $now->diff($itemExpiry);
 
 		return (int) $interval->format('%i') * 60;
+	}
+
+	/**
+	 * Generate the values for the PSR-16 getMultiple method
+	 *
+	 * @param   mixed  $default  Default value to return for keys that do not exist.
+	 * @param   array  $items    The items to process
+	 *
+	 * @return  \Generator
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	private function generateValues($default, $items)
+	{
+		/** @var $item CacheItemInterface */
+		foreach ($items as $key => $item)
+		{
+			if (!$item->isHit())
+			{
+				yield $key => $default;
+			}
+			else
+			{
+				yield $key => $item->get();
+			}
+		}
 	}
 }
