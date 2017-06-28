@@ -67,9 +67,7 @@ class ConcreteCache extends Cache
 	 */
 	public function get($key)
 	{
-		$item = $this->getItem($key);
-
-		return $item;
+		return $this->getItem($key);
 	}
 
 	/**

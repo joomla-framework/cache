@@ -333,14 +333,11 @@ class CacheTest extends TestCase
 			__LINE__
 		);
 
-		$i = 0;
-
 		foreach ($keys as $key)
 		{
 			$cacheValue = $cacheInstance->get($key)->getValue();
 			$sampleValue = $samples[$key];
 			$this->assertThat($cacheValue, $this->equalTo($sampleValue), __LINE__);
-			$i++;
 		}
 	}
 

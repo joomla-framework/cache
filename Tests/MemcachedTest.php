@@ -45,7 +45,7 @@ class MemcachedTest extends CacheTest
 
 		if (!isset($options['memcache.servers']))
 		{
-			$server = new \StdClass;
+			$server = new \stdClass;
 			$server->host = 'localhost';
 			$server->port = '11211';
 			$options['memcache.servers'] = array($server);

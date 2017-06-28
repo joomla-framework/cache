@@ -373,7 +373,7 @@ class FileTest extends TestCase
 
 		foreach ($iterator as $file)
 		{
-			if ($file->isFile() && $file->getExtension() == 'data')
+			if ($file->isFile() && $file->getExtension() === 'data')
 			{
 				unlink($file->getRealPath());
 			}

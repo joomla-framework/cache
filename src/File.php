@@ -252,11 +252,6 @@ class File extends Cache
 	private function isExpired($key)
 	{
 		// Check to see if the cached data has expired.
-		if (filemtime($this->fetchStreamUri($key)) < (time() - $this->options['ttl']))
-		{
-			return true;
-		}
-
-		return false;
+		return filemtime($this->fetchStreamUri($key)) < (time() - $this->options['ttl']);
 	}
 }

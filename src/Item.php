@@ -51,7 +51,6 @@ class Item implements CacheItemInterface
 	public function __construct($key)
 	{
 		$this->key = $key;
-		$this->value = null;
 		$this->hit = false;
 	}
 
