@@ -63,7 +63,7 @@ class Redis extends Cache
 	{
 		$this->connect();
 
-		return $this->driver->flushall();
+		return $this->driver->flushAll();
 	}
 
 	/**
@@ -103,9 +103,7 @@ class Redis extends Cache
 	{
 		$this->connect();
 
-		$result = (bool) $this->driver->del($key);
-
-		return $result;
+		return (bool) $this->driver->del($key);
 	}
 
 	/**
@@ -128,12 +126,9 @@ class Redis extends Cache
 			return false;
 		}
 
-		if ($ttl)
+		if ($ttl && !$this->driver->expire($key, $ttl))
 		{
-			if (!$this->driver->expire($key, $ttl))
-			{
-				return false;
-			}
+			return false;
 		}
 
 		return true;
@@ -165,7 +160,7 @@ class Redis extends Cache
 	private function connect()
 	{
 		// We want to only create the driver once.
-		if (isset($this->driver))
+		if ($this->driver !== null)
 		{
 			return;
 		}
@@ -175,7 +170,7 @@ class Redis extends Cache
 
 		$this->driver = new RedisDriver;
 
-		if (($host == 'localhost' || filter_var($host, FILTER_VALIDATE_IP)))
+		if ($host === 'localhost' || filter_var($host, FILTER_VALIDATE_IP))
 		{
 			$this->driver->connect('tcp://' . $host . ':' . $port, $port);
 		}

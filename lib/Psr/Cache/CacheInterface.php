@@ -2,8 +2,6 @@
 
 namespace Psr\Cache;
 
-use Psr\Cache\CacheItemInterface;
-
 interface CacheInterface
 {
 

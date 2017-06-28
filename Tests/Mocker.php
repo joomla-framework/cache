@@ -66,7 +66,7 @@ class Mocker
 			$mockObject,
 			$this->test,
 			array(
-				'get' => array((is_callable(array($this->test, 'mockCacheGet')) ? $this->test : $this), 'mockCacheGet'),
+				'get' => array(is_callable(array($this->test, 'mockCacheGet')) ? $this->test : $this, 'mockCacheGet'),
 			)
 		);
 
@@ -101,8 +101,8 @@ class Mocker
 			$mockObject,
 			$this->test,
 			array(
-				'getValue' => array((is_callable(array($this->test, 'mockCacheItemGetValue')) ? $this->test : $this), 'mockCacheItemGetValue'),
-				'isHit' => array((is_callable(array($this->test, 'mockCacheItemIsHit')) ? $this->test : $this), 'mockCacheItemIsHit'),
+				'getValue' => array(is_callable(array($this->test, 'mockCacheItemGetValue')) ? $this->test : $this, 'mockCacheItemGetValue'),
+				'isHit' => array(is_callable(array($this->test, 'mockCacheItemIsHit')) ? $this->test : $this, 'mockCacheItemIsHit'),
 			)
 		);
 

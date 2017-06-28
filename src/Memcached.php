@@ -111,8 +111,9 @@ class Memcached extends Cache
 
 		$rc = $this->driver->getResultCode();
 
-		if ( ($rc != \Memcached::RES_SUCCESS))
+		if ($rc !== \Memcached::RES_SUCCESS)
 		{
+			// Todo: is this a placeholder for some future work or can it be removed?
 // 			throw new \RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
 			return false;
 		}
@@ -137,7 +138,7 @@ class Memcached extends Cache
 
 		$this->driver->set($key, $value, $ttl);
 
-		return (bool) ($this->driver->getResultCode() == \Memcached::RES_SUCCESS);
+		return (bool) ($this->driver->getResultCode() === \Memcached::RES_SUCCESS);
 	}
 
 	/**
@@ -155,7 +156,7 @@ class Memcached extends Cache
 
 		$this->driver->get($key);
 
-		return ($this->driver->getResultCode() != \Memcached::RES_NOTFOUND);
+		return ($this->driver->getResultCode() !== \Memcached::RES_NOTFOUND);
 	}
 
 	/**
