@@ -169,14 +169,6 @@ class Redis extends Cache
 		$port = isset($this->options['redis.port'])? $this->options['redis.port'] : self::REDIS_PORT;
 
 		$this->driver = new RedisDriver;
-
-		if ($host === 'localhost' || filter_var($host, FILTER_VALIDATE_IP))
-		{
-			$this->driver->connect('tcp://' . $host . ':' . $port, $port);
-		}
-		else
-		{
-			$this->driver->connect($host, null);
-		}
+		$this->driver->connect($host, $port);
 	}
 }
