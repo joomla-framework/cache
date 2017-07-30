@@ -21,7 +21,7 @@ class Redis extends Cache
 	/**
 	 * Default hostname of redis server
 	 */
-	const REDIS_HOST = '127.0.0.1';
+	const REDIS_HOST = 'localhost';
 
 	/**
 	 * Default port of redis server
