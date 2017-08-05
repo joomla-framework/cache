@@ -196,7 +196,7 @@ class Memcached extends AbstractCacheItemPool
 
 		$this->driver->set($item->getKey(), $item->get(), $ttl);
 
-		return (bool) ($this->driver->getResultCode() == \Memcached::RES_SUCCESS);
+		return $this->driver->getResultCode() === \Memcached::RES_SUCCESS;
 	}
 
 	/**
@@ -212,7 +212,7 @@ class Memcached extends AbstractCacheItemPool
 	{
 		$this->driver->get($key);
 
-		return ($this->driver->getResultCode() !== \Memcached::RES_NOTFOUND);
+		return $this->driver->getResultCode() !== \Memcached::RES_NOTFOUND;
 	}
 
 	/**

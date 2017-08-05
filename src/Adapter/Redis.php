@@ -145,6 +145,6 @@ class Redis extends AbstractCacheItemPool
 	 */
 	public static function isSupported()
 	{
-		return (extension_loaded('redis') && class_exists('Redis'));
+		return extension_loaded('redis') && class_exists('Redis');
 	}
 }
