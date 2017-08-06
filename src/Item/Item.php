@@ -50,8 +50,8 @@ class Item extends AbstractItem
 	/**
 	 * Class constructor.
 	 *
-	 * @param   string                           $key  The key for the cache item.
-	 * @param   \DateTimeInterface|integer|null  $ttl  The expiry time for the cache item in seconds or as a datetime object
+	 * @param   string                                         $key  The key for the cache item.
+	 * @param   \DateInterval|\DateTimeInterface|integer|null  $ttl  The expiry time for the cache item in seconds or as a datetime object
 	 *
 	 * @since   1.0
 	 */
@@ -59,7 +59,7 @@ class Item extends AbstractItem
 	{
 		$this->key = $key;
 
-		if (is_int($ttl))
+		if (is_int($ttl) || ($ttl instanceof \DateInterval))
 		{
 			$this->expiresAfter($ttl);
 		}
