@@ -365,12 +365,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface, CacheInt
 	 */
 	protected function convertItemExpiryToSeconds(HasExpirationDateInterface $item)
 	{
-		$itemExpiry   = $item->getExpiration();
-		$itemTimezone = $itemExpiry->getTimezone();
-		$now          = new \DateTime('now', $itemTimezone);
-		$interval     = $now->diff($itemExpiry);
-
-		return (int) $interval->format('%i') * 60;
+		return (int) $item->getExpiration()->getTimestamp() - time();
 	}
 
 	/**
