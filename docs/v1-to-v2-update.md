@@ -4,7 +4,7 @@ The following changes were made to the Cache package between v1 and v2.
 
 ### Minimum supported PHP version raised
 
-All framework packages now require PHP 5.5.9 or newer.
+All framework packages now require PHP 7.0 or newer.
 
 ### PSR-6 Changes
 
