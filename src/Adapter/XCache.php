@@ -118,7 +118,7 @@ class XCache extends AbstractCacheItemPool
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function isSupported()
+	public static function isSupported(): bool
 	{
 		// XCache is not supported on CLI
 		return extension_loaded('xcache') && php_sapi_name() != 'cli';

@@ -24,5 +24,5 @@ interface CacheItemPoolInterface extends PsrCacheItemPoolInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function isSupported();
+	public static function isSupported(): bool;
 }

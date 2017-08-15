@@ -363,7 +363,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface, CacheInt
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function convertItemExpiryToSeconds(HasExpirationDateInterface $item)
+	protected function convertItemExpiryToSeconds(HasExpirationDateInterface $item): int
 	{
 		return (int) $item->getExpiration()->getTimestamp() - time();
 	}
@@ -378,7 +378,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface, CacheInt
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	private function generateValues($default, $items)
+	private function generateValues($default, $items): \Generator
 	{
 		/** @var $item CacheItemInterface */
 		foreach ($items as $key => $item)

@@ -120,7 +120,7 @@ class Wincache extends AbstractCacheItemPool
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function isSupported()
+	public static function isSupported(): bool
 	{
 		return extension_loaded('wincache') && function_exists('wincache_ucache_get') && !strcmp(ini_get('wincache.ucenabled'), "1");
 	}

@@ -152,7 +152,7 @@ class Apcu extends AbstractCacheItemPool
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public static function isSupported()
+	public static function isSupported(): bool
 	{
 		$supported = extension_loaded('apcu') && ini_get('apc.enabled');
 
