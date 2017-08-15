@@ -378,7 +378,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface, CacheInt
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	private function generateValues($default, $items): \Generator
+	private function generateValues($default, array $items): \Generator
 	{
 		/** @var $item CacheItemInterface */
 		foreach ($items as $key => $item)

@@ -202,7 +202,7 @@ class Item extends AbstractItem
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getExpiration()
+	public function getExpiration(): \DateTimeInterface
 	{
 		return $this->expiration;
 	}

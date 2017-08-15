@@ -24,5 +24,5 @@ interface HasExpirationDateInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getExpiration();
+	public function getExpiration(): \DateTimeInterface;
 }
