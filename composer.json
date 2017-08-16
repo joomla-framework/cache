@@ -12,11 +12,10 @@
     },
     "require-dev": {
         "joomla/test": "~1.0",
-        "phpunit/phpunit": "~6.0",
+        "phpunit/phpunit": "~6.3",
         "squizlabs/php_codesniffer": "1.*"
     },
     "suggest": {
-        "ext-apc": "To use APC caching",
         "ext-apcu": "To use APCu caching",
         "ext-memcached": "To use Memcached caching",
         "ext-redis": "To use Redis caching",
