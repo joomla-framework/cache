@@ -6,6 +6,7 @@
 
 namespace Joomla\Cache\Tests;
 
+use Joomla\Cache\Item\AbstractItem;
 use Joomla\Test\TestHelper;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
@@ -654,9 +655,7 @@ abstract class CacheTestCase extends TestCase
 	 */
 	public function testGetAndSaveWithTimeout()
 	{
-		// Create a stub for the CacheItemInterface class.
-		$stub = $this->getMockBuilder('\\Joomla\\Cache\\Item\\AbstractItem')
-			->getMock();
+		$stub = $this->getMockForAbstractClass(AbstractItem::class);
 
 		$stub->method('get')
 			->willReturn('bar');
