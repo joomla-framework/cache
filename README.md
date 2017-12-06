@@ -9,7 +9,7 @@ This package provides an implementation of the [PSR-6 caching interface](http://
 
 ## Requirements
 
-* PHP 5.5.9 or later
+* PHP 7.0 or later
 
 ## Installation via Composer
 
