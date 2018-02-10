@@ -133,7 +133,13 @@ class Memcached extends AbstractCacheItemPool
 			// If the item was not successfully removed nor did not exist then raise an error
 			if (($rc !== \Memcached::RES_SUCCESS))
 			{
-				throw new RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
+				throw new RuntimeException(
+					sprintf(
+						'Unable to remove cache entry for %s. Error message `%s`.',
+						$key,
+						$this->driver->getResultMessage()
+					)
+				);
 			}
 		}
 

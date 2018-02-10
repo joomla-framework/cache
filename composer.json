@@ -11,9 +11,9 @@
         "psr/simple-cache": "~1.0"
     },
     "require-dev": {
+        "joomla/coding-standards": "~2.0@alpha",
         "joomla/test": "~1.0",
-        "phpunit/phpunit": "~6.3",
-        "squizlabs/php_codesniffer": "1.*"
+        "phpunit/phpunit": "~6.3"
     },
     "suggest": {
         "ext-apcu": "To use APCu caching",
@@ -36,6 +36,7 @@
             "Joomla\\Cache\\Tests\\": "tests/"
         }
     },
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
 	        "dev-2.0-dev": "2.0-dev"

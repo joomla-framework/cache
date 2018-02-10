@@ -344,7 +344,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface, CacheInt
 	 *
 	 * @param   string  $key  The cache item key.
 	 *
-	 * @return  bool
+	 * @return  boolean
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 * @throws  InvalidArgumentException
