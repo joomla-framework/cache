@@ -44,6 +44,7 @@ class XCache extends Cache
 	 */
 	public function clear()
 	{
+		return true;
 	}
 
 	/**

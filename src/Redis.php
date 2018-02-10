@@ -165,8 +165,8 @@ class Redis extends Cache
 			return;
 		}
 
-		$host = isset($this->options['redis.host'])? $this->options['redis.host'] : self::REDIS_HOST;
-		$port = isset($this->options['redis.port'])? $this->options['redis.port'] : self::REDIS_PORT;
+		$host = isset($this->options['redis.host']) ? $this->options['redis.host'] : self::REDIS_HOST;
+		$port = isset($this->options['redis.port']) ? $this->options['redis.port'] : self::REDIS_PORT;
 
 		$this->driver = new RedisDriver;
 		$this->driver->connect($host, $port);

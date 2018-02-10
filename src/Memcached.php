@@ -113,8 +113,6 @@ class Memcached extends Cache
 
 		if ($rc !== \Memcached::RES_SUCCESS)
 		{
-			// Todo: is this a placeholder for some future work or can it be removed?
-// 			throw new \RuntimeException(sprintf('Unable to remove cache entry for %s. Error message `%s`.', $key, $this->driver->getResultMessage()));
 			return false;
 		}
 

@@ -66,7 +66,7 @@ class File extends Cache
 			'/\.data$/i'
 		);
 
-		/* @var  \RecursiveDirectoryIterator  $file */
+		/** @var \RecursiveDirectoryIterator $file */
 		foreach ($iterator as $file)
 		{
 			if ($file->isFile())
