@@ -8,6 +8,8 @@
 
 namespace Joomla\Cache\Item;
 
+use Joomla\Cache\Exception\InvalidArgumentException;
+
 /**
  * Cache item instance for the Joomla Framework.
  *
@@ -155,9 +157,21 @@ class Item extends AbstractItem
 	 * @return  $this
 	 *
 	 * @since   __DEPLOY_VERSION__
+	 * @throws  InvalidArgumentException
 	 */
 	public function expiresAt($expiration)
 	{
+		if ($expiration !== null && !($expiration instanceof \DateTimeInterface))
+		{
+			throw new InvalidArgumentException(
+				sprintf(
+					'Argument 1 passed to %s::expiresAt() must be an instance of DateTimeInterface; %s given',
+					get_class($this),
+					is_object($expiration) ? get_class($expiration) : gettype($expiration)
+				)
+			);
+		}
+
 		$this->expiration = $expiration;
 
 		return $this;
