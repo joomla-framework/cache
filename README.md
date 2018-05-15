@@ -7,6 +7,10 @@
 
 This cache package is based on a version of the now accepted PSR-6 as it was in 2013.
 
+## Deprecated
+
+The `joomla/cache` package has been deprecated with no further updates planned.
+
 ## Options and General Usage
 
 Following option as available across a cache storage types:

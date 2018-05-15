@@ -18,7 +18,8 @@ use Psr\Cache\CacheItemInterface;
  * - file.locking (boolean) :
  * - file.path              : The path for cache files.
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  The joomla/cache package is deprecated
  */
 class File extends Cache
 {

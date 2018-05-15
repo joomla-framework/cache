@@ -14,7 +14,8 @@ use Psr\Cache\CacheItemInterface;
 /**
  * Joomla! Caching Class
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  The joomla/cache package is deprecated
  */
 abstract class Cache implements CacheInterface
 {
