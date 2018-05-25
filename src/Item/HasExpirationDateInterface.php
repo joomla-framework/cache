@@ -11,7 +11,8 @@ namespace Joomla\Cache\Item;
 /**
  * CacheItemInterface containing an expiration time.
  *
- * @since  __DEPLOY_VERSION__
+ * @since       __DEPLOY_VERSION__
+ * @deprecated  The joomla/cache package is deprecated
  */
 interface HasExpirationDateInterface
 {

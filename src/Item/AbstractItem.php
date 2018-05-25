@@ -13,7 +13,8 @@ use Psr\Cache\CacheItemInterface;
 /**
  * Abstract cache item instance for the Joomla Framework.
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  The joomla/cache package is deprecated
  */
 abstract class AbstractItem implements HasExpirationDateInterface, CacheItemInterface
 {

@@ -13,7 +13,8 @@ use Psr\Cache\CacheItemPoolInterface as PsrCacheItemPoolInterface;
 /**
  * Interface defining Joomla! PSR-6 compatible CacheItemPoolInterface implementations
  *
- * @since  __DEPLOY_VERSION__
+ * @since       1.0
+ * @deprecated  The joomla/cache package is deprecated
  */
 interface CacheItemPoolInterface extends PsrCacheItemPoolInterface
 {

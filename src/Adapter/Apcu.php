@@ -16,7 +16,8 @@ use Psr\Cache\CacheItemInterface;
 /**
  * APCu cache driver for the Joomla Framework.
  *
- * @since  __DEPLOY_VERSION__
+ * @since       __DEPLOY_VERSION__
+ * @deprecated  The joomla/cache package is deprecated
  */
 class Apcu extends AbstractCacheItemPool
 {

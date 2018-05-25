@@ -13,7 +13,8 @@ use Psr\Cache\CacheException;
 /**
  * Joomla! Caching Class Runtime Exception
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  The joomla/cache package is deprecated
  */
 class RuntimeException extends \RuntimeException implements CacheException
 {

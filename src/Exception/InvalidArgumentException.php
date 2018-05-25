@@ -14,7 +14,8 @@ use Psr\SimpleCache\InvalidArgumentException as SimpleInvalidArgumentException;
 /**
  * Joomla! Caching Class Invalid Argument Exception
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  The joomla/cache package is deprecated
  */
 class InvalidArgumentException extends \InvalidArgumentException implements PsrInvalidArgumentException, SimpleInvalidArgumentException
 {

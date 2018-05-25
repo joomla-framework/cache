@@ -15,7 +15,8 @@ use Psr\Cache\CacheItemInterface;
 /**
  * Runtime memory cache driver.
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  The joomla/cache package is deprecated
  */
 class Runtime extends AbstractCacheItemPool
 {
