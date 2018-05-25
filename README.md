@@ -7,6 +7,10 @@
 
 This package provides an implementation of the [PSR-6 caching interface](http://www.php-fig.org/psr/psr-6/).
 
+## Deprecated
+
+The `joomla/cache` package has been deprecated with no further updates planned.
+
 ## Requirements
 
 * PHP 7.0 or later
