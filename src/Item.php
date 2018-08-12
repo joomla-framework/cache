@@ -93,7 +93,7 @@ class Item implements CacheItemInterface
 	public function setValue($value)
 	{
 		$this->value = $value;
-		$this->hit = true;
+		$this->hit   = true;
 	}
 
 	/**

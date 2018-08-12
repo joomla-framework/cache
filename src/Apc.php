@@ -61,8 +61,8 @@ class Apc extends Cache
 	public function get($key)
 	{
 		$success = false;
-		$value = apc_fetch($key, $success);
-		$item = new Item($key);
+		$value   = apc_fetch($key, $success);
+		$item    = new Item($key);
 
 		if ($success)
 		{
@@ -83,9 +83,9 @@ class Apc extends Cache
 	 */
 	public function getMultiple($keys)
 	{
-		$items = array();
+		$items   = array();
 		$success = false;
-		$values = apc_fetch($keys, $success);
+		$values  = apc_fetch($keys, $success);
 
 		if ($success && is_array($values))
 		{

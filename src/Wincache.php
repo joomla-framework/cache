@@ -59,9 +59,9 @@ class Wincache extends Cache
 	 */
 	public function get($key)
 	{
-		$item = new Item($key);
+		$item    = new Item($key);
 		$success = true;
-		$value = wincache_ucache_get($key, $success);
+		$value   = wincache_ucache_get($key, $success);
 
 		if ($success)
 		{

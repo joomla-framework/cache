@@ -84,8 +84,8 @@ class Memcached extends Cache
 	{
 		$this->connect();
 		$value = $this->driver->get($key);
-		$code = $this->driver->getResultCode();
-		$item = new Item($key);
+		$code  = $this->driver->getResultCode();
+		$item  = new Item($key);
 
 		if ($code === \Memcached::RES_SUCCESS)
 		{
@@ -155,7 +155,7 @@ class Memcached extends Cache
 
 		$this->driver->get($key);
 
-		return ($this->driver->getResultCode() !== \Memcached::RES_NOTFOUND);
+		return $this->driver->getResultCode() !== \Memcached::RES_NOTFOUND;
 	}
 
 	/**

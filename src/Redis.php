@@ -81,7 +81,7 @@ class Redis extends Cache
 		$this->connect();
 
 		$value = $this->driver->get($key);
-		$item = new Item($key);
+		$item  = new Item($key);
 
 		if ($value !== false)
 		{
