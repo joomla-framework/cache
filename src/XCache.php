@@ -28,7 +28,7 @@ class XCache extends Cache
 	 */
 	public function __construct($options = array())
 	{
-		if (!extension_loaded('xcache') || !is_callable('xcache_get'))
+		if (!\extension_loaded('xcache') || !\is_callable('xcache_get'))
 		{
 			throw new \RuntimeException('XCache not supported.');
 		}

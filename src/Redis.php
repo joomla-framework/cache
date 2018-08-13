@@ -45,7 +45,7 @@ class Redis extends Cache
 	 */
 	public function __construct($options = array())
 	{
-		if (!extension_loaded('redis') || !class_exists('\Redis'))
+		if (!\extension_loaded('redis') || !class_exists('\Redis'))
 		{
 			throw new \RuntimeException('Redis not supported.');
 		}

@@ -32,7 +32,7 @@ class Memcached extends Cache
 	 */
 	public function __construct($options = array())
 	{
-		if (!extension_loaded('memcached') || !class_exists('Memcached'))
+		if (!\extension_loaded('memcached') || !class_exists('Memcached'))
 		{
 			throw new \RuntimeException('Memcached not supported.');
 		}

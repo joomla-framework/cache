@@ -35,7 +35,7 @@ abstract class Cache implements CacheInterface
 	 */
 	public function __construct($options = array())
 	{
-		if (! ($options instanceof \ArrayAccess || is_array($options)))
+		if (! ($options instanceof \ArrayAccess || \is_array($options)))
 		{
 			throw new \RuntimeException(sprintf('%s requires an options array or an object that implements \\ArrayAccess', __CLASS__));
 		}

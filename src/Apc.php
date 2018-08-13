@@ -28,7 +28,7 @@ class Apc extends Cache
 	 */
 	public function __construct($options = array())
 	{
-		if (!extension_loaded('apc') || !is_callable('apc_fetch'))
+		if (!\extension_loaded('apc') || !\is_callable('apc_fetch'))
 		{
 			throw new \RuntimeException('APC not supported.');
 		}
@@ -87,7 +87,7 @@ class Apc extends Cache
 		$success = false;
 		$values  = apc_fetch($keys, $success);
 
-		if ($success && is_array($values))
+		if ($success && \is_array($values))
 		{
 			foreach ($keys as $key)
 			{

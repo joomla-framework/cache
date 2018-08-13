@@ -210,7 +210,8 @@ class File extends Cache
 		{
 			throw new \RuntimeException(sprintf('The base cache path `%s` does not exist.', $filePath));
 		}
-		elseif (!is_writable($filePath))
+
+		if (!is_writable($filePath))
 		{
 			throw new \RuntimeException(sprintf('The base cache path `%s` is not writable.', $filePath));
 		}
