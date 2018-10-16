@@ -33,6 +33,8 @@ matrix:
       env: INSTALL_APCU="yes" INSTALL_MEMCACHED="yes" INSTALL_REDIS="yes" COMPOSER_FLAGS=""
     - php: 7.2
       env: INSTALL_APCU="yes" INSTALL_MEMCACHED="yes" INSTALL_REDIS="yes"
+    - php: 7.3
+      env: INSTALL_APCU="yes" INSTALL_MEMCACHED="yes" INSTALL_REDIS="yes"
     - php: nightly
       env: INSTALL_APCU="yes" INSTALL_MEMCACHED="yes" INSTALL_REDIS="yes"
   allow_failures:
