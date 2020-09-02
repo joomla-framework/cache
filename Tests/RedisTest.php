@@ -267,11 +267,57 @@ class RedisTest extends TestCase
 	 */
 	protected function setUp()
 	{
+		// Parse the DSN details for the test server
+		$dsn = defined('JTEST_CACHE_REDIS_DSN') ? JTEST_CACHE_REDIS_DSN : getenv('JTEST_CACHE_REDIS_DSN');
+
+		if ($dsn)
+		{
+			$options = $this->cacheOptions;
+
+			if (!$options)
+			{
+				$options = array();
+			}
+
+			// First let's trim the redis: part off the front of the DSN if it exists.
+			if (strpos($dsn, 'redis:') === 0)
+			{
+				$dsn = substr($dsn, 6);
+			}
+
+			if (!is_array($options))
+			{
+				$options = array($options);
+			}
+
+			// Split the DSN into its parts over semicolons.
+			$parts = explode(';', $dsn);
+
+			// Parse each part and populate the options array.
+			foreach ($parts as $part)
+			{
+				list ($k, $v) = explode('=', $part, 2);
+				switch ($k)
+				{
+					case 'host':
+					case 'port':
+						$options['redis.' . $k] = $v;
+						break;
+				}
+			}
+
+			$this->cacheOptions = $options;
+		}
+		else
+		{
+			$this->markTestSkipped('No configuration for Redis given');
+		}
+
 		parent::setUp();
 
 		try
 		{
-			$this->instance = new Cache\Redis;
+			$this->instance = new Cache\Redis($options);
 		}
 		catch (\Exception $e)
 		{

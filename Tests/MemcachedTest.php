@@ -31,27 +31,58 @@ class MemcachedTest extends CacheTest
 			return;
 		}
 
-		$options = $this->cacheOptions;
+		// Parse the DSN details for the test server
+		$dsn = defined('JTEST_CACHE_MEMCACHED_DSN') ? JTEST_CACHE_MEMCACHED_DSN : getenv('JTEST_CACHE_MEMCACHED_DSN');
 
-		if (!$options)
+		if ($dsn)
 		{
-			$options = array();
+			$options = $this->cacheOptions;
+
+			if (!$options)
+			{
+				$options = array();
+			}
+
+			// First let's trim the memcached: part off the front of the DSN if it exists.
+			if (strpos($dsn, 'memcached:') === 0)
+			{
+				$dsn = substr($dsn, 10);
+			}
+
+			if (!is_array($options))
+			{
+				$options = array($options);
+			}
+
+			// Split the DSN into its parts over semicolons.
+			$parts = explode(';', $dsn);
+
+			if (!isset($options['memcache.servers']))
+			{
+				$server = new \stdClass;
+
+				// Parse each part and populate the options array.
+				foreach ($parts as $part)
+				{
+					list ($k, $v) = explode('=', $part, 2);
+					switch ($k)
+					{
+						case 'host':
+						case 'port':
+							$server->$k = $v;
+							break;
+					}
+				}
+				$options['memcache.servers'] = array($server);
+			}
+
+			$this->cacheOptions = $options;
+		}
+		else
+		{
+			$this->markTestSkipped('No configuration for Memcached given');
 		}
 
-		if (!is_array($options))
-		{
-			$options = array($options);
-		}
-
-		if (!isset($options['memcache.servers']))
-		{
-			$server = new \stdClass;
-			$server->host = 'localhost';
-			$server->port = '11211';
-			$options['memcache.servers'] = array($server);
-		}
-
-		$this->cacheOptions = $options;
 		$this->cacheClass = 'Joomla\\Cache\\Memcached';
 		parent::setUp();
 	}

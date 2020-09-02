@@ -39,6 +39,16 @@ local pipeline(name, phpversion, params) = {
         composer(phpversion, params),
         phpunit(phpversion)
     ],
+    services: [
+        {
+            name: "memcached",
+            image: "memcached:alpine"
+        },
+        {
+            name:"redis",
+            image: "redis:alpine"
+        }
+    ]
 };
 
 [
