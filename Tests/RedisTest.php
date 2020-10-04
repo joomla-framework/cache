@@ -272,12 +272,7 @@ class RedisTest extends TestCase
 
 		if ($dsn)
 		{
-			$options = $this->cacheOptions;
-
-			if (!$options)
-			{
-				$options = array();
-			}
+			$options = array();
 
 			// First let's trim the redis: part off the front of the DSN if it exists.
 			if (strpos($dsn, 'redis:') === 0)

@@ -36,12 +36,7 @@ class MemcachedTest extends CacheTest
 
 		if ($dsn)
 		{
-			$options = $this->cacheOptions;
-
-			if (!$options)
-			{
-				$options = array();
-			}
+			$options = array();
 
 			// First let's trim the memcached: part off the front of the DSN if it exists.
 			if (strpos($dsn, 'memcached:') === 0)
