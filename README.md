@@ -26,5 +26,5 @@ composer require joomla/cache "~2.0@dev"
 If you want to include the test sources, use
 
 ```sh
-composer require --prefer-source joomla/cache "~1.0"
+composer require --prefer-source joomla/cache "~2.0@dev"
 ```
