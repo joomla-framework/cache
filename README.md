@@ -22,3 +22,9 @@ You can simply run the following from the command line:
 ```sh
 composer require joomla/cache "~2.0@dev"
 ```
+
+If you want to include the test sources, use
+
+```sh
+composer require --prefer-source joomla/cache "~2.0@dev"
+```
