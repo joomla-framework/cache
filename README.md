@@ -9,7 +9,11 @@ This package provides an implementation of the [PSR-6 caching interface](http://
 
 ## Deprecated
 
-The `joomla/cache` package has been deprecated with no further updates planned.
+The `joomla/cache` package has been deprecated with no further updates planned. Use
+any [PSR-6](https://packagist.org/search/?query=psr%2Fcache)
+or [PSR-16](https://packagist.org/search/?query=psr%2Fsimple-cache) compliant package instead.
+
+See https://framework.joomla.org/contribute
 
 ## Requirements
 
